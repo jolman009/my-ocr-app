@@ -94,8 +94,7 @@ my-ocr-app/
 | `WEB_ORIGIN` | `http://localhost:5173` | Frontend URL (CORS) |
 | `OCR_PROVIDER` | `mock` | `mock` or `google-vision` |
 | `UPLOAD_DIR` | `uploads` | Directory for receipt images |
-| `GOOGLE_CLOUD_PROJECT` | — | GCP project ID (for google-vision) |
-| `GOOGLE_APPLICATION_CREDENTIALS` | — | Path to GCP service account key (for google-vision) |
+| `GOOGLE_APPLICATION_CREDENTIALS` | — | Absolute path to GCP service account key (for google-vision) |
 
 ## API Endpoints
 

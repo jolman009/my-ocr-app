@@ -25,8 +25,8 @@ const updateSchema = z.object({
   confidence: z.record(z.number()).optional(),
   items: z.array(z.object({
     name: z.string(),
-    quantity: z.number().optional(),
-    unitPrice: z.number().optional(),
+    quantity: z.number().nullable().optional(),
+    unitPrice: z.number().nullable().optional(),
     totalPrice: z.number()
   })).optional()
 });

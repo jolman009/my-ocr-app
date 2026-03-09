@@ -27,7 +27,14 @@ Or use the GCP Console:
 - Enter project name (e.g., "receipt-ocr")
 - Click "CREATE"
 
-### 2. Enable the Vision API
+### 2. Enable Billing
+
+A billing account must be linked to your project before you can enable APIs.
+
+- Go to [Billing](https://console.cloud.google.com/billing) in the Console
+- Link a billing account to your project (the free tier covers 1,000 Vision API requests/month)
+
+### 3. Enable the Vision API
 
 ```bash
 # Enable the Vision API for your project
@@ -35,11 +42,13 @@ gcloud services enable vision.googleapis.com
 ```
 
 Or via Console:
-- Go to APIs & Services → Library
+- Go to **APIs & Services → Library**
 - Search for "Cloud Vision API"
 - Click on it and press "ENABLE"
 
-### 3. Create a Service Account
+> **Note:** It may take a minute or two for the API to fully activate after enabling.
+
+### 4. Create a Service Account
 
 ```bash
 # Create a service account
@@ -51,32 +60,14 @@ gcloud iam service-accounts list
 ```
 
 Or via Console:
-- Go to APIs & Services → Service Accounts
+- Go to **IAM & Admin → Service Accounts**
 - Click "CREATE SERVICE ACCOUNT"
 - Fill in details:
   - Service account name: `receipt-ocr-app`
   - Display name: `Receipt OCR Application`
 - Click "CREATE AND CONTINUE"
-
-### 4. Grant Vision API Permissions
-
-```bash
-# Get your GCP project ID
-export PROJECT_ID=$(gcloud config get-value project)
-
-# Grant the Vision API User role to the service account
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member="serviceAccount:receipt-ocr-app@${PROJECT_ID}.iam.gserviceaccount.com" \
-  --role="roles/vision.documentAnalyzer"
-```
-
-Or via Console:
-- Go to APIs & Services → Service Accounts
-- Click on `receipt-ocr-app`
-- Go to "IAM & Admin" → click "Grant Access"
-- Add principal: `receipt-ocr-app@PROJECT_ID.iam.gserviceaccount.com`
-- Role: `Cloud Vision API User` or `Document Analyzer`
-- Click "SAVE"
+- Skip the optional role/access steps (no special IAM role is needed — the Vision API is authorized at the API level, not via IAM roles)
+- Click "DONE"
 
 ### 5. Create and Download Service Account Key
 
@@ -93,25 +84,27 @@ ls receipt-ocr-key.json
 ```
 
 Or via Console:
-- Go to APIs & Services → Service Accounts
+- Go to **IAM & Admin → Service Accounts**
 - Click on `receipt-ocr-app`
-- Go to "Keys" tab
+- Go to the "Keys" tab
 - Click "Add Key" → "Create new key"
 - Select "JSON"
-- Click "CREATE" (file downloads automatically)
+- Click "CREATE" (the file downloads automatically)
 
-### 6. Configure Environment Variables
+### 6. Store the Key File Securely
 
-Move the key file to a secure location (recommended: outside the repository):
+Move the key file to a secure location **outside the repository**:
 
+**Linux/macOS:**
 ```bash
-# Linux/macOS
+mkdir -p ~/.config/gcp
 mv receipt-ocr-key.json ~/.config/gcp/receipt-ocr-key.json
-export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.config/gcp/receipt-ocr-key.json"
+```
 
-# Windows PowerShell
-mv receipt-ocr-key.json "$env:APPDATA\gcp\receipt-ocr-key.json"
-$env:GOOGLE_APPLICATION_CREDENTIALS = "$env:APPDATA\gcp\receipt-ocr-key.json"
+**Windows (PowerShell):**
+```powershell
+New-Item -ItemType Directory -Force -Path "$env:APPDATA\gcp"
+Move-Item receipt-ocr-key.json "$env:APPDATA\gcp\receipt-ocr-key.json"
 ```
 
 ### 7. Update Your `.env` File
@@ -120,20 +113,21 @@ Edit `apps/api/.env` and set:
 
 ```env
 OCR_PROVIDER="google-vision"
-GOOGLE_APPLICATION_CREDENTIALS="/path/to/receipt-ocr-key.json"
-GOOGLE_CLOUD_PROJECT="your-project-id-here"
+GOOGLE_APPLICATION_CREDENTIALS="/absolute/path/to/receipt-ocr-key.json"
 ```
 
-Replace:
-- `/path/to/receipt-ocr-key.json` with the absolute path to your downloaded key
-- `your-project-id-here` with your actual GCP project ID (from `gcloud config get-value project`)
+Replace `/absolute/path/to/receipt-ocr-key.json` with the actual absolute path to your key file:
+- **Linux/macOS:** e.g., `/home/youruser/.config/gcp/receipt-ocr-key.json`
+- **Windows:** e.g., `C:\Users\YourUser\AppData\Roaming\gcp\receipt-ocr-key.json`
+
+> **Note:** `GOOGLE_CLOUD_PROJECT` is not required — the project ID is read from the key file automatically.
 
 ### 8. Test the Setup
 
 Start the API server:
 
 ```bash
-npm run -w api dev
+npm run dev:api
 ```
 
 Test with a receipt image:
@@ -147,35 +141,37 @@ You should see extracted receipt data in the response.
 
 ## Troubleshooting
 
-### Error: `GOOGLE_APPLICATION_CREDENTIALS not found`
-- Verify the file path in `.env` is correct and absolute
-- Ensure the file exists: `ls "$GOOGLE_APPLICATION_CREDENTIALS"`
-- Try running: `gcloud auth application-default login` for alternative authentication
+### Error: `Could not load the default credentials`
+- Verify `GOOGLE_APPLICATION_CREDENTIALS` in `apps/api/.env` is set to the correct **absolute** path
+- Ensure the key file exists at that path
+- Make sure the `.env` file is being loaded — check that `apps/api/.env` exists (not just the root `.env.example`)
+- Alternative: run `gcloud auth application-default login` to authenticate with your user account instead of a service account
 
-### Error: `Vision API not enabled`
+### Error: `Cloud Vision API has not been used in project ... before or it is disabled`
 - Re-run: `gcloud services enable vision.googleapis.com`
-- Wait a few minutes for API to fully activate
-- Check in Console: APIs & Services → Enabled APIs & Services
+- Wait a few minutes for the API to fully activate
+- Verify in Console: **APIs & Services → Enabled APIs & Services**
+- Ensure billing is enabled on the project
 
-### Error: `Permission denied` when calling Vision API
-- Verify service account has `roles/vision.documentAnalyzer` role
-- Check: `gcloud projects get-iam-policy $PROJECT_ID | grep receipt-ocr-app`
-- Re-grant permissions using step 4 above
+### Error: `Permission denied` or `403`
+- Confirm the API is enabled (see above)
+- Verify the service account key file belongs to the correct project
+- Check: `gcloud services list --enabled | grep vision`
 
-### Error: `Invalid project ID`
-- Verify `GOOGLE_CLOUD_PROJECT` matches your actual GCP project ID
-- Check: `gcloud config get-value project`
+### Error: `Invalid value at 'image'`
+- Ensure the uploaded file is a valid image (JPEG, PNG, or WebP)
+- Check that the file isn't corrupted or empty
 
 ### Testing Locally Without GCP
-If you want to test without setting up GCP yet, keep `OCR_PROVIDER="mock"` in `.env`. The mock provider returns test receipt data without needing credentials.
+If you want to test without setting up GCP, keep `OCR_PROVIDER="mock"` in `.env`. The mock provider returns test receipt data without needing any credentials.
 
 ## Security Best Practices
 
-⚠️ **Never commit the service account key file to version control!**
+**Never commit the service account key file to version control!**
 
-1. Add to `.gitignore`:
+1. The `.gitignore` already excludes key files — verify it contains:
    ```
-   receipt-ocr-key.json
+   *.json (service account keys)
    apps/api/.env
    ```
 
@@ -183,28 +179,32 @@ If you want to test without setting up GCP yet, keep `OCR_PROVIDER="mock"` in `.
 
 3. Rotate keys periodically:
    ```bash
+   export PROJECT_ID=$(gcloud config get-value project)
+
    # List existing keys
    gcloud iam service-accounts keys list \
      --iam-account=receipt-ocr-app@${PROJECT_ID}.iam.gserviceaccount.com
 
-   # Delete old keys (keep only active ones)
+   # Delete old keys (replace KEY_ID with the actual key ID)
    gcloud iam service-accounts keys delete KEY_ID \
      --iam-account=receipt-ocr-app@${PROJECT_ID}.iam.gserviceaccount.com
    ```
 
+4. For production, consider [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation) instead of key files.
+
 ## Cost Estimation
 
-Google Cloud Vision API pricing (as of 2024):
+Google Cloud Vision API pricing:
 - **Free tier:** 1,000 requests/month included
-- **Pay-as-you-go:** $0.60 per 1,000 requests after free tier
+- **Pay-as-you-go:** $1.50 per 1,000 requests (document text detection) after free tier
 
 For production, consider:
-- Setting up budget alerts: GCP Console → Billing → Budgets
-- Using the `receipt_ocr` project only for this application
+- Setting up budget alerts: **GCP Console → Billing → Budgets & alerts**
+- Using a dedicated project for this application to isolate costs
 
 ## References
 
 - [Google Cloud Vision API Documentation](https://cloud.google.com/vision/docs)
-- [Service Account Setup](https://cloud.google.com/docs/authentication#service-accounts)
-- [Vision API Python Client Library](https://github.com/googleapis/python-client-libraries)
+- [Node.js Client Library for Vision](https://github.com/googleapis/nodejs-vision)
+- [Service Account Authentication](https://cloud.google.com/docs/authentication/provide-credentials-adc#local-key)
 - [GCP Pricing Calculator](https://cloud.google.com/products/calculator)
