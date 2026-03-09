@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ReceiptStatus {
+  processed
+  needs_review
+  failed
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  receipts  Receipt[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Receipt {
+  id          String         @id @default(cuid())
+  userId      String?
+  imageUrl    String
+  merchantName String?
+  receiptDate DateTime?
+  address     String?
+  subtotal    Decimal?
+  tax         Decimal?
+  tip         Decimal?
+  total       Decimal?
+  currency    String?
+  status      ReceiptStatus  @default(needs_review)
+  confidence  Json
+  ocrRawText  String
+  ocrRawJson  Json
+  items       ReceiptItem[]
+  user        User?          @relation(fields: [userId], references: [id])
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([merchantName])
+  @@index([receiptDate])
+  @@index([status])
+}
+
+model ReceiptItem {
+  id         String   @id @default(cuid())
+  receiptId   String
+  name       String
+  quantity   Decimal?
+  unitPrice  Decimal?
+  totalPrice Decimal
+  sortOrder  Int
+  receipt    Receipt  @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+
+  @@index([receiptId])
+}
