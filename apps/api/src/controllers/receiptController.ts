@@ -57,7 +57,18 @@ export class ReceiptController {
 
   update = asyncHandler(async (req: Request, res: Response) => {
     const payload = updateSchema.parse(req.body);
-    const receipt = await this.receiptService.update(String(req.params.id), payload);
+    
+    // Convert null values to undefined for items to match ParsedReceiptItem interface
+    const normalizedPayload = {
+      ...payload,
+      items: payload.items?.map(item => ({
+        ...item,
+        quantity: item.quantity ?? undefined,
+        unitPrice: item.unitPrice ?? undefined
+      }))
+    };
+    
+    const receipt = await this.receiptService.update(String(req.params.id), normalizedPayload);
     res.json(receipt);
   });
 }
