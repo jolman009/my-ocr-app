@@ -19,7 +19,7 @@ export class ReceiptService {
     private readonly imageService: ImageService
   ) {}
 
-  async createFromUpload(file: Express.Multer.File): Promise<ReceiptRecord> {
+  async createFromUpload(file: Express.Multer.File, userId?: string): Promise<ReceiptRecord> {
     const processedBuffer = await this.imageService.preprocess(file.buffer);
     const imageUrl = await this.imageService.save(processedBuffer);
     const ocrResult = await this.ocrProvider.extractReceiptText(processedBuffer);
@@ -30,24 +30,24 @@ export class ReceiptService {
 
     const parsed = this.extractor.parse(ocrResult);
     const status = deriveStatus(parsed);
-    return this.repository.create({ imageUrl, parsed, rawOcr: ocrResult.raw, status });
+    return this.repository.create({ imageUrl, parsed, rawOcr: ocrResult.raw, status, userId });
   }
 
-  async list(filters: ReceiptFilters) {
-    return this.repository.list(filters);
+  async list(filters: ReceiptFilters, userId?: string) {
+    return this.repository.list(filters, userId);
   }
 
-  async getById(id: string) {
-    const receipt = await this.repository.getById(id);
+  async getById(id: string, userId?: string) {
+    const receipt = await this.repository.getById(id, userId);
     if (!receipt) {
       throw new HttpError(404, "Receipt not found.");
     }
     return receipt;
   }
 
-  async update(id: string, parsed: Partial<ParsedReceipt>) {
-    await this.getById(id);
-    const updated = await this.repository.update(id, parsed);
+  async update(id: string, parsed: Partial<ParsedReceipt>, userId?: string) {
+    await this.getById(id, userId);
+    const updated = await this.repository.update(id, parsed, userId);
     if (!updated) {
       throw new HttpError(404, "Receipt not found.");
     }

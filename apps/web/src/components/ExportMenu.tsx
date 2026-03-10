@@ -1,5 +1,5 @@
-import type { ReceiptFilters } from "../types/receipt";
-import { getExportUrl } from "../api/client";
+import { getExportUrl } from "@receipt-ocr/shared/api";
+import type { ReceiptFilters } from "@receipt-ocr/shared/types";
 
 interface ExportMenuProps {
   filters?: ReceiptFilters;

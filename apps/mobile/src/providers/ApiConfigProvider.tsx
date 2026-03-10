@@ -1,0 +1,13 @@
+import { PropsWithChildren, useEffect } from "react";
+import Constants from "expo-constants";
+import { setApiBaseUrl, setRequestTimeoutMs } from "@receipt-ocr/shared/api";
+
+export const ApiConfigProvider = ({ children }: PropsWithChildren) => {
+  useEffect(() => {
+    const apiUrl = Constants.expoConfig?.extra?.apiUrl as string | undefined;
+    setApiBaseUrl(apiUrl ?? "http://10.0.2.2:4000/api");
+    setRequestTimeoutMs(15_000);
+  }, []);
+
+  return children;
+};

@@ -1,7 +1,8 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { z } from "zod";
 import { ExportService } from "../services/exportService.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import type { AuthenticatedRequest } from "../types/auth.js";
 
 const filtersSchema = z.object({
   merchant: z.string().optional(),
@@ -13,17 +14,17 @@ const filtersSchema = z.object({
 export class ExportController {
   constructor(private readonly exportService: ExportService) {}
 
-  csv = asyncHandler(async (req: Request, res: Response) => {
+  csv = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const filters = filtersSchema.parse(req.query);
-    const csv = await this.exportService.generateCsv(filters);
+    const csv = await this.exportService.generateCsv(filters, req.auth?.userId);
     res.setHeader("Content-Type", "text/csv");
     res.setHeader("Content-Disposition", "attachment; filename=receipts.csv");
     res.send(csv);
   });
 
-  xlsx = asyncHandler(async (req: Request, res: Response) => {
+  xlsx = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const filters = filtersSchema.parse(req.query);
-    const workbook = await this.exportService.generateWorkbook(filters);
+    const workbook = await this.exportService.generateWorkbook(filters, req.auth?.userId);
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     res.setHeader("Content-Disposition", "attachment; filename=receipts.xlsx");
     res.send(workbook);

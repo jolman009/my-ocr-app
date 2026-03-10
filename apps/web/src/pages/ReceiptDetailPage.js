@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { Link, useParams } from "react-router-dom";
 import { ReceiptReviewForm } from "../components/ReceiptReviewForm";
-import { useReceipt, useUpdateReceipt } from "../hooks/useReceipts";
+import { useReceipt, useUpdateReceipt } from "@receipt-ocr/shared/hooks";
 export const ReceiptDetailPage = () => {
     const { id = "" } = useParams();
     const { data, isLoading, error } = useReceipt(id);

@@ -3,7 +3,7 @@ import { useDeferredValue, useState } from "react";
 import { ExportMenu } from "../components/ExportMenu";
 import { ReceiptTable } from "../components/ReceiptTable";
 import { ReceiptUploader } from "../components/ReceiptUploader";
-import { useReceipts } from "../hooks/useReceipts";
+import { useReceipts } from "@receipt-ocr/shared/hooks";
 export const DashboardPage = () => {
     const [merchant, setMerchant] = useState("");
     const [status, setStatus] = useState("");

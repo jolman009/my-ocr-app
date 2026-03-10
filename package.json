@@ -4,13 +4,16 @@
   "version": "1.0.0",
   "workspaces": [
     "apps/api",
-    "apps/web"
+    "apps/web",
+    "apps/mobile",
+    "packages/shared"
   ],
   "scripts": {
     "dev:api": "npm.cmd run dev --workspace api",
     "dev:web": "npm.cmd run dev --workspace web",
+    "dev:mobile": "npm.cmd run start --workspace mobile",
     "build": "npm.cmd run build --workspace api && npm.cmd run build --workspace web",
     "test": "npm.cmd run test --workspace api && npm.cmd run test --workspace web",
-    "lint": "npm.cmd run lint --workspace api && npm.cmd run lint --workspace web"
+    "lint": "npm.cmd run lint --workspace @receipt-ocr/shared && npm.cmd run lint --workspace api && npm.cmd run lint --workspace web && npm.cmd run lint --workspace mobile"
   }
 }

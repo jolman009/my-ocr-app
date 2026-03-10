@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import type { ReceiptRecord } from "../types/receipt";
+import type { ReceiptRecord } from "@receipt-ocr/shared/types";
 
 interface ReceiptTableProps {
   receipts: ReceiptRecord[];

@@ -1,7 +1,8 @@
 import { z } from "zod";
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { ReceiptService } from "../services/receiptService.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import type { AuthenticatedRequest } from "../types/auth.js";
 
 const filtersSchema = z.object({
   page: z.coerce.number().int().positive().optional(),
@@ -34,28 +35,28 @@ const updateSchema = z.object({
 export class ReceiptController {
   constructor(private readonly receiptService: ReceiptService) {}
 
-  create = asyncHandler(async (req: Request, res: Response) => {
+  create = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     if (!req.file) {
       res.status(400).json({ message: "Receipt file is required." });
       return;
     }
 
-    const receipt = await this.receiptService.createFromUpload(req.file);
+    const receipt = await this.receiptService.createFromUpload(req.file, req.auth?.userId);
     res.status(201).json({ id: receipt.id, status: receipt.status, receipt });
   });
 
-  list = asyncHandler(async (req: Request, res: Response) => {
+  list = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const filters = filtersSchema.parse(req.query);
-    const receipts = await this.receiptService.list(filters);
+    const receipts = await this.receiptService.list(filters, req.auth?.userId);
     res.json(receipts);
   });
 
-  getById = asyncHandler(async (req: Request, res: Response) => {
-    const receipt = await this.receiptService.getById(String(req.params.id));
+  getById = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const receipt = await this.receiptService.getById(String(req.params.id), req.auth?.userId);
     res.json(receipt);
   });
 
-  update = asyncHandler(async (req: Request, res: Response) => {
+  update = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const payload = updateSchema.parse(req.body);
     
     // Convert null values to undefined for items to match ParsedReceiptItem interface
@@ -68,7 +69,7 @@ export class ReceiptController {
       }))
     };
     
-    const receipt = await this.receiptService.update(String(req.params.id), normalizedPayload);
+    const receipt = await this.receiptService.update(String(req.params.id), normalizedPayload, req.auth?.userId);
     res.json(receipt);
   });
 }

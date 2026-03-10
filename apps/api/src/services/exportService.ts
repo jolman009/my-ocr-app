@@ -60,14 +60,14 @@ const buildItemRows = (receipts: ReceiptRecord[]) =>
 export class ExportService {
   constructor(private readonly repository: ReceiptRepository) {}
 
-  async generateCsv(filters: ReceiptFilters): Promise<string> {
-    const receipts = await this.repository.findForExport(filters);
+  async generateCsv(filters: ReceiptFilters, userId?: string): Promise<string> {
+    const receipts = await this.repository.findForExport(filters, userId);
     const parser = new Json2CsvParser({ fields: receiptFields as unknown as string[] });
     return parser.parse(buildReceiptRows(receipts));
   }
 
-  async generateWorkbook(filters: ReceiptFilters): Promise<Buffer> {
-    const receipts = await this.repository.findForExport(filters);
+  async generateWorkbook(filters: ReceiptFilters, userId?: string): Promise<Buffer> {
+    const receipts = await this.repository.findForExport(filters, userId);
     const workbook = new ExcelJS.Workbook();
     const receiptsSheet = workbook.addWorksheet("Receipts");
     const itemsSheet = workbook.addWorksheet("Items");

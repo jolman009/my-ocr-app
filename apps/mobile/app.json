@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "Receipt Radar",
+    "slug": "receipt-radar-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "receiptradar",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f8fafc"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jolma.receiptradar"
+    },
+    "android": {
+      "package": "com.jolma.receiptradar",
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Receipt Radar to use your camera to scan receipts."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Receipt Radar to access your photos to upload receipts."
+        }
+      ],
+      "expo-sharing",
+      "expo-sqlite",
+      "expo-image"
+    ],
+    "extra": {
+      "apiUrl": "http://10.0.2.2:4000/api"
+    }
+  }
+}

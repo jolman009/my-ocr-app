@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useFieldArray, useForm } from "react-hook-form";
-import { getReceiptImageUrl } from "../api/client";
+import { getReceiptImageUrl } from "@receipt-ocr/shared/api";
 const toInputString = (value) => {
     if (value === null || value === undefined) {
         return "";

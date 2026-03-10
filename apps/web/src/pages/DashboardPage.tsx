@@ -1,12 +1,13 @@
 import { useDeferredValue, useState } from "react";
+import type { ReceiptStatus } from "@receipt-ocr/shared/types";
 import { ExportMenu } from "../components/ExportMenu";
 import { ReceiptTable } from "../components/ReceiptTable";
 import { ReceiptUploader } from "../components/ReceiptUploader";
-import { useReceipts } from "../hooks/useReceipts";
+import { useReceipts } from "@receipt-ocr/shared/hooks";
 
 export const DashboardPage = () => {
   const [merchant, setMerchant] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState<"" | ReceiptStatus>("");
   const deferredMerchant = useDeferredValue(merchant);
   const filters = {
     merchant: deferredMerchant || undefined,
@@ -50,7 +51,7 @@ export const DashboardPage = () => {
             placeholder="Filter by merchant"
             className="rounded-full border border-slate-200 bg-white/85 px-4 py-3 text-sm shadow-panel"
           />
-          <select value={status} onChange={(event) => setStatus(event.target.value)} className="rounded-full border border-slate-200 bg-white/85 px-4 py-3 text-sm shadow-panel">
+          <select value={status} onChange={(event) => setStatus(event.target.value as "" | ReceiptStatus)} className="rounded-full border border-slate-200 bg-white/85 px-4 py-3 text-sm shadow-panel">
             <option value="">All statuses</option>
             <option value="processed">Processed</option>
             <option value="needs_review">Needs review</option>

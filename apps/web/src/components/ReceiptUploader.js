@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useCallback, useState, startTransition } from "react";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
-import { useUploadReceipt } from "../hooks/useReceipts";
+import { useUploadReceipt } from "@receipt-ocr/shared/hooks";
 import { CameraCapture } from "./CameraCapture";
 import { ProcessingState } from "./ProcessingState";
 const previewFor = (file) => URL.createObjectURL(file);

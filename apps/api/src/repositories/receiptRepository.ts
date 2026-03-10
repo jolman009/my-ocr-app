@@ -71,10 +71,12 @@ export class ReceiptRepository {
     parsed: ParsedReceipt;
     rawOcr: unknown;
     status: ReceiptStatus;
+    userId?: string | null;
   }): Promise<ReceiptRecord> {
     const created = await prisma.receipt.create({
       ...receiptWithItems,
       data: {
+        userId: input.userId ?? null,
         imageUrl: input.imageUrl,
         merchantName: input.parsed.merchantName,
         receiptDate: input.parsed.receiptDate ? new Date(input.parsed.receiptDate) : null,
@@ -103,10 +105,13 @@ export class ReceiptRepository {
     return mapRecord(created);
   }
 
-  async list(filters: ReceiptFilters): Promise<ReceiptListResponse> {
+  async list(filters: ReceiptFilters, userId?: string): Promise<ReceiptListResponse> {
     const page = filters.page ?? 1;
     const limit = filters.limit ?? 10;
-    const where = buildWhere(filters);
+    const where = {
+      ...buildWhere(filters),
+      userId: userId ?? undefined
+    };
     const [total, receipts] = await Promise.all([
       prisma.receipt.count({ where }),
       prisma.receipt.findMany({
@@ -129,12 +134,18 @@ export class ReceiptRepository {
     };
   }
 
-  async getById(id: string): Promise<ReceiptRecord | null> {
-    const receipt = await prisma.receipt.findUnique({ ...receiptWithItems, where: { id } });
+  async getById(id: string, userId?: string): Promise<ReceiptRecord | null> {
+    const receipt = await prisma.receipt.findFirst({
+      ...receiptWithItems,
+      where: {
+        id,
+        userId: userId ?? undefined
+      }
+    });
     return receipt ? mapRecord(receipt) : null;
   }
 
-  async update(id: string, parsed: Partial<ParsedReceipt>): Promise<ReceiptRecord | null> {
+  async update(id: string, parsed: Partial<ParsedReceipt>, userId?: string): Promise<ReceiptRecord | null> {
     const updated = await prisma.receipt.update({
       ...receiptWithItems,
       where: { id },
@@ -165,13 +176,20 @@ export class ReceiptRepository {
       }
     });
 
+    if (userId && updated.userId !== userId) {
+      return null;
+    }
+
     return updated ? mapRecord(updated) : null;
   }
 
-  async findForExport(filters: ReceiptFilters): Promise<ReceiptRecord[]> {
+  async findForExport(filters: ReceiptFilters, userId?: string): Promise<ReceiptRecord[]> {
     const receipts = await prisma.receipt.findMany({
       ...receiptWithItems,
-      where: buildWhere(filters),
+      where: {
+        ...buildWhere(filters),
+        userId: userId ?? undefined
+      },
       orderBy: { receiptDate: "desc" }
     });
 

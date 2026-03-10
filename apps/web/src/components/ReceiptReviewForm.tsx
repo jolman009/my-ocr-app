@@ -1,6 +1,6 @@
 import { useFieldArray, useForm } from "react-hook-form";
-import { getReceiptImageUrl } from "../api/client";
-import type { ReceiptRecord } from "../types/receipt";
+import { getReceiptImageUrl } from "@receipt-ocr/shared/api";
+import type { ReceiptRecord } from "@receipt-ocr/shared/types";
 
 interface ReceiptReviewFormProps {
   receipt: ReceiptRecord;
