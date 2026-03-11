@@ -7,4 +7,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     apiUrl: process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:4000/api',
   },
+  plugins: [
+    "expo-secure-store"
+  ]
 });

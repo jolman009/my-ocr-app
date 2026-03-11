@@ -11,6 +11,19 @@ import {
   getRequestTimeoutMs
 } from "./config";
 
+type UnauthorizedHandler = () => void;
+const unauthorizedHandlers: UnauthorizedHandler[] = [];
+
+export const onUnauthorized = (handler: UnauthorizedHandler) => {
+  unauthorizedHandlers.push(handler);
+  return () => {
+    const index = unauthorizedHandlers.indexOf(handler);
+    if (index !== -1) {
+      unauthorizedHandlers.splice(index, 1);
+    }
+  };
+};
+
 export interface AuthResponse {
   token: string;
   user: {
@@ -82,11 +95,17 @@ const withTimeout = async (input: string, init?: RequestInit) => {
       headers.set("Authorization", `Bearer ${token}`);
     }
 
-    return await fetch(input, {
+    const response = await fetch(input, {
       ...init,
       headers,
       signal: controller.signal
     });
+
+    if (response.status === 401) {
+      unauthorizedHandlers.forEach((handler) => handler());
+    }
+
+    return response;
   } finally {
     clearTimeout(timeout);
   }

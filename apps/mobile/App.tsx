@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ApiConfigProvider } from "./src/providers/ApiConfigProvider";
+import { AuthProvider } from "./src/providers/AuthProvider";
 import { RootNavigator } from "./src/navigation/RootNavigator";
 
 const queryClient = new QueryClient();
@@ -24,12 +25,14 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <ApiConfigProvider>
-        <QueryClientProvider client={queryClient}>
-          <NavigationContainer theme={navTheme}>
-            <StatusBar style="dark" />
-            <RootNavigator />
-          </NavigationContainer>
-        </QueryClientProvider>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <NavigationContainer theme={navTheme}>
+              <StatusBar style="dark" />
+              <RootNavigator />
+            </NavigationContainer>
+          </QueryClientProvider>
+        </AuthProvider>
       </ApiConfigProvider>
     </SafeAreaProvider>
   );

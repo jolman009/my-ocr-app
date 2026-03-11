@@ -18,10 +18,12 @@ import { ReceiptListItem } from "../components/ReceiptListItem";
 import { colors } from "../lib/theme";
 import type { RootStackParamList } from "../types/navigation";
 import { downloadAndShareExport } from "../lib/export";
+import { useAuthContext } from "../providers/AuthProvider";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Dashboard">;
 
 export const DashboardScreen = ({ navigation }: Props) => {
+  const { logout } = useAuthContext();
   const [merchant, setMerchant] = useState("");
   const [status, setStatus] = useState<"" | "processed" | "needs_review" | "failed">("");
   const filters = useMemo(
@@ -59,7 +61,12 @@ export const DashboardScreen = ({ navigation }: Props) => {
         }
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.eyebrow}>Mobile OCR</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <Text style={styles.eyebrow}>Mobile OCR</Text>
+              <Pressable onPress={() => logout()} hitSlop={8}>
+                <Text style={styles.logoutText}>Log out</Text>
+              </Pressable>
+            </View>
             <Text style={styles.title}>Receipt ledger on the move</Text>
             <Text style={styles.subtitle}>
               Capture, review, and export receipts from Android using the same backend contract as the web app.
@@ -168,6 +175,11 @@ const styles = StyleSheet.create({
     color: colors.tide,
     fontWeight: "700",
     fontSize: 12
+  },
+  logoutText: {
+    color: colors.ember,
+    fontWeight: "600",
+    fontSize: 14
   },
   title: {
     color: colors.ink,
