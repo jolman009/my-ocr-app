@@ -10,7 +10,6 @@ import { createAuthenticate } from "./middleware/authenticate.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { GoogleVisionOcrProvider } from "./providers/googleVisionOcrProvider.js";
 import { LocalStorageProvider } from "./providers/localStorageProvider.js";
-import { MockOcrProvider } from "./providers/mockOcrProvider.js";
 import { S3StorageProvider } from "./providers/s3StorageProvider.js";
 import { ReceiptRepository } from "./repositories/receiptRepository.js";
 import { UserRepository } from "./repositories/userRepository.js";
@@ -28,7 +27,7 @@ const users = new UserRepository();
 const extractor = new ReceiptExtractor();
 const storageProvider = env.STORAGE_PROVIDER === "s3" ? new S3StorageProvider() : new LocalStorageProvider();
 const imageService = new ImageService(storageProvider);
-const ocrProvider = env.OCR_PROVIDER === "google-vision" ? new GoogleVisionOcrProvider() : new MockOcrProvider();
+const ocrProvider = new GoogleVisionOcrProvider();
 const authService = new AuthService(users);
 const receiptService = new ReceiptService(repository, ocrProvider, extractor, imageService);
 const exportService = new ExportService(repository);
@@ -70,8 +69,16 @@ app.use(createAuthenticate(authService));
 if (env.STORAGE_PROVIDER === "local") {
   app.use("/uploads", express.static(path.resolve(process.cwd(), env.UPLOAD_DIR)));
 }
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true });
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+
+app.get("/api/health", async (_req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ ok: true, status: "healthy", timestamp: new Date().toISOString() });
+  } catch (error) {
+    res.status(503).json({ ok: false, status: "unhealthy", error: String(error) });
+  }
 });
 app.use("/api/auth", createAuthRouter(authController));
 app.use("/api/receipts", createReceiptRouter(receiptController));

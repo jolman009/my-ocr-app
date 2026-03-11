@@ -24,8 +24,16 @@ export class ReceiptService {
     const imageUrl = await this.imageService.save(processedBuffer);
     const ocrResult = await this.ocrProvider.extractReceiptText(processedBuffer);
 
-    if (!ocrResult.rawText.trim()) {
-      throw new HttpError(422, "Unable to extract text from this receipt image.");
+    if (!ocrResult.rawText.trim() || ocrResult.lines.length < 3) {
+      throw new HttpError(422, "Image does not appear to contain a complete or readable receipt.");
+    }
+
+    const confidences = ocrResult.blocks.map(b => b.confidence).filter(c => c !== undefined) as number[];
+    if (confidences.length > 0) {
+      const avgConfidence = confidences.reduce((a, b) => a + b, 0) / confidences.length;
+      if (avgConfidence < 0.6) {
+        throw new HttpError(422, "Image quality is too low or blurry to extract text reliably. Please retake the photo.");
+      }
     }
 
     const parsed = this.extractor.parse(ocrResult);

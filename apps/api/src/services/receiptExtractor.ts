@@ -63,12 +63,16 @@ const findTotal = (lines: string[]): number | null => {
     return keywordAmount;
   }
 
-  const allAmounts = lines.flatMap((line) => Array.from(line.matchAll(amountPattern)).map((match) => toNumber(match[1])));
-  if (!allAmounts.length) {
-    return null;
+  // Fallback: the largest currency value at the bottom half of the receipt
+  const bottomLines = lines.slice(Math.floor(lines.length / 2));
+  const bottomAmounts = bottomLines.flatMap((line) => Array.from(line.matchAll(amountPattern)).map((match) => toNumber(match[1])));
+  
+  if (bottomAmounts.length) {
+    return Math.max(...bottomAmounts);
   }
 
-  return Math.max(...allAmounts);
+  const allAmounts = lines.flatMap((line) => Array.from(line.matchAll(amountPattern)).map((match) => toNumber(match[1])));
+  return allAmounts.length ? Math.max(...allAmounts) : null;
 };
 
 const findMerchantName = (lines: string[]): string | null => {
