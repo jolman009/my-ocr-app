@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -68,18 +69,50 @@ const toFormValues = (receipt: ReceiptRecord): ReceiptFormValues => ({
   }))
 });
 
-export const ReceiptDetailScreen = ({ route }: Props) => {
+export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
   const receiptId = route.params.receiptId;
   const receiptQuery = useReceipt(receiptId);
   const updateMutation = useUpdateReceipt();
 
   const form = useForm<ReceiptFormValues>({
-    values: receiptQuery.data ? toFormValues(receiptQuery.data) : undefined
+    defaultValues: receiptQuery.data ? toFormValues(receiptQuery.data) : undefined
   });
+  
   const itemsFieldArray = useFieldArray({
     control: form.control,
     name: "items"
   });
+
+  const { isDirty } = form.formState;
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e: any) => {
+      if (!isDirty || updateMutation.isSuccess) {
+        return;
+      }
+      e.preventDefault();
+      Alert.alert(
+        "Discard changes?",
+        "You have unsaved edits. Are you sure you want to leave?",
+        [
+          { text: "Keep editing", style: "cancel", onPress: () => {} },
+          {
+            text: "Discard",
+            style: "destructive",
+            onPress: () => navigation.dispatch(e.data.action)
+          }
+        ]
+      );
+    });
+    return unsubscribe;
+  }, [navigation, isDirty, updateMutation.isSuccess]);
+
+  // Sync data to form when query loads/updates initially
+  useEffect(() => {
+    if (receiptQuery.data && !isDirty) {
+      form.reset(toFormValues(receiptQuery.data));
+    }
+  }, [receiptQuery.data, isDirty, form]);
 
   const confidenceEntries = useMemo(
     () => Object.entries(receiptQuery.data?.confidence ?? {}),
@@ -123,42 +156,42 @@ export const ReceiptDetailScreen = ({ route }: Props) => {
           <Controller
             control={form.control}
             name="merchantName"
-            render={({ field }) => <LabeledInput label="Merchant" value={field.value} onChangeText={field.onChange} />}
+            render={({ field }) => <LabeledInput label="Merchant" value={field.value} onChangeText={field.onChange} lowConfidence={(receiptQuery.data?.confidence.merchantName || 1) < 0.6} />}
           />
           <Controller
             control={form.control}
             name="receiptDate"
-            render={({ field }) => <LabeledInput label="Receipt Date" value={field.value} onChangeText={field.onChange} placeholder="YYYY-MM-DD" />}
+            render={({ field }) => <LabeledInput label="Receipt Date" value={field.value} onChangeText={field.onChange} placeholder="YYYY-MM-DD" lowConfidence={(receiptQuery.data?.confidence.receiptDate || 1) < 0.6} />}
           />
           <Controller
             control={form.control}
             name="address"
-            render={({ field }) => <LabeledInput label="Address" value={field.value} onChangeText={field.onChange} />}
+            render={({ field }) => <LabeledInput label="Address" value={field.value} onChangeText={field.onChange} lowConfidence={(receiptQuery.data?.confidence.address || 1) < 0.6} />}
           />
           <Controller
             control={form.control}
             name="subtotal"
-            render={({ field }) => <LabeledInput label="Subtotal" value={field.value} onChangeText={field.onChange} keyboardType="numeric" />}
+            render={({ field }) => <LabeledInput label="Subtotal" value={field.value} onChangeText={field.onChange} keyboardType="numeric" lowConfidence={(receiptQuery.data?.confidence.subtotal || 1) < 0.6} />}
           />
           <Controller
             control={form.control}
             name="tax"
-            render={({ field }) => <LabeledInput label="Tax" value={field.value} onChangeText={field.onChange} keyboardType="numeric" />}
+            render={({ field }) => <LabeledInput label="Tax" value={field.value} onChangeText={field.onChange} keyboardType="numeric" lowConfidence={(receiptQuery.data?.confidence.tax || 1) < 0.6} />}
           />
           <Controller
             control={form.control}
             name="tip"
-            render={({ field }) => <LabeledInput label="Tip" value={field.value} onChangeText={field.onChange} keyboardType="numeric" />}
+            render={({ field }) => <LabeledInput label="Tip" value={field.value} onChangeText={field.onChange} keyboardType="numeric" lowConfidence={(receiptQuery.data?.confidence.tip || 1) < 0.6} />}
           />
           <Controller
             control={form.control}
             name="total"
-            render={({ field }) => <LabeledInput label="Total" value={field.value} onChangeText={field.onChange} keyboardType="numeric" />}
+            render={({ field }) => <LabeledInput label="Total" value={field.value} onChangeText={field.onChange} keyboardType="numeric" lowConfidence={(receiptQuery.data?.confidence.total || 1) < 0.6} />}
           />
           <Controller
             control={form.control}
             name="currency"
-            render={({ field }) => <LabeledInput label="Currency" value={field.value} onChangeText={field.onChange} />}
+            render={({ field }) => <LabeledInput label="Currency" value={field.value} onChangeText={field.onChange} lowConfidence={(receiptQuery.data?.confidence.currency || 1) < 0.6} />}
           />
         </View>
         <View style={styles.section}>
@@ -174,37 +207,93 @@ export const ReceiptDetailScreen = ({ route }: Props) => {
                   totalPrice: "0"
                 })
               }
+              accessibilityRole="button"
+              accessibilityLabel="Add new line item"
+              hitSlop={8}
             >
               <Text style={styles.addButtonText}>Add item</Text>
             </Pressable>
           </View>
-          {itemsFieldArray.fields.map((field, index) => (
-            <View key={field.id} style={styles.lineItemCard}>
-              <Controller
-                control={form.control}
-                name={`items.${index}.name`}
-                render={({ field }) => <LabeledInput label="Name" value={field.value} onChangeText={field.onChange} />}
-              />
-              <Controller
-                control={form.control}
-                name={`items.${index}.quantity`}
-                render={({ field }) => <LabeledInput label="Qty" value={field.value} onChangeText={field.onChange} keyboardType="numeric" />}
-              />
-              <Controller
-                control={form.control}
-                name={`items.${index}.unitPrice`}
-                render={({ field }) => <LabeledInput label="Unit Price" value={field.value} onChangeText={field.onChange} keyboardType="numeric" />}
-              />
-              <Controller
-                control={form.control}
-                name={`items.${index}.totalPrice`}
-                render={({ field }) => <LabeledInput label="Total Price" value={field.value} onChangeText={field.onChange} keyboardType="numeric" />}
-              />
-              <Pressable style={styles.removeButton} onPress={() => itemsFieldArray.remove(index)}>
-                <Text style={styles.removeButtonText}>Remove</Text>
-              </Pressable>
-            </View>
-          ))}
+          {itemsFieldArray.fields.map((field, index) => {
+            const isLast = index === itemsFieldArray.fields.length - 1;
+            // The API doesn't currently provide structured confidence per-line-item 
+            // inside the Record<string, number>. Defaulting Line Item lowConfidence to false.
+            const isItemLowConfidence = false;
+            return (
+              <View key={field.id} style={styles.lineItemCard}>
+                <Controller
+                  control={form.control}
+                  name={`items.${index}.name`}
+                  render={({ field }) => (
+                    <LabeledInput 
+                      label="Name" 
+                      value={field.value} 
+                      onChangeText={field.onChange} 
+                      returnKeyType="next"
+                      lowConfidence={isItemLowConfidence}
+                    />
+                  )}
+                />
+                <View style={{ flexDirection: 'row', gap: 12 }}>
+                  <View style={{ flex: 1 }}>
+                    <Controller
+                      control={form.control}
+                      name={`items.${index}.quantity`}
+                      render={({ field }) => (
+                        <LabeledInput 
+                          label="Qty" 
+                          value={field.value} 
+                          onChangeText={field.onChange} 
+                          keyboardType="numeric" 
+                          returnKeyType="next"
+                          lowConfidence={isItemLowConfidence}
+                        />
+                      )}
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Controller
+                      control={form.control}
+                      name={`items.${index}.unitPrice`}
+                      render={({ field }) => (
+                        <LabeledInput 
+                          label="Unit Price" 
+                          value={field.value} 
+                          onChangeText={field.onChange} 
+                          keyboardType="numeric" 
+                          returnKeyType="next"
+                          lowConfidence={isItemLowConfidence}
+                        />
+                      )}
+                    />
+                  </View>
+                </View>
+                <Controller
+                  control={form.control}
+                  name={`items.${index}.totalPrice`}
+                  render={({ field }) => (
+                    <LabeledInput 
+                      label="Total Price" 
+                      value={field.value} 
+                      onChangeText={field.onChange} 
+                      keyboardType="numeric" 
+                      returnKeyType={isLast ? "done" : "next"}
+                      lowConfidence={isItemLowConfidence}
+                    />
+                  )}
+                />
+                <Pressable 
+                  style={styles.removeButton} 
+                  onPress={() => itemsFieldArray.remove(index)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Remove line item ${index + 1}`}
+                  hitSlop={12}
+                >
+                  <Text style={styles.removeButtonText}>Remove</Text>
+                </Pressable>
+              </View>
+            );
+          })}
         </View>
         <Pressable
           style={styles.saveButton}
@@ -229,6 +318,8 @@ export const ReceiptDetailScreen = ({ route }: Props) => {
                 .filter((item) => item.name.length > 0)
             });
           })}
+          accessibilityRole="button"
+          accessibilityLabel={updateMutation.isPending ? "Saving receipt" : "Save receipt"}
         >
           <Text style={styles.saveButtonText}>
             {updateMutation.isPending ? "Saving..." : "Save receipt"}

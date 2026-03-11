@@ -1,33 +1,38 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { forwardRef } from "react";
+import { StyleSheet, Text, TextInput, View, type TextInputProps } from "react-native";
 import { colors } from "../lib/theme";
 
-interface LabeledInputProps {
+interface LabeledInputProps extends Omit<TextInputProps, "value" | "onChangeText"> {
   label: string;
   value: string;
   onChangeText: (value: string) => void;
-  placeholder?: string;
-  keyboardType?: "default" | "email-address" | "numeric";
+  lowConfidence?: boolean;
 }
 
-export const LabeledInput = ({
+export const LabeledInput = forwardRef<TextInput, LabeledInputProps>(({
   label,
   value,
   onChangeText,
-  placeholder,
-  keyboardType = "default"
-}: LabeledInputProps) => (
+  style,
+  lowConfidence,
+  ...props
+}, ref) => (
   <View style={styles.wrapper}>
     <Text style={styles.label}>{label}</Text>
     <TextInput
+      ref={ref}
       value={value}
       onChangeText={onChangeText}
-      placeholder={placeholder}
-      keyboardType={keyboardType}
-      style={styles.input}
       placeholderTextColor="#94a3b8"
+      style={[
+        styles.input,
+        lowConfidence && styles.inputWarning,
+        style
+      ]}
+      {...props}
     />
   </View>
-);
+));
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -47,5 +52,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 15,
     color: colors.ink
+  },
+  inputWarning: {
+    borderColor: colors.ember,
+    borderWidth: 2
   }
 });

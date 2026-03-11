@@ -61,14 +61,21 @@ export const CameraScreen = ({ navigation }: Props) => {
     }
   };
 
-  const handleLibraryPick = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      quality: 0.8
-    });
+  const [isProcessing, setIsProcessing] = useState(false);
 
-    if (!result.canceled && result.assets[0]?.uri) {
-      setPreviewUri(result.assets[0].uri);
+  const handleLibraryPick = async () => {
+    setIsProcessing(true);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        quality: 0.8
+      });
+
+      if (!result.canceled && result.assets[0]?.uri) {
+        setPreviewUri(result.assets[0].uri);
+      }
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -121,15 +128,35 @@ export const CameraScreen = ({ navigation }: Props) => {
             <Pressable
               style={styles.overlayButton}
               onPress={() => setFlash((current) => (current === "off" ? "on" : "off"))}
+              disabled={isProcessing}
+              accessibilityRole="button"
+              accessibilityLabel={`Toggle flash. Currently ${flash}`}
+              hitSlop={16}
             >
               <Text style={styles.overlayButtonText}>{flash === "off" ? "Flash off" : "Flash on"}</Text>
             </Pressable>
-            <Pressable style={styles.overlayButton} onPress={() => void handleLibraryPick()}>
-              <Text style={styles.overlayButtonText}>Gallery</Text>
+            <Pressable 
+              style={[styles.overlayButton, isProcessing && { opacity: 0.5 }]} 
+              onPress={() => void handleLibraryPick()}
+              disabled={isProcessing}
+              accessibilityRole="button"
+              accessibilityLabel="Pick image from gallery"
+              hitSlop={16}
+            >
+              <Text style={styles.overlayButtonText}>
+                {isProcessing ? "Loading..." : "Gallery"}
+              </Text>
             </Pressable>
           </View>
           <View style={styles.captureContainer}>
-            <Pressable style={styles.captureButton} onPress={() => void handleCapture()} />
+            <Pressable 
+              style={[styles.captureButton, isProcessing && { opacity: 0.5 }]} 
+              onPress={() => void handleCapture()} 
+              disabled={isProcessing}
+              accessibilityRole="button"
+              accessibilityLabel="Take picture of receipt"
+              hitSlop={24}
+            />
           </View>
         </View>
       </CameraView>

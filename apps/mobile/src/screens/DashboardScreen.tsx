@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
   RefreshControl,
@@ -32,9 +33,19 @@ export const DashboardScreen = ({ navigation }: Props) => {
   );
   const receiptsQuery = useReceipts(filters);
 
+  const [isExporting, setIsExporting] = useState<"csv" | "xlsx" | null>(null);
+
   const handleExport = async (format: "csv" | "xlsx") => {
-    await Haptics.selectionAsync();
-    await downloadAndShareExport(format, filters);
+    if (isExporting) return;
+    setIsExporting(format);
+    try {
+      await Haptics.selectionAsync();
+      await downloadAndShareExport(format, filters);
+    } catch (e) {
+      Alert.alert("Export Error", e instanceof Error ? e.message : "Failed to generate export");
+    } finally {
+      setIsExporting(null);
+    }
   };
 
   return (
@@ -60,12 +71,16 @@ export const DashboardScreen = ({ navigation }: Props) => {
               style={styles.input}
               placeholderTextColor="#94a3b8"
             />
-            <View style={styles.filterRow}>
+            <View style={styles.filterRow} accessibilityRole="radiogroup">
               {["", "processed", "needs_review", "failed"].map((value) => (
                 <Pressable
                   key={value || "all"}
                   style={[styles.filterChip, status === value && styles.filterChipActive]}
                   onPress={() => setStatus(value as typeof status)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: status === value }}
+                  accessibilityLabel={`Filter by ${value ? value.replace("_", " ") : "All"}`}
+                  hitSlop={8}
                 >
                   <Text style={[styles.filterText, status === value && styles.filterTextActive]}>
                     {value ? value.replace("_", " ") : "All"}
@@ -74,11 +89,23 @@ export const DashboardScreen = ({ navigation }: Props) => {
               ))}
             </View>
             <View style={styles.exportRow}>
-              <Pressable style={styles.exportButtonPrimary} onPress={() => void handleExport("csv")}>
-                <Text style={styles.exportTextPrimary}>Share CSV</Text>
+              <Pressable 
+                style={[styles.exportButtonPrimary, isExporting && { opacity: 0.5 }]} 
+                onPress={() => void handleExport("csv")}
+                disabled={!!isExporting}
+              >
+                <Text style={styles.exportTextPrimary}>
+                  {isExporting === "csv" ? "Exporting..." : "Share CSV"}
+                </Text>
               </Pressable>
-              <Pressable style={styles.exportButtonSecondary} onPress={() => void handleExport("xlsx")}>
-                <Text style={styles.exportTextSecondary}>Share XLSX</Text>
+              <Pressable 
+                style={[styles.exportButtonSecondary, isExporting && { opacity: 0.5 }]} 
+                onPress={() => void handleExport("xlsx")}
+                disabled={!!isExporting}
+              >
+                <Text style={styles.exportTextSecondary}>
+                  {isExporting === "xlsx" ? "Exporting..." : "Share XLSX"}
+                </Text>
               </Pressable>
             </View>
           </View>
@@ -90,6 +117,17 @@ export const DashboardScreen = ({ navigation }: Props) => {
         ListEmptyComponent={
           receiptsQuery.isLoading ? (
             <ActivityIndicator color={colors.ember} size="large" />
+          ) : receiptsQuery.isError ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyTitle}>Could not load ledger</Text>
+              <Text style={styles.emptyBody}>Check your connection and try again.</Text>
+              <Pressable
+                style={[styles.exportButtonPrimary, { marginTop: 12, paddingHorizontal: 24 }]}
+                onPress={() => void receiptsQuery.refetch()}
+              >
+                <Text style={styles.exportTextPrimary}>Retry</Text>
+              </Pressable>
+            </View>
           ) : (
             <View style={styles.emptyState}>
               <Text style={styles.emptyTitle}>No receipts yet</Text>
@@ -101,6 +139,9 @@ export const DashboardScreen = ({ navigation }: Props) => {
       <Pressable
         style={styles.fab}
         onPress={() => navigation.navigate("Camera")}
+        accessibilityRole="button"
+        accessibilityLabel="Scan new receipt"
+        hitSlop={12}
       >
         <Text style={styles.fabText}>Scan</Text>
       </Pressable>
