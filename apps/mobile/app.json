@@ -48,7 +48,15 @@
       ],
       "expo-sharing",
       "expo-sqlite",
-      "expo-image"
+      "expo-image",
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "receipt-radar",
+          "project": "receipt-radar-mobile"
+        }
+      ],
+      "expo-updates"
     ]
   }
 }

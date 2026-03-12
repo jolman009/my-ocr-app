@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { CameraView, FlashMode, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+import * as Haptics from "expo-haptics";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useUploadReceipt } from "@receipt-ocr/shared/hooks";
@@ -46,15 +47,28 @@ export const CameraScreen = ({ navigation }: Props) => {
     }
 
     try {
+      // Trigger optimization
       const optimized = await optimizeImage(previewUri);
-      const response = await uploadMutation.mutateAsync(optimized);
-      navigation.replace("ReceiptDetail", { receiptId: response.id });
+      
+      // Fire-and-forget the upload mutation:
+      // If offline, TanStack will persist the mutation and retry automatically upon reconnection.
+      uploadMutation.mutate(optimized, {
+        onSuccess: () => {
+          // Provide success feedback assuming they're online
+          void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+      });
+      
+      // Navigate back to Dashboard immediately to see the optimistic UI or pending state
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      navigation.replace("Dashboard");
     } catch (error) {
-      Alert.alert("Upload failed", error instanceof Error ? error.message : "Unable to upload receipt.");
+      Alert.alert("Preprocessing failed", "Unable to prepare the image for upload.");
     }
   };
 
   const handleCapture = async () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const photo = await cameraRef.current?.takePictureAsync({ quality: 0.8 });
     if (photo?.uri) {
       setPreviewUri(photo.uri);

@@ -34,6 +34,7 @@ export const useUploadReceipt = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ["uploadReceipt"],
     mutationFn: (file: UploadReceiptInput) => uploadReceipt(file),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: receiptKeys.all });
@@ -45,6 +46,7 @@ export const useUpdateReceipt = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ["updateReceipt"],
     mutationFn: (receipt: ReceiptRecord) => updateReceipt(receipt),
     onSuccess: (receipt) => {
       queryClient.setQueryData(receiptKeys.detail(receipt.id), receipt);

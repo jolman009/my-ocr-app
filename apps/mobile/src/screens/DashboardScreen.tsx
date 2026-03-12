@@ -18,12 +18,47 @@ import { ReceiptListItem } from "../components/ReceiptListItem";
 import { colors } from "../lib/theme";
 import type { RootStackParamList } from "../types/navigation";
 import { downloadAndShareExport } from "../lib/export";
+import { useIsRestoring, useMutationState } from "@tanstack/react-query";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { useAuthContext } from "../providers/AuthProvider";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Dashboard">;
 
 export const DashboardScreen = ({ navigation }: Props) => {
   const { logout } = useAuthContext();
+  const netInfo = useNetInfo();
+  const isHydrating = useIsRestoring();
+  // Extract pending uploads from the paused background mutations queue
+  const pendingMutations = useMutationState({ filters: { status: "pending", mutationKey: ["uploadReceipt"] } });
+  
+  const inFlightReceipts = useMemo(() => {
+    return pendingMutations.map((mutation: any) => {
+      // The variable we pass to mutate() is the first arg: UploadReceiptInput
+      const input = mutation.state.variables as any; 
+      return {
+        id: `pending-${Math.random()}`,
+        userId: "local",
+        imageUrl: input?.uri ?? "",
+        merchantName: "Pending Scan (Offline)",
+        receiptDate: null,
+        address: null,
+        subtotal: null,
+        tax: null,
+        tip: null,
+        total: null,
+        currency: null,
+        status: "needs_review" as any, // Treat offline as needs review
+        confidence: {},
+        items: [],
+        rawText: "", // Required by ReceiptRecord interface
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+    });
+  }, [pendingMutations]);
+
+  const isOffline = netInfo.isConnected === false;
+
   const [merchant, setMerchant] = useState("");
   const [status, setStatus] = useState<"" | "processed" | "needs_review" | "failed">("");
   const filters = useMemo(
@@ -34,6 +69,12 @@ export const DashboardScreen = ({ navigation }: Props) => {
     [merchant, status]
   );
   const receiptsQuery = useReceipts(filters);
+
+  // Merge the standard server cache with local-only pending creations
+  const displayData = useMemo(() => {
+    const serverData = receiptsQuery.data?.data ?? [];
+    return [...inFlightReceipts, ...serverData];
+  }, [inFlightReceipts, receiptsQuery.data?.data]);
 
   const [isExporting, setIsExporting] = useState<"csv" | "xlsx" | null>(null);
 
@@ -53,7 +94,7 @@ export const DashboardScreen = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
-        data={receiptsQuery.data?.data ?? []}
+        data={displayData}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.content}
         refreshControl={
@@ -68,6 +109,17 @@ export const DashboardScreen = ({ navigation }: Props) => {
               </Pressable>
             </View>
             <Text style={styles.title}>Receipt ledger on the move</Text>
+            
+            {isOffline && (
+              <View style={styles.offlineBanner}>
+                <Text style={styles.offlineText}>
+                  {pendingMutations.length > 0
+                    ? `Offline: ${pendingMutations.length} upload(s) queued`
+                    : "You are offline. Showing cached ledger."}
+                </Text>
+              </View>
+            )}
+
             <Text style={styles.subtitle}>
               Capture, review, and export receipts from Android using the same backend contract as the web app.
             </Text>
@@ -278,5 +330,19 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontWeight: "800",
     fontSize: 16
+  },
+  offlineBanner: {
+    backgroundColor: "#fffbeb",
+    borderWidth: 1,
+    borderColor: "#fde68a",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    marginTop: -4
+  },
+  offlineText: {
+    color: "#b45309",
+    fontWeight: "600",
+    fontSize: 14
   }
 });
