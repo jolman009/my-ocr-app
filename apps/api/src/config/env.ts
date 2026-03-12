@@ -9,7 +9,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(4000),
   WEB_ORIGIN: z.string().default("http://localhost:5173"),
   WEB_ORIGINS: z.string().optional(),
-  OCR_PROVIDER: z.enum(["google-vision"]).default("google-vision"),
+  OCR_PROVIDER: z.enum(["mock", "google-vision"]).default("mock"),
   GOOGLE_APPLICATION_CREDENTIALS: z.string().optional(),
   UPLOAD_DIR: z.string().default("uploads"),
   AUTH_REQUIRED: z.coerce.boolean().default(false),

@@ -3,7 +3,7 @@ import type {
   ReceiptListResponse,
   ReceiptRecord,
   UploadableFile
-} from "../types/index.js";
+} from "../types/index";
 import {
   getApiBaseUrl,
   getApiOrigin,
