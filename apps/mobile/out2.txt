@@ -1,0 +1,41 @@
+﻿node.exe : FAIL test/DashboardScreen.test.tsx
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Users\Jolma\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/DashboardScr 
+   een.test.tsx:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ΓùÅ Test suite failed to run
+
+    Incorrect version of "react-test-renderer" detected. Expected 
+"19.2.4", but found "19.2.0".
+
+    Fix it by running:
+    npm install -D react-test-renderer@19.2.4
+
+    [0m [90m 1 |[39m [36mimport[39m [33mReact[39m 
+[36mfrom[39m [32m"react"[39m[33m;[39m
+    [31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { render } 
+[36mfrom[39m [32m"@testing-library/react-native"[39m[33m;[39m
+     [90m   |[39m [31m[1m^[22m[39m
+     [90m 3 |[39m [36mimport[39m { [33mDashboardScreen[39m } 
+[36mfrom[39m [32m"../src/screens/DashboardScreen"[39m[33m;[39m
+     [90m 4 |[39m
+     [90m 5 |[39m 
+jest[33m.[39mmock([32m"@react-navigation/native"[39m[33m,[39m 
+() [33m=>[39m ({[0m
+
+      at Object.ensurePeerDeps (../../node_modules/@testing-library/
+react-native/src/helpers/ensure-peer-deps.ts:36:3)
+      at Object.require 
+(../../node_modules/@testing-library/react-native/src/index.ts:1:1)
+      at Object.require (test/DashboardScreen.test.tsx:2:1)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        0.419 s
+Ran all test suites matching test/DashboardScreen.test.tsx.

@@ -1,0 +1,281 @@
+﻿  console.warn
+    SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+
+    [0m [90m 16 |[39m   [36mif[39m (isHydrating) {
+     [90m 17 |[39m     [36mreturn[39m (
+    [31m[1m>[22m[39m[90m 18 |[39m       [33m<[39m[33mSafeAreaView[39m style[33m=[39m{styles[33m.[39mloadingContainer}[33m>[39m
+     [90m    |[39m        [31m[1m^[22m[39m
+     [90m 19 |[39m         [33m<[39m[33mActivityIndicator[39m color[33m=[39m{colors[33m.[39member} size[33m=[39m[32m"large"[39m [33m/[39m[33m>[39m
+     [90m 20 |[39m       [33m<[39m[33m/[39m[33mSafeAreaView[39m[33m>[39m
+     [90m 21 |[39m     )[33m;[39m[0m
+
+      at warn (../../node_modules/react-native/Libraries/Utilities/warnOnce.js:27:11)
+      at Object.warnOnce [as SafeAreaView] (../../node_modules/react-native/index.js:98:5)
+      at SafeAreaView (src/navigation/RootNavigator.tsx:18:8)
+      at Object.react_stack_bottom_frame (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15670:20)
+      at renderWithHooks (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:4863:22)
+      at updateFunctionComponent (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:7018:19)
+      at beginWork (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:8499:18)
+      at runWithFiberInDEV (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2315:13)
+      at performUnitOfWork (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:13224:22)
+      at workLoopSync (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:13068:41)
+      at renderRootSync (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:13049:11)
+      at performWorkOnRoot (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:12181:11)
+      at performWorkOnRootViaSchedulerTask (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2908:7)
+      at flushActQueue (../../node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (../../node_modules/react/cjs/react.development.js:884:10)
+      at actImplementation (../../node_modules/@testing-library/react-native/src/act.ts:30:25)
+      at renderWithAct (../../node_modules/@testing-library/react-native/src/render-act.ts:13:11)
+      at renderInternal (../../node_modules/@testing-library/react-native/src/render.tsx:69:33)
+      at renderInternal (../../node_modules/@testing-library/react-native/src/render.tsx:44:10)
+      at Object.<anonymous> (test/App.integration.test.tsx:53:49)
+      at asyncGeneratorStep (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+node.exe : FAIL test/App.integration.test.tsx
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\Jolma\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/App.integration.test.tsx:String) [], 
+    RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  App E2E Integration
+    ├ù navigates through the happy path when authenticated (1171 ms)
+
+  ΓùÅ App E2E Integration ΓÇ║ navigates through the happy path when authenticated
+
+    Unable to find an element with accessibility label: Take custom photo
+
+    [36m<RNCSafeAreaProvider>[39m
+      [36m<RNSScreenStack>[39m
+        [36m<RNSScreen[39m
+          [33maria-hidden[39m=[32m{true}[39m
+        [36m>[39m
+          [36m<RNSScreenContentWrapper>[39m
+            [36m<RCTSafeAreaView>[39m
+              [36m<RCTScrollView>[39m
+                [36m<RCTRefreshControl />[39m
+                [36m<View>[39m
+                  [36m<View>[39m
+                    [36m<View>[39m
+                      [36m<View>[39m
+                        [36m<Text>[39m
+                          [0mMobile OCR[0m
+                        [36m</Text>[39m
+                        [36m<View[39m
+                          [33maccessible[39m=[32m{true}[39m
+                        [36m>[39m
+                          [36m<Text>[39m
+                            [0mLog out[0m
+                          [36m</Text>[39m
+                        [36m</View>[39m
+                      [36m</View>[39m
+                      [36m<Text>[39m
+                        [0mReceipt ledger on the move[0m
+                      [36m</Text>[39m
+                      [36m<Text>[39m
+                        [0mCapture, review, and export receipts from Android using the 
+same backend contract as the web app.[0m
+                      [36m</Text>[39m
+                      [36m<TextInput[39m
+                        [33mplaceholder[39m=[32m"Search merchant"[39m
+                        [33mvalue[39m=[32m""[39m
+                      [36m/>[39m
+                      [36m<View[39m
+                        [33maccessibilityRole[39m=[32m"radiogroup"[39m
+                      [36m>[39m
+                        [36m<View[39m
+                          [33maccessibilityLabel[39m=[32m"Filter by All"[39m
+                          [33maccessibilityRole[39m=[32m"radio"[39m
+                          [33maccessibilityState[39m=[32m{
+                            {
+                              "checked": true,
+                            }
+                          }[39m
+                          [33maccessible[39m=[32m{true}[39m
+                        [36m>[39m
+                          [36m<Text>[39m
+                            [0mAll[0m
+                          [36m</Text>[39m
+                        [36m</View>[39m
+                        [36m<View[39m
+                          [33maccessibilityLabel[39m=[32m"Filter by processed"[39m
+                          [33maccessibilityRole[39m=[32m"radio"[39m
+                          [33maccessibilityState[39m=[32m{
+                            {
+                              "checked": false,
+                            }
+                          }[39m
+                          [33maccessible[39m=[32m{true}[39m
+                        [36m>[39m
+                          [36m<Text>[39m
+                            [0mprocessed[0m
+                          [36m</Text>[39m
+                        [36m</View>[39m
+                        [36m<View[39m
+                          [33maccessibilityLabel[39m=[32m"Filter by needs review"[39m
+                          [33maccessibilityRole[39m=[32m"radio"[39m
+                          [33maccessibilityState[39m=[32m{
+                            {
+                              "checked": false,
+                            }
+                          }[39m
+                          [33maccessible[39m=[32m{true}[39m
+                        [36m>[39m
+                          [36m<Text>[39m
+                            [0mneeds review[0m
+                          [36m</Text>[39m
+                        [36m</View>[39m
+                        [36m<View[39m
+                          [33maccessibilityLabel[39m=[32m"Filter by failed"[39m
+                          [33maccessibilityRole[39m=[32m"radio"[39m
+                          [33maccessibilityState[39m=[32m{
+                            {
+                              "checked": false,
+                            }
+                          }[39m
+                          [33maccessible[39m=[32m{true}[39m
+                        [36m>[39m
+                          [36m<Text>[39m
+                            [0mfailed[0m
+                          [36m</Text>[39m
+                        [36m</View>[39m
+                      [36m</View>[39m
+                      [36m<View>[39m
+                        [36m<View[39m
+                          [33maccessibilityState[39m=[32m{
+                            {
+                              "disabled": false,
+                            }
+                          }[39m
+                          [33maccessible[39m=[32m{true}[39m
+                        [36m>[39m
+                          [36m<Text>[39m
+                            [0mShare CSV[0m
+                          [36m</Text>[39m
+                        [36m</View>[39m
+                        [36m<View[39m
+                          [33maccessibilityState[39m=[32m{
+                            {
+                              "disabled": false,
+                            }
+                          }[39m
+                          [33maccessible[39m=[32m{true}[39m
+                        [36m>[39m
+                          [36m<Text>[39m
+                            [0mShare XLSX[0m
+                          [36m</Text>[39m
+                        [36m</View>[39m
+                      [36m</View>[39m
+                    [36m</View>[39m
+                  [36m</View>[39m
+                  [36m<View>[39m
+                    [36m<Text>[39m
+                      [0mNo receipts yet[0m
+                    [36m</Text>[39m
+                    [36m<Text>[39m
+                      [0mCapture one to populate the mobile ledger.[0m
+                    [36m</Text>[39m
+                  [36m</View>[39m
+                [36m</View>[39m
+              [36m</RCTScrollView>[39m
+              [36m<View[39m
+                [33maccessibilityLabel[39m=[32m"Scan new receipt"[39m
+                [33maccessibilityRole[39m=[32m"button"[39m
+                [33maccessible[39m=[32m{true}[39m
+              [36m>[39m
+                [36m<Text>[39m
+                  [0mScan[0m
+                [36m</Text>[39m
+              [36m</View>[39m
+            [36m</RCTSafeAreaView>[39m
+          [36m</RNSScreenContentWrapper>[39m
+          [36m<RNSScreenStackHeaderConfig[39m
+            [33mpointerEvents[39m=[32m"box-none"[39m
+            [33mtitle[39m=[32m"Receipt Radar"[39m
+          [36m/>[39m
+        [36m</RNSScreen>[39m
+        [36m<RNSScreen[39m
+          [33maria-hidden[39m=[32m{false}[39m
+        [36m>[39m
+          [36m<RNSScreenContentWrapper>[39m
+            [36m<RCTSafeAreaView>[39m
+              [36m<View>[39m
+                [36m<View>[39m
+                  [36m<View>[39m
+                    [36m<View[39m
+                      [33maccessibilityLabel[39m=[32m"Toggle flash. Currently off"[39m
+                      [33maccessibilityRole[39m=[32m"button"[39m
+                      [33maccessibilityState[39m=[32m{
+                        {
+                          "disabled": false,
+                        }
+                      }[39m
+                      [33maccessible[39m=[32m{true}[39m
+                    [36m>[39m
+                      [36m<Text>[39m
+                        [0mFlash off[0m
+                      [36m</Text>[39m
+                    [36m</View>[39m
+                    [36m<View[39m
+                      [33maccessibilityLabel[39m=[32m"Pick image from gallery"[39m
+                      [33maccessibilityRole[39m=[32m"button"[39m
+                      [33maccessibilityState[39m=[32m{
+                        {
+                          "disabled": false,
+                        }
+                      }[39m
+                      [33maccessible[39m=[32m{true}[39m
+                    [36m>[39m
+                      [36m<Text>[39m
+                        [0mGallery[0m
+                      [36m</Text>[39m
+                    [36m</View>[39m
+                  [36m</View>[39m
+                  [36m<View>[39m
+                    [36m<View[39m
+                      [33maccessibilityLabel[39m=[32m"Take picture of receipt"[39m
+                      [33maccessibilityRole[39m=[32m"button"[39m
+                      [33maccessibilityState[39m=[32m{
+                        {
+                          "disabled": false,
+                        }
+                      }[39m
+                      [33maccessible[39m=[32m{true}[39m
+                    [36m/>[39m
+                  [36m</View>[39m
+                [36m</View>[39m
+              [36m</View>[39m
+            [36m</RCTSafeAreaView>[39m
+          [36m</RNSScreenContentWrapper>[39m
+          [36m<RNSScreenStackHeaderConfig[39m
+            [33mpointerEvents[39m=[32m"box-none"[39m
+            [33mtitle[39m=[32m"Scan Receipt"[39m
+          [36m/>[39m
+        [36m</RNSScreen>[39m
+      [36m</RNSScreenStack>[39m
+    [36m</RNCSafeAreaProvider>[39m
+
+    [0m [90m 69 |[39m
+     [90m 70 |[39m     [90m// 3. Should switch navigation to the Camera screen view 
+automatically[39m
+    [31m[1m>[22m[39m[90m 71 |[39m     [36mawait[39m waitFor(() [33m=>[39m 
+expect(getByLabelText([32m"Take custom photo"[39m))[33m.[39mtoBeTruthy())[33m;[39m
+     [90m    |[39m                  [31m[1m^[22m[39m
+     [90m 72 |[39m   })[33m;[39m
+     [90m 73 |[39m })[33m;[39m
+     [90m 74 |[39m[0m
+
+      at Object.<anonymous> (test/App.integration.test.tsx:71:18)
+      at asyncGeneratorStep 
+(../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 total
+Snapshots:   0 total
+Time:        2.383 s, estimated 3 s
+Ran all test suites matching /test\\App.integration.test.tsx/i.

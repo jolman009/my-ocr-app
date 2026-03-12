@@ -121,10 +121,16 @@ const parseItemLine = (line: string): ParsedReceiptItem | null => {
 
   let quantity: number | undefined;
   let unitPrice: number | undefined;
-  const quantityMatch = name.match(/^(\d+)x?\s+(.+)$/i);
-  const cleanName = quantityMatch ? quantityMatch[2].trim() : name;
-  if (quantityMatch) {
-    quantity = Number.parseInt(quantityMatch[1], 10);
+  const prefixMatch = name.match(/^(\d+)x?\s+(.+)$/i);
+  const suffixMatch = name.match(/^(.+?)\s+(\d+)x$/i);
+  
+  let cleanName = name;
+  if (prefixMatch) {
+    quantity = Number.parseInt(prefixMatch[1], 10);
+    cleanName = prefixMatch[2].trim();
+  } else if (suffixMatch) {
+    quantity = Number.parseInt(suffixMatch[2], 10);
+    cleanName = suffixMatch[1].trim();
   }
 
   const totalPrice = toNumber(match[2]);

@@ -1,0 +1,41 @@
+﻿node.exe : FAIL test/App.integration.test.tsx
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\Jolma\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/App.integration.test.tsx:String) [], 
+    RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  App E2E Integration
+    ├ù navigates through the happy path when authenticated (1 ms)
+
+  ΓùÅ App E2E Integration ΓÇ║ navigates through the happy path when authenticated
+
+    TypeError: Cannot read properties of undefined (reading 'Provider')
+
+    [0m [90m 59 |[39m     [36mconst[39m { getByText[33m,[39m 
+getByLabelText[33m,[39m queryByLabelText[33m,[39m debug } [33m=[39m render(
+     [90m 60 |[39m       [33m<[39m[33mQueryClientProvider[39m 
+client[33m=[39m{queryClient}[33m>[39m
+    [31m[1m>[22m[39m[90m 61 |[39m         
+[33m<[39m[33mAuthContext[39m[33m.[39m[33mProvider[39m 
+value[33m=[39m{mockAuthContext}[33m>[39m
+     [90m    |[39m                      [31m[1m^[22m[39m
+     [90m 62 |[39m           [33m<[39m[33mNavigationContainer[39m[33m>[39m
+     [90m 63 |[39m             [33m<[39m[33mRootNavigator[39m [33m/[39m[33m>[39m
+     [90m 64 |[39m           
+[33m<[39m[33m/[39m[33mNavigationContainer[39m[33m>[39m[0m
+
+      at Object.Provider (test/App.integration.test.tsx:61:22)
+      at asyncGeneratorStep 
+(../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+      at ../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:7
+      at Object.<anonymous> 
+(../../node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 total
+Snapshots:   0 total
+Time:        1.249 s, estimated 4 s
+Ran all test suites matching /test\\App.integration.test.tsx/i.

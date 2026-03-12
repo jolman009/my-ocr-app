@@ -4,7 +4,8 @@ module.exports = {
   roots: ["<rootDir>", "<rootDir>/../../packages/shared/src"],
   moduleNameMapper: {
     "^@receipt-ocr/shared$": "<rootDir>/../../packages/shared/src/index.ts",
-    "^@receipt-ocr/shared/(.*)$": "<rootDir>/../../packages/shared/src/$1"
+    "^@receipt-ocr/shared/(.*)$": "<rootDir>/../../packages/shared/src/$1",
+    ".*ensure-peer-deps.*": "<rootDir>/test/mock-peer-deps.js"
   },
   transformIgnorePatterns: [
     "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg)"

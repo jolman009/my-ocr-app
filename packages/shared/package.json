@@ -12,10 +12,14 @@
     "./types": "./src/types/index.ts"
   },
   "scripts": {
-    "lint": "tsc --noEmit -p tsconfig.json"
+    "lint": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.68.0",
     "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
   }
 }

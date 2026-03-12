@@ -1,0 +1,202 @@
+﻿  console.warn
+    SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+
+    [0m [90m 52 |[39m
+     [90m 53 |[39m   [36mreturn[39m (
+    [31m[1m>[22m[39m[90m 54 |[39m     [33m<[39m[33mSafeAreaView[39m style[33m=[39m{styles[33m.[39msafeArea}[33m>[39m
+     [90m    |[39m      [31m[1m^[22m[39m
+     [90m 55 |[39m       [33m<[39m[33mFlatList[39m
+     [90m 56 |[39m         data[33m=[39m{receiptsQuery[33m.[39mdata[33m?[39m[33m.[39mdata [33m?[39m[33m?[39m []}
+     [90m 57 |[39m         keyExtractor[33m=[39m{(item) [33m=>[39m item[33m.[39mid}[0m
+
+      at warn (../../node_modules/react-native/Libraries/Utilities/warnOnce.js:27:11)
+      at Object.warnOnce [as SafeAreaView] (../../node_modules/react-native/index.js:98:5)
+      at SafeAreaView (src/screens/DashboardScreen.tsx:54:6)
+      at Object.react_stack_bottom_frame (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15670:20)
+      at renderWithHooks (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:4863:22)
+      at updateFunctionComponent (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:7018:19)
+      at beginWork (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:8499:18)
+      at runWithFiberInDEV (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2315:13)
+      at performUnitOfWork (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:13224:22)
+      at workLoopSync (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:13068:41)
+      at renderRootSync (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:13049:11)
+      at performWorkOnRoot (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:12181:11)
+      at performWorkOnRootViaSchedulerTask (../../node_modules/react-test-renderer/cjs/react-test-renderer.development.js:2908:7)
+      at flushActQueue (../../node_modules/react/cjs/react.development.js:590:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (../../node_modules/react/cjs/react.development.js:884:10)
+      at actImplementation (../../node_modules/@testing-library/react-native/src/act.ts:30:25)
+      at renderWithAct (../../node_modules/@testing-library/react-native/src/render-act.ts:13:11)
+      at renderInternal (../../node_modules/@testing-library/react-native/src/render.tsx:69:33)
+      at renderInternal (../../node_modules/@testing-library/react-native/src/render.tsx:44:10)
+      at Object.<anonymous> (test/DashboardScreen.test.tsx:31:33)
+
+node.exe : FAIL test/DashboardScreen.test.tsx
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\Jolma\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/DashboardScreen.test.tsx:String) [], 
+    RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  DashboardScreen
+    ├ù renders the empty state correctly (215 ms)
+
+  ΓùÅ DashboardScreen ΓÇ║ renders the empty state correctly
+
+    Unable to find an element with text: Receipts
+
+    [36m<RCTSafeAreaView>[39m
+      [36m<RCTScrollView>[39m
+        [36m<RCTRefreshControl />[39m
+        [36m<View>[39m
+          [36m<View>[39m
+            [36m<View>[39m
+              [36m<View>[39m
+                [36m<Text>[39m
+                  [0mMobile OCR[0m
+                [36m</Text>[39m
+                [36m<View[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<Text>[39m
+                    [0mLog out[0m
+                  [36m</Text>[39m
+                [36m</View>[39m
+              [36m</View>[39m
+              [36m<Text>[39m
+                [0mReceipt ledger on the move[0m
+              [36m</Text>[39m
+              [36m<Text>[39m
+                [0mCapture, review, and export receipts from Android using the same 
+backend contract as the web app.[0m
+              [36m</Text>[39m
+              [36m<TextInput[39m
+                [33mplaceholder[39m=[32m"Search merchant"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+              [36m<View[39m
+                [33maccessibilityRole[39m=[32m"radiogroup"[39m
+              [36m>[39m
+                [36m<View[39m
+                  [33maccessibilityLabel[39m=[32m"Filter by All"[39m
+                  [33maccessibilityRole[39m=[32m"radio"[39m
+                  [33maccessibilityState[39m=[32m{
+                    {
+                      "checked": true,
+                    }
+                  }[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<Text>[39m
+                    [0mAll[0m
+                  [36m</Text>[39m
+                [36m</View>[39m
+                [36m<View[39m
+                  [33maccessibilityLabel[39m=[32m"Filter by processed"[39m
+                  [33maccessibilityRole[39m=[32m"radio"[39m
+                  [33maccessibilityState[39m=[32m{
+                    {
+                      "checked": false,
+                    }
+                  }[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<Text>[39m
+                    [0mprocessed[0m
+                  [36m</Text>[39m
+                [36m</View>[39m
+                [36m<View[39m
+                  [33maccessibilityLabel[39m=[32m"Filter by needs review"[39m
+                  [33maccessibilityRole[39m=[32m"radio"[39m
+                  [33maccessibilityState[39m=[32m{
+                    {
+                      "checked": false,
+                    }
+                  }[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<Text>[39m
+                    [0mneeds review[0m
+                  [36m</Text>[39m
+                [36m</View>[39m
+                [36m<View[39m
+                  [33maccessibilityLabel[39m=[32m"Filter by failed"[39m
+                  [33maccessibilityRole[39m=[32m"radio"[39m
+                  [33maccessibilityState[39m=[32m{
+                    {
+                      "checked": false,
+                    }
+                  }[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<Text>[39m
+                    [0mfailed[0m
+                  [36m</Text>[39m
+                [36m</View>[39m
+              [36m</View>[39m
+              [36m<View>[39m
+                [36m<View[39m
+                  [33maccessibilityState[39m=[32m{
+                    {
+                      "disabled": false,
+                    }
+                  }[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<Text>[39m
+                    [0mShare CSV[0m
+                  [36m</Text>[39m
+                [36m</View>[39m
+                [36m<View[39m
+                  [33maccessibilityState[39m=[32m{
+                    {
+                      "disabled": false,
+                    }
+                  }[39m
+                  [33maccessible[39m=[32m{true}[39m
+                [36m>[39m
+                  [36m<Text>[39m
+                    [0mShare XLSX[0m
+                  [36m</Text>[39m
+                [36m</View>[39m
+              [36m</View>[39m
+            [36m</View>[39m
+          [36m</View>[39m
+          [36m<View>[39m
+            [36m<Text>[39m
+              [0mNo receipts yet[0m
+            [36m</Text>[39m
+            [36m<Text>[39m
+              [0mCapture one to populate the mobile ledger.[0m
+            [36m</Text>[39m
+          [36m</View>[39m
+        [36m</View>[39m
+      [36m</RCTScrollView>[39m
+      [36m<View[39m
+        [33maccessibilityLabel[39m=[32m"Scan new receipt"[39m
+        [33maccessibilityRole[39m=[32m"button"[39m
+        [33maccessible[39m=[32m{true}[39m
+      [36m>[39m
+        [36m<Text>[39m
+          [0mScan[0m
+        [36m</Text>[39m
+      [36m</View>[39m
+    [36m</RCTSafeAreaView>[39m
+
+    [0m [90m 32 |[39m     
+     [90m 33 |[39m     [90m// Ensure the app title or the empty state text renders[39m
+    [31m[1m>[22m[39m[90m 34 |[39m     
+expect(getByText([32m"Receipts"[39m))[33m.[39mtoBeTruthy()[33m;[39m
+     [90m    |[39m            [31m[1m^[22m[39m
+     [90m 35 |[39m     expect(getByText([32m"No receipts 
+yet"[39m))[33m.[39mtoBeTruthy()[33m;[39m
+     [90m 36 |[39m   })[33m;[39m
+     [90m 37 |[39m })[33m;[39m[0m
+
+      at Object.getByText (test/DashboardScreen.test.tsx:34:12)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 total
+Snapshots:   0 total
+Time:        0.98 s, estimated 4 s
+Ran all test suites matching /test\\DashboardScreen.test.tsx/i.

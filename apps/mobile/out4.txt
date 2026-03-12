@@ -1,0 +1,40 @@
+﻿node.exe : FAIL test/CameraScreen.test.tsx
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\Jolma\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL test/CameraScreen.test.tsx:String) [], Re 
+   moteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ΓùÅ Test suite failed to run
+
+    Cannot find module '../api/client.js' from '../../packages/shared/src/hooks/useAuth.ts'
+
+    Require stack:
+      C:/Users/Jolma/Documents/Vibe-Code/my-ocr-app/packages/shared/src/hooks/useAuth.ts
+      C:/Users/Jolma/Documents/Vibe-Code/my-ocr-app/packages/shared/src/hooks/index.ts
+      src/screens/CameraScreen.tsx
+      test/CameraScreen.test.tsx
+
+    [0m [90m 1 |[39m [36mimport[39m { useMutation[33m,[39m useQueryClient } 
+[36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+    [31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { login[33m,[39m register } 
+[36mfrom[39m [32m"../api/client.js"[39m[33m;[39m
+     [90m   |[39m [31m[1m^[22m[39m
+     [90m 3 |[39m
+     [90m 4 |[39m [36mexport[39m [36mconst[39m useLogin [33m=[39m () [33m=>[39m {
+     [90m 5 |[39m   [36mconst[39m queryClient [33m=[39m 
+useQueryClient()[33m;[39m[0m
+
+      at Resolver._throwModNotFoundError 
+(node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.require (../../packages/shared/src/hooks/useAuth.ts:2:1)
+      at Object.require (../../packages/shared/src/hooks/index.ts:2:1)
+      at Object.require (src/screens/CameraScreen.tsx:16:1)
+      at Object.require (test/CameraScreen.test.tsx:3:1)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        0.953 s
+Ran all test suites matching /test\\CameraScreen.test.tsx/i.
