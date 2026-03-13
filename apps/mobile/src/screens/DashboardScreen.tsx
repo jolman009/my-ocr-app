@@ -32,11 +32,10 @@ export const DashboardScreen = ({ navigation }: Props) => {
   const pendingMutations = useMutationState({ filters: { status: "pending", mutationKey: ["uploadReceipt"] } });
   
   const inFlightReceipts = useMemo(() => {
-    return pendingMutations.map((mutation: any) => {
-      // The variable we pass to mutate() is the first arg: UploadReceiptInput
-      const input = mutation.state.variables as any; 
+    return pendingMutations.map((mutation: any, index: number) => {
+      const input = mutation?.variables as any;
       return {
-        id: `pending-${Math.random()}`,
+        id: `pending-${index}`,
         userId: "local",
         imageUrl: input?.uri ?? "",
         merchantName: "Pending Scan (Offline)",
@@ -47,10 +46,10 @@ export const DashboardScreen = ({ navigation }: Props) => {
         tip: null,
         total: null,
         currency: null,
-        status: "needs_review" as any, // Treat offline as needs review
+        status: "needs_review" as any,
         confidence: {},
         items: [],
-        rawText: "", // Required by ReceiptRecord interface
+        rawText: "",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };

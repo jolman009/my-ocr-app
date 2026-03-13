@@ -47,21 +47,19 @@ export const CameraScreen = ({ navigation }: Props) => {
     }
 
     try {
-      // Trigger optimization
       const optimized = await optimizeImage(previewUri);
-      
-      // Fire-and-forget the upload mutation:
-      // If offline, TanStack will persist the mutation and retry automatically upon reconnection.
+
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
       uploadMutation.mutate(optimized, {
-        onSuccess: () => {
-          // Provide success feedback assuming they're online
+        onSuccess: (data) => {
           void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          navigation.replace("ReceiptDetail", { receiptId: data.id });
+        },
+        onError: (error) => {
+          Alert.alert("Upload failed", error.message || "Unable to upload receipt.");
         }
       });
-      
-      // Navigate back to Dashboard immediately to see the optimistic UI or pending state
-      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      navigation.replace("Dashboard");
     } catch (error) {
       Alert.alert("Preprocessing failed", "Unable to prepare the image for upload.");
     }
