@@ -11,3 +11,4 @@ uploads
 apps/api/generated
 apps/api/.env
 apps/web/.env
+apps/mobile/build-log.txt
