@@ -21,7 +21,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://staging-api.receiptradar.example.com"
+        "EXPO_PUBLIC_API_URL": "https://receipt-radar-api.onrender.com/api"
       }
     },
     "production": {
@@ -29,7 +29,7 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.receiptradar.example.com"
+        "EXPO_PUBLIC_API_URL": "https://receipt-radar-api.onrender.com/api"
       },
       "autoIncrement": true
     }

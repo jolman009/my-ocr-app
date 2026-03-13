@@ -11,6 +11,7 @@ const envSchema = z.object({
   WEB_ORIGINS: z.string().optional(),
   OCR_PROVIDER: z.enum(["mock", "google-vision"]).default("mock"),
   GOOGLE_APPLICATION_CREDENTIALS: z.string().optional(),
+  GOOGLE_CREDENTIALS_JSON: z.string().optional(),
   UPLOAD_DIR: z.string().default("uploads"),
   AUTH_REQUIRED: z.coerce.boolean().default(false),
   JWT_SECRET: z.string().default("development-secret"),

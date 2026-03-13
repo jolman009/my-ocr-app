@@ -1,12 +1,18 @@
 import { ImageAnnotatorClient, protos } from "@google-cloud/vision";
 import type { OcrProvider } from "./ocrProvider.js";
 import type { OcrBlock, OcrResult } from "../types/receipt.js";
+import { env } from "../config/env.js";
 
 export class GoogleVisionOcrProvider implements OcrProvider {
   private client: ImageAnnotatorClient;
 
   constructor() {
-    this.client = new ImageAnnotatorClient();
+    if (env.GOOGLE_CREDENTIALS_JSON) {
+      const credentials = JSON.parse(env.GOOGLE_CREDENTIALS_JSON);
+      this.client = new ImageAnnotatorClient({ credentials });
+    } else {
+      this.client = new ImageAnnotatorClient();
+    }
   }
 
   async extractReceiptText(input: Buffer | string): Promise<OcrResult> {
