@@ -43,7 +43,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-updates',
   ],
   extra: {
-    apiUrl: process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.181:4000/api',
+    apiUrl: process.env.EXPO_PUBLIC_API_URL || 'https://receipt-radar-api.onrender.com/api',
     eas: {
       projectId: '1a88a075-d431-4cac-98d7-ac3632691309',
     },

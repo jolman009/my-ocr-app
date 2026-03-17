@@ -5,7 +5,7 @@ import { setApiBaseUrl, setRequestTimeoutMs } from "@receipt-ocr/shared/api";
 export const ApiConfigProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const apiUrl = Constants.expoConfig?.extra?.apiUrl as string | undefined;
-    setApiBaseUrl(apiUrl ?? "http://192.168.1.181:4000/api");
+    setApiBaseUrl(apiUrl ?? "https://receipt-radar-api.onrender.com/api");
     setRequestTimeoutMs(15_000);
   }, []);
 
