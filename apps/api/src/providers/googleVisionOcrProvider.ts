@@ -9,17 +9,8 @@ export class GoogleVisionOcrProvider implements OcrProvider {
 
   constructor() {
     if (env.GOOGLE_CREDENTIALS_JSON) {
-      let creds;
-      try {
-        creds = JSON.parse(env.GOOGLE_CREDENTIALS_JSON);
-      } catch {
-        // Render converts \n to real newlines; re-escape for JSON.parse
-        creds = JSON.parse(env.GOOGLE_CREDENTIALS_JSON.replace(/\n/g, "\\n"));
-      }
-      // Ensure private_key has real newlines (PEM format requires them)
-      if (creds.private_key) {
-        creds.private_key = creds.private_key.replace(/\\n/g, "\n");
-      }
+      const decoded = Buffer.from(env.GOOGLE_CREDENTIALS_JSON, "base64").toString("utf-8");
+      const creds = JSON.parse(decoded);
       this.client = new ImageAnnotatorClient({ credentials: creds });
     } else {
       this.client = new ImageAnnotatorClient();
