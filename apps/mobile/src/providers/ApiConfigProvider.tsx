@@ -6,7 +6,7 @@ export const ApiConfigProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const apiUrl = Constants.expoConfig?.extra?.apiUrl as string | undefined;
     setApiBaseUrl(apiUrl ?? "https://receipt-radar-api.onrender.com/api");
-    setRequestTimeoutMs(15_000);
+    setRequestTimeoutMs(60_000);
   }, []);
 
   return children;
