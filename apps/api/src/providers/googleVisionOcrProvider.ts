@@ -1,3 +1,4 @@
+import { writeFileSync } from "node:fs";
 import { ImageAnnotatorClient, protos } from "@google-cloud/vision";
 import type { OcrProvider } from "./ocrProvider.js";
 import type { OcrBlock, OcrResult } from "../types/receipt.js";
@@ -8,11 +9,11 @@ export class GoogleVisionOcrProvider implements OcrProvider {
 
   constructor() {
     if (env.GOOGLE_CREDENTIALS_JSON) {
-      const credentials = JSON.parse(env.GOOGLE_CREDENTIALS_JSON);
-      this.client = new ImageAnnotatorClient({ credentials });
-    } else {
-      this.client = new ImageAnnotatorClient();
+      const tmpPath = "/tmp/gcp-credentials.json";
+      writeFileSync(tmpPath, env.GOOGLE_CREDENTIALS_JSON);
+      process.env.GOOGLE_APPLICATION_CREDENTIALS = tmpPath;
     }
+    this.client = new ImageAnnotatorClient();
   }
 
   async extractReceiptText(input: Buffer | string): Promise<OcrResult> {
