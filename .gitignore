@@ -12,3 +12,5 @@ apps/api/generated
 apps/api/.env
 apps/web/.env
 apps/mobile/build-log.txt
+apps/mobile/android
+apps/mobile/ios
