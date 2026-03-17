@@ -10,7 +10,9 @@ export class GoogleVisionOcrProvider implements OcrProvider {
   constructor() {
     if (env.GOOGLE_CREDENTIALS_JSON) {
       const tmpPath = "/tmp/gcp-credentials.json";
-      writeFileSync(tmpPath, env.GOOGLE_CREDENTIALS_JSON);
+      // Re-serialize to ensure valid JSON (Render can mangle \n in private_key)
+      const parsed = JSON.parse(env.GOOGLE_CREDENTIALS_JSON.replace(/\n/g, "\\n"));
+      writeFileSync(tmpPath, JSON.stringify(parsed));
       process.env.GOOGLE_APPLICATION_CREDENTIALS = tmpPath;
     }
     this.client = new ImageAnnotatorClient();
