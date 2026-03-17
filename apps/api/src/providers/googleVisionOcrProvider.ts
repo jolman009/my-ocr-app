@@ -9,13 +9,21 @@ export class GoogleVisionOcrProvider implements OcrProvider {
 
   constructor() {
     if (env.GOOGLE_CREDENTIALS_JSON) {
-      const tmpPath = "/tmp/gcp-credentials.json";
-      // Re-serialize to ensure valid JSON (Render can mangle \n in private_key)
-      const parsed = JSON.parse(env.GOOGLE_CREDENTIALS_JSON.replace(/\n/g, "\\n"));
-      writeFileSync(tmpPath, JSON.stringify(parsed));
-      process.env.GOOGLE_APPLICATION_CREDENTIALS = tmpPath;
+      let creds;
+      try {
+        creds = JSON.parse(env.GOOGLE_CREDENTIALS_JSON);
+      } catch {
+        // Render converts \n to real newlines; re-escape for JSON.parse
+        creds = JSON.parse(env.GOOGLE_CREDENTIALS_JSON.replace(/\n/g, "\\n"));
+      }
+      // Ensure private_key has real newlines (PEM format requires them)
+      if (creds.private_key) {
+        creds.private_key = creds.private_key.replace(/\\n/g, "\n");
+      }
+      this.client = new ImageAnnotatorClient({ credentials: creds });
+    } else {
+      this.client = new ImageAnnotatorClient();
     }
-    this.client = new ImageAnnotatorClient();
   }
 
   async extractReceiptText(input: Buffer | string): Promise<OcrResult> {
