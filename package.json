@@ -9,11 +9,11 @@
     "packages/shared"
   ],
   "scripts": {
-    "dev:api": "npm.cmd run dev --workspace api",
-    "dev:web": "npm.cmd run dev --workspace web",
-    "dev:mobile": "npm.cmd run start --workspace mobile",
-    "build": "npm.cmd run build --workspace api && npm.cmd run build --workspace web",
-    "test": "npm.cmd run test --workspace api && npm.cmd run test --workspace web",
-    "lint": "npm.cmd run lint --workspace @receipt-ocr/shared && npm.cmd run lint --workspace api && npm.cmd run lint --workspace web && npm.cmd run lint --workspace mobile"
+    "dev:api": "npm run dev --workspace api",
+    "dev:web": "npm run dev --workspace web",
+    "dev:mobile": "npm run start --workspace mobile",
+    "build": "npm run build --workspace api && npm run build --workspace web",
+    "test": "npm run test --workspace api && npm run test --workspace web",
+    "lint": "npm run lint --workspace @receipt-ocr/shared && npm run lint --workspace api && npm run lint --workspace web && npm run lint --workspace mobile"
   }
 }
