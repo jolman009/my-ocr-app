@@ -10,6 +10,7 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ApiConfigProvider } from "./src/providers/ApiConfigProvider";
 import { AuthProvider } from "./src/providers/AuthProvider";
+import { ErrorBoundary } from "./src/components/ErrorBoundary";
 import { RootNavigator } from "./src/navigation/RootNavigator";
 
 // ---------- Sentry Crash Reporting ----------
@@ -58,19 +59,21 @@ const navTheme = {
 function App() {
   return (
     <SafeAreaProvider>
-      <ApiConfigProvider>
-        <AuthProvider>
-          <PersistQueryClientProvider 
-            client={queryClient}
-            persistOptions={{ persister: asyncStoragePersister }}
-          >
-            <NavigationContainer theme={navTheme}>
-              <StatusBar style="dark" />
-              <RootNavigator />
-            </NavigationContainer>
-          </PersistQueryClientProvider>
-        </AuthProvider>
-      </ApiConfigProvider>
+      <ErrorBoundary>
+        <ApiConfigProvider>
+          <AuthProvider>
+            <PersistQueryClientProvider
+              client={queryClient}
+              persistOptions={{ persister: asyncStoragePersister }}
+            >
+              <NavigationContainer theme={navTheme}>
+                <StatusBar style="dark" />
+                <RootNavigator />
+              </NavigationContainer>
+            </PersistQueryClientProvider>
+          </AuthProvider>
+        </ApiConfigProvider>
+      </ErrorBoundary>
     </SafeAreaProvider>
   );
 }

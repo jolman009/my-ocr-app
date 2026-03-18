@@ -188,8 +188,17 @@ export const DashboardScreen = ({ navigation }: Props) => {
             </View>
           ) : (
             <View style={styles.emptyState}>
+              <Text style={styles.emptyIcon}>+</Text>
               <Text style={styles.emptyTitle}>No receipts yet</Text>
-              <Text style={styles.emptyBody}>Capture one to populate the mobile ledger.</Text>
+              <Text style={styles.emptyBody}>Tap below to scan your first receipt and start tracking expenses.</Text>
+              <Pressable
+                style={[styles.exportButtonPrimary, { marginTop: 16, paddingHorizontal: 32 }]}
+                onPress={() => navigation.navigate("Camera")}
+                accessibilityRole="button"
+                accessibilityLabel="Scan your first receipt"
+              >
+                <Text style={styles.exportTextPrimary}>Scan a Receipt</Text>
+              </Pressable>
             </View>
           )
         }
@@ -305,6 +314,12 @@ const styles = StyleSheet.create({
     padding: 28,
     alignItems: "center",
     gap: 8
+  },
+  emptyIcon: {
+    fontSize: 40,
+    fontWeight: "800",
+    color: colors.ember,
+    marginBottom: 4,
   },
   emptyTitle: {
     color: colors.ink,
