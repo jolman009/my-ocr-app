@@ -17,6 +17,7 @@ import { UserRepository } from "./repositories/userRepository.js";
 import { createAuthRouter } from "./routes/authRoutes.js";
 import { createExportRouter } from "./routes/exportRoutes.js";
 import { createReceiptRouter } from "./routes/receiptRoutes.js";
+import { privacyRouter } from "./routes/privacyPolicy.js";
 import { AuthService } from "./services/authService.js";
 import { ExportService } from "./services/exportService.js";
 import { ImageService } from "./services/imageService.js";
@@ -83,6 +84,7 @@ app.get("/api/health", async (_req, res) => {
     res.status(503).json({ ok: false, status: "unhealthy", error: String(error) });
   }
 });
+app.use("/privacy", privacyRouter);
 app.use("/api/auth", createAuthRouter(authController));
 app.use("/api/receipts", createReceiptRouter(receiptController));
 app.use("/api/exports", createExportRouter(exportController));

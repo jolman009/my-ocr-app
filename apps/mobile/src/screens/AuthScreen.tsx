@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   Pressable,
   SafeAreaView,
@@ -134,6 +135,15 @@ export const AuthScreen = () => {
                   : "Already have an account? Log in"}
               </Text>
             </Pressable>
+
+            <Pressable
+              style={styles.privacyLink}
+              onPress={() => void Linking.openURL("https://receipt-radar-api.onrender.com/privacy")}
+              accessibilityRole="link"
+              accessibilityLabel="View privacy policy"
+            >
+              <Text style={styles.privacyLinkText}>Privacy Policy</Text>
+            </Pressable>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -189,5 +199,14 @@ const styles = StyleSheet.create({
     color: colors.ink,
     fontSize: 15,
     fontWeight: "600"
+  },
+  privacyLink: {
+    alignItems: "center",
+    paddingVertical: 4
+  },
+  privacyLinkText: {
+    color: "#94a3b8",
+    fontSize: 13,
+    textDecorationLine: "underline" as const
   }
 });

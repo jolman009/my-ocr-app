@@ -19,7 +19,7 @@
 
 ## High Priority (Should-Have)
 
-- [ ] **Error Boundary** — Graceful fallback UI when a screen crashes (Sentry catches it but user sees a blank screen)
+- [x] **Error Boundary** — Graceful fallback UI when a screen crashes (Sentry catches it but user sees a blank screen)
 - [ ] **Analytics Integration** — `analytics.ts` currently logs to console only; needs a real provider (PostHog, Mixpanel, etc.)
 - [ ] **Multi-device Testing** — Test on Android 9-15, different screen sizes
 - [ ] **Sentry DSN** — Add `EXPO_PUBLIC_SENTRY_DSN` to EAS build profiles
@@ -34,7 +34,7 @@
 | **Upload Feedback** | Alert.alert on error, no progress | Progress bar during upload + toast notifications |
 | **Dark Mode** | Not supported (`userInterfaceStyle: "light"`) | Dark theme using `theme.ts` system |
 | **Onboarding** | None — drops straight to login | 2-3 swipeable intro slides on first launch |
-| **Empty Dashboard** | "No receipts yet" text | Illustration + "Scan your first receipt" CTA button |
+| ~~**Empty Dashboard**~~ | ~~"No receipts yet" text~~ | ~~Done — CTA button added~~ |
 | **Camera UX** | Basic capture + gallery | Receipt alignment guide overlay |
 | **Search** | Filter by merchant/status only | Full-text search bar on dashboard |
 | **Deep Linking** | Not configured | `receiptradar://receipt/:id` for sharing |
