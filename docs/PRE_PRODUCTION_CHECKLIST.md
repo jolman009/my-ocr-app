@@ -2,19 +2,19 @@
 
 ## Critical (Must-Have for Play Store)
 
-- [ ] **Privacy Policy** — Create and host at a public URL (required for camera/photo permissions)
+- [x] **Privacy Policy** — Hosted at `https://receipt-radar-api.onrender.com/privacy`, linked on auth screen
 - [ ] **Play Store Listing Assets**
   - [ ] Feature graphic (1024x500 PNG)
   - [ ] 4-8 phone screenshots (16:9 or 9:16)
   - [ ] Short description (80 chars max)
   - [ ] Full description (4000 chars max)
 - [ ] **Google Play Console Setup**
-  - [ ] Developer account ($25 one-time)
+  - [x] Developer account ($25 one-time — already have from ShelfQuest)
   - [ ] Content rating questionnaire
   - [ ] Data safety form (camera, photos, network, analytics)
   - [ ] Target audience declaration
   - [ ] Google Service Account JSON for EAS Submit
-- [ ] **S3/Supabase Storage** — Render filesystem is ephemeral; uploaded images are lost on redeploy
+- [x] **S3/Supabase Storage** — Images stored in Supabase Storage `receipts` bucket
 - [ ] **Production AAB Build** — `eas build --profile production --platform android`
 
 ## High Priority (Should-Have)
