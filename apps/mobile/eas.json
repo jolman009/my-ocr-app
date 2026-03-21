@@ -29,7 +29,8 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://receipt-radar-api.onrender.com/api"
+        "EXPO_PUBLIC_API_URL": "https://receipt-radar-api.onrender.com/api",
+        "SENTRY_AUTH_TOKEN": "${secrets.SENTRY_AUTH_TOKEN}"
       },
       "autoIncrement": true
     }
