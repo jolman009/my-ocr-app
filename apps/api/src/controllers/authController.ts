@@ -14,6 +14,11 @@ const loginSchema = z.object({
   password: z.string().min(8)
 });
 
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(8)
+});
+
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -27,5 +32,16 @@ export class AuthController {
     const payload = loginSchema.parse(req.body);
     const auth = await this.authService.login(payload);
     res.json(auth);
+  });
+
+  changePassword = asyncHandler(async (req: Request, res: Response) => {
+    const userId = (req as any).userId;
+    if (!userId) {
+      res.status(401).json({ message: "Authentication is required." });
+      return;
+    }
+    const payload = changePasswordSchema.parse(req.body);
+    await this.authService.changePassword(userId, payload);
+    res.json({ message: "Password changed successfully." });
   });
 }

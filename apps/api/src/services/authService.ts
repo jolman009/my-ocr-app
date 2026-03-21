@@ -54,6 +54,21 @@ export class AuthService {
     };
   }
 
+  async changePassword(userId: string, input: { currentPassword: string; newPassword: string }) {
+    const user = await this.users.findById(userId);
+    if (!user?.passwordHash) {
+      throw new HttpError(404, "User not found.");
+    }
+
+    const valid = await bcrypt.compare(input.currentPassword, user.passwordHash);
+    if (!valid) {
+      throw new HttpError(401, "Current password is incorrect.");
+    }
+
+    const passwordHash = await bcrypt.hash(input.newPassword, 10);
+    await this.users.updatePassword(userId, passwordHash);
+  }
+
   verifyToken(token: string) {
     const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string; email: string };
     return {

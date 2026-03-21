@@ -20,6 +20,7 @@ import { useAuthContext } from "../providers/AuthProvider";
 
 export const AuthScreen = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuthContext();
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -102,13 +103,24 @@ export const AuthScreen = () => {
               name="password"
               rules={{ required: true, minLength: 8 }}
               render={({ field }) => (
-                <LabeledInput
-                  label="Password"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  secureTextEntry
-                  returnKeyType="done"
-                />
+                <View>
+                  <LabeledInput
+                    label="Password"
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    secureTextEntry={!showPassword}
+                    returnKeyType="done"
+                  />
+                  <Pressable
+                    style={styles.eyeButton}
+                    onPress={() => setShowPassword(!showPassword)}
+                    accessibilityRole="button"
+                    accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+                    hitSlop={8}
+                  >
+                    <Text style={styles.eyeText}>{showPassword ? "Hide" : "Show"}</Text>
+                  </Pressable>
+                </View>
               )}
             />
 
@@ -199,6 +211,16 @@ const styles = StyleSheet.create({
     color: colors.ink,
     fontSize: 15,
     fontWeight: "600"
+  },
+  eyeButton: {
+    position: "absolute" as const,
+    right: 16,
+    top: 38,
+  },
+  eyeText: {
+    color: "#94a3b8",
+    fontSize: 13,
+    fontWeight: "600" as const,
   },
   privacyLink: {
     alignItems: "center",

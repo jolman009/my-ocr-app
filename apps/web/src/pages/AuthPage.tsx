@@ -6,6 +6,7 @@ import { useAuthContext } from "../providers/AuthProvider";
 
 export const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuthContext();
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: { email: "", password: "", name: "" }
@@ -63,11 +64,20 @@ export const AuthPage = () => {
 
         <div className="space-y-2">
           <label className="text-sm font-semibold text-ink">Password</label>
-          <input
-            {...register("password", { required: "Password is required", minLength: { value: 8, message: "Min 8 characters" } })}
-            type="password"
-            className="w-full rounded-2xl border border-slate-200 bg-mist px-4 py-3 placeholder-slate-400 outline-none focus:border-ember focus:bg-white"
-          />
+          <div className="relative">
+            <input
+              {...register("password", { required: "Password is required", minLength: { value: 8, message: "Min 8 characters" } })}
+              type={showPassword ? "text" : "password"}
+              className="w-full rounded-2xl border border-slate-200 bg-mist px-4 py-3 pr-16 placeholder-slate-400 outline-none focus:border-ember focus:bg-white"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 hover:text-slate-600"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
           {errors.password && <p className="text-sm text-ember">{String(errors.password.message)}</p>}
         </div>
 

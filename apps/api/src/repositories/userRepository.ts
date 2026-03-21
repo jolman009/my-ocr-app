@@ -20,4 +20,11 @@ export class UserRepository {
       }
     });
   }
+
+  updatePassword(id: string, passwordHash: string) {
+    return prisma.user.update({
+      where: { id },
+      data: { passwordHash }
+    });
+  }
 }
