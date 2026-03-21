@@ -39,7 +39,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-sqlite',
     'expo-image',
     'expo-secure-store',
-    ['@sentry/react-native/expo', { organization: 'receipt-radar', project: 'receipt-radar-mobile' }],
+    ['@sentry/react-native/expo', { organization: 'receipt-radar', project: 'receipt-radar-mobile', uploadSourceMaps: false }],
     'expo-updates',
   ],
   extra: {
