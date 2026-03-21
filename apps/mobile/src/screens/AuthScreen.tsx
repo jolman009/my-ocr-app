@@ -138,7 +138,7 @@ export const AuthScreen = () => {
 
             <Pressable
               style={styles.privacyLink}
-              onPress={() => void Linking.openURL("https://receipt-radar-api.onrender.com/privacy")}
+              onPress={() => void Linking.openURL("https://my-ocr-app-nu.vercel.app/privacy")}
               accessibilityRole="link"
               accessibilityLabel="View privacy policy"
             >

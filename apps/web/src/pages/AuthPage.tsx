@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useLogin, useRegister } from "@receipt-ocr/shared/hooks";
 import { useAuthContext } from "../providers/AuthProvider";
@@ -89,6 +90,10 @@ export const AuthPage = () => {
         >
           {isLogin ? "Don't have an account? Sign up" : "Already have an account? Log in"}
         </button>
+
+        <Link to="/privacy" className="block text-center text-xs text-slate-400 underline hover:text-slate-500">
+          Privacy Policy
+        </Link>
       </form>
     </div>
   );

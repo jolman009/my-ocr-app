@@ -1,11 +1,21 @@
-import { NavLink, Route, Routes, Navigate } from "react-router-dom";
+import { NavLink, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { DashboardPage } from "./pages/DashboardPage";
 import { ReceiptDetailPage } from "./pages/ReceiptDetailPage";
+import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 import { AuthPage } from "./pages/AuthPage";
 import { useAuthContext } from "./providers/AuthProvider";
 
 export default function App() {
   const { isAuthenticated, isHydrating, logout } = useAuthContext();
+  const location = useLocation();
+
+  if (location.pathname === "/privacy") {
+    return (
+      <div className="min-h-screen bg-mist">
+        <PrivacyPolicyPage />
+      </div>
+    );
+  }
 
   if (isHydrating) {
     return <div className="flex min-h-screen items-center justify-center bg-mist text-ink">Loading...</div>;
