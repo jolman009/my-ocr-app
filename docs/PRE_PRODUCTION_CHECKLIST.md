@@ -10,9 +10,9 @@
   - [x] Full description (4000 chars max)
 - [x] **Google Play Console Setup**
   - [x] Developer account ($25 one-time — already have from ShelfQuest)
-  - [ ] Content rating questionnaire (in progress)
-  - [ ] Data safety form — camera, photos, network, analytics (in progress)
-  - [ ] Target audience declaration (in progress)
+  - [x] Content rating questionnaire
+  - [x] Data safety form (camera, photos, network, analytics)
+  - [x] Target audience declaration
   - [x] Google Service Account JSON for EAS Submit
 - [x] **S3/Supabase Storage** — Images stored in Supabase Storage `receipts` bucket
 - [x] **Production AAB Build** — Built via `eas build --profile production --platform android`

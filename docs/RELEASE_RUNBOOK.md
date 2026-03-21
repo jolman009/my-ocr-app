@@ -204,6 +204,6 @@ Pushes JavaScript bundle updates without requiring a new Play Store build. Only 
 - [x] Short description (80 chars max)
 - [x] Full description (4000 chars max)
 - [x] Privacy policy URL — `https://my-ocr-app-nu.vercel.app/privacy`
-- [ ] Content rating questionnaire (in progress)
-- [ ] Target audience declaration (in progress)
-- [ ] Data safety form (in progress)
+- [x] Content rating questionnaire
+- [x] Target audience declaration
+- [x] Data safety form

@@ -158,5 +158,5 @@ The remaining work is no longer "start Android from scratch". The work is now to
 - [x] Production AAB built
 - [x] Submitted to Google Play closed testing (alpha track)
 - [x] Privacy policy, listing assets, and descriptions completed
-- [ ] Google Play Console forms (content rating, data safety, target audience) — in progress
+- [x] Google Play Console forms (content rating, data safety, target audience)
 - [ ] Automated test expansion — deferred to post-launch
