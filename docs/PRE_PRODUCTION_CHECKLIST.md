@@ -2,27 +2,31 @@
 
 ## Critical (Must-Have for Play Store)
 
-- [x] **Privacy Policy** — Hosted at `https://receipt-radar-api.onrender.com/privacy`, linked on auth screen
-- [ ] **Play Store Listing Assets**
-  - [ ] Feature graphic (1024x500 PNG)
-  - [ ] 4-8 phone screenshots (16:9 or 9:16)
-  - [ ] Short description (80 chars max)
-  - [ ] Full description (4000 chars max)
-- [ ] **Google Play Console Setup**
+- [x] **Privacy Policy** — Hosted at `https://my-ocr-app-nu.vercel.app/privacy`, linked on auth screen
+- [x] **Play Store Listing Assets**
+  - [x] Feature graphic (1024x500 PNG)
+  - [x] 4-8 phone screenshots
+  - [x] Short description (80 chars max)
+  - [x] Full description (4000 chars max)
+- [x] **Google Play Console Setup**
   - [x] Developer account ($25 one-time — already have from ShelfQuest)
-  - [ ] Content rating questionnaire
-  - [ ] Data safety form (camera, photos, network, analytics)
-  - [ ] Target audience declaration
-  - [ ] Google Service Account JSON for EAS Submit
+  - [ ] Content rating questionnaire (in progress)
+  - [ ] Data safety form — camera, photos, network, analytics (in progress)
+  - [ ] Target audience declaration (in progress)
+  - [x] Google Service Account JSON for EAS Submit
 - [x] **S3/Supabase Storage** — Images stored in Supabase Storage `receipts` bucket
-- [ ] **Production AAB Build** — `eas build --profile production --platform android`
+- [x] **Production AAB Build** — Built via `eas build --profile production --platform android`
+- [x] **First Play Store Submission** — Manually uploaded AAB to closed testing (alpha) track
 
 ## High Priority (Should-Have)
 
-- [x] **Error Boundary** — Graceful fallback UI when a screen crashes (Sentry catches it but user sees a blank screen)
-- [ ] **Analytics Integration** — `analytics.ts` currently logs to console only; needs a real provider (PostHog, Mixpanel, etc.)
+- [x] **Error Boundary** — Graceful fallback UI with "Try Again" recovery + Sentry reporting
+- [x] **Password Visibility Toggle** — Show/Hide on login/signup (mobile + web)
+- [x] **Change Password Endpoint** — `POST /api/auth/change-password`
+- [x] **Empty Dashboard CTA** — "Scan a Receipt" button when no receipts exist
+- [ ] **Sentry Project Setup** — Create project in Sentry dashboard, set `EXPO_PUBLIC_SENTRY_DSN`
+- [ ] **Analytics Integration** — `analytics.ts` currently logs to console only; needs a real provider
 - [ ] **Multi-device Testing** — Test on Android 9-15, different screen sizes
-- [ ] **Sentry DSN** — Add `EXPO_PUBLIC_SENTRY_DSN` to EAS build profiles
 - [ ] **Auth Token Refresh** — Currently forces logout when token expires mid-session
 
 ## UI Improvement Flow Plan

@@ -25,128 +25,71 @@ The remaining work is no longer "start Android from scratch". The work is now to
 - [x] Initial dashboard, camera/upload, and receipt detail flows
 - [x] Backend CORS/rate limiting/auth groundwork
 - [x] Storage abstraction for local vs. S3
+- [x] Mobile UX refinement and reliability
+- [x] Auth end-to-end flow in mobile
+- [x] Backend production readiness (Render deployment)
+- [x] Offline queue and sync
+- [x] Production deployment (Render + Vercel + Supabase)
+- [x] Play Store release preparation (AAB built, submitted to closed testing)
 
-### Partially Complete
+### Remaining
 
-- [ ] Mobile UX refinement and reliability
-- [ ] Auth end-to-end flow in mobile
-- [ ] Backend production readiness
-- [ ] Test coverage depth
-- [ ] Release pipeline and Play Store setup
-
-### Not Started or Not Complete Enough
-
-- [ ] Offline queue and sync
-- [ ] Production deployment and observability
-- [ ] Play Store release preparation
-- [ ] Post-launch monitoring integrations
-
-## Execution Strategy
-
-The next work should follow this order:
-
-1. Stabilize the current mobile and shared foundation.
-2. Finish the first production-usable mobile feature set.
-3. Harden backend and auth for real users.
-4. Expand automated test coverage.
-5. Add offline and UX polish only after the core path is reliable.
-6. Prepare deployment, release, and monitoring.
+- [ ] Test coverage depth (Phase E — deferred)
+- [ ] Post-launch monitoring integrations (Sentry project setup, analytics provider)
 
 ## Updated Phases
 
-### Phase A: Stabilize Shared and Mobile Foundation
+### Phase A: Stabilize Shared and Mobile Foundation — COMPLETE
 
-Goal: make the current shared package and Expo app reliable enough for day-to-day development.
+- [x] Audit `packages/shared` exports and remove any remaining web-only assumptions
+- [x] Confirm all shared imports resolve cleanly in `web`, `mobile`, and `api`
+- [x] Normalize API configuration so web and mobile use the same shared setup pattern
+- [x] Verify request timeout, error parsing, and response typing in shared API client
+- [x] Clean up mobile project configuration for local dev, emulator, and physical device usage
+- [ ] Fix or stabilize mobile Jest setup so it can run in CI — **deferred**
+- [ ] Document local run/test steps for web, API, and mobile in one place — **partially done via CLAUDE.md**
 
-Checklist:
+### Phase B: Complete Core Mobile Workflow — COMPLETE
 
-- [ ] Audit `packages/shared` exports and remove any remaining web-only assumptions
-- [ ] Confirm all shared imports resolve cleanly in `web`, `mobile`, and `api`
-- [ ] Normalize API configuration so web and mobile use the same shared setup pattern
-- [ ] Verify request timeout, error parsing, and response typing in shared API client
-- [ ] Clean up mobile project configuration for local dev, emulator, and physical device usage
-- [ ] Fix or stabilize mobile Jest setup so it can run in CI
-- [ ] Document local run/test steps for web, API, and mobile in one place
+- [x] Finish dashboard UX states: loading, empty, retry, pull-to-refresh
+- [x] Finish camera flow: permission, retake, preview, upload progress
+- [x] Confirm gallery upload flow works on Android
+- [x] Finish receipt detail editing UX and save confirmation
+- [x] Improve line item editing behavior on mobile
+- [x] Confirm export flow works via file download and share sheet
+- [x] Add low-confidence indicators where extraction confidence is weak
+- [x] Add navigation guards for unsaved edits
+- [x] Add basic accessibility checks for touch targets and labels
 
-Definition of done:
+### Phase C: Finish Auth and Multi-User Backend Support — COMPLETE
 
-- [ ] `web`, `api`, and `mobile` all build cleanly
-- [ ] shared package is the single source of truth for receipt API contracts
-- [ ] mobile test runner is either working or explicitly replaced with an agreed test strategy
+- [x] Review current auth routes and JWT middleware for correctness
+- [x] Add registration/login screens in mobile
+- [x] Persist auth token securely on device (expo-secure-store)
+- [x] Attach bearer token automatically from shared/mobile API client
+- [x] Enforce per-user receipt ownership on all receipt/export routes
+- [x] Add logout flow and expired-token handling
+- [x] Add auth-aware route guards in web and mobile
+- [x] Validate `AUTH_REQUIRED=true` end-to-end
+- [x] Add change password endpoint
+- [x] Add password visibility toggle on auth screens
 
-### Phase B: Complete Core Mobile Workflow
+### Phase D: Harden Storage, OCR, and Production Backend Readiness — COMPLETE
 
-Goal: make Android capable of the same core receipt workflow as the web app.
+- [x] Validate local storage provider behavior in development
+- [x] Complete S3 provider configuration and URL generation (Supabase Storage)
+- [x] Test image upload and retrieval with `STORAGE_PROVIDER=s3`
+- [x] Confirm `OCR_PROVIDER=google-vision` works with real credentials
+- [x] Add health/readiness checks suitable for deployment
+- [x] Review API rate limiting thresholds
+- [x] Verify exports work with authenticated requests and cloud-hosted images
+- [x] Server binds to `0.0.0.0` for Render compatibility
+- [x] `trust proxy` configured for reverse proxy
+- [x] Google Vision credentials via separate env vars (not JSON blob)
+- [ ] Add clearer OCR failure classification for unreadable receipts — **deferred**
+- [ ] Improve receipt parsing confidence and fallback handling — **deferred**
 
-Checklist:
-
-- [ ] Finish dashboard UX states: loading, empty, retry, pull-to-refresh
-- [ ] Finish camera flow: permission, retake, preview, upload progress
-- [ ] Confirm gallery upload flow works on Android
-- [ ] Finish receipt detail editing UX and save confirmation
-- [ ] Improve line item editing behavior on mobile
-- [ ] Confirm export flow works via file download and share sheet
-- [ ] Add low-confidence indicators where extraction confidence is weak
-- [ ] Add navigation guards for unsaved edits
-- [ ] Add basic accessibility checks for touch targets and labels
-
-Definition of done:
-
-- [ ] user can capture or select a receipt
-- [ ] upload succeeds against the local API
-- [ ] parsed receipt opens in detail view
-- [ ] user can edit and save receipt fields
-- [ ] updated receipt is visible in dashboard list
-- [ ] export works from the mobile app
-
-### Phase C: Finish Auth and Multi-User Backend Support
-
-Goal: move from development-only access to a real user model.
-
-Checklist:
-
-- [ ] Review current auth routes and JWT middleware for correctness
-- [ ] Add registration/login screens in mobile
-- [ ] Persist auth token securely on device
-- [ ] Attach bearer token automatically from shared/mobile API client
-- [ ] Enforce per-user receipt ownership on all receipt/export routes
-- [ ] Add logout flow and expired-token handling
-- [ ] Add auth-aware route guards in web and mobile
-- [ ] Validate `AUTH_REQUIRED=true` end-to-end
-
-Definition of done:
-
-- [ ] a user can register, log in, and log out
-- [ ] receipts are scoped to the authenticated user
-- [ ] unauthenticated access is blocked when auth is enabled
-
-### Phase D: Harden Storage, OCR, and Production Backend Readiness
-
-Goal: remove local-development assumptions that block production and mobile deployment.
-
-Checklist:
-
-- [ ] Validate local storage provider behavior in development
-- [ ] Complete S3 provider configuration and URL generation
-- [ ] Test image upload and retrieval with `STORAGE_PROVIDER=s3`
-- [ ] Confirm `OCR_PROVIDER=google-vision` works with real credentials
-- [ ] Add clearer OCR failure classification for unreadable receipts
-- [ ] Improve receipt parsing confidence and fallback handling
-- [ ] Add health/readiness checks suitable for deployment
-- [ ] Review API rate limiting thresholds
-- [ ] Verify exports work with authenticated requests and cloud-hosted images
-
-Definition of done:
-
-- [ ] API can run with managed Postgres, S3, and Google Vision
-- [ ] receipt images and exports work outside local disk assumptions
-- [ ] OCR failures degrade gracefully into reviewable states
-
-### Phase E: Expand Test Coverage
-
-Goal: raise confidence in the mobile contract and core receipt workflows.
-
-Checklist:
+### Phase E: Expand Test Coverage — NOT STARTED
 
 - [ ] Add shared API client tests for auth, timeout, and error cases
 - [ ] Expand backend integration tests for upload/list/detail/update/export
@@ -156,158 +99,64 @@ Checklist:
 - [ ] Add at least one end-to-end mobile happy-path test
 - [ ] Add CI-friendly commands and documentation for the test matrix
 
-Definition of done:
+**Status:** Deferred — not blocking initial Play Store release. Should be addressed before scaling to more users.
 
-- [ ] backend contract regressions are caught automatically
-- [ ] mobile core flow has automated coverage
-- [ ] parser changes can be tested against fixture receipts
+### Phase F: Offline Support and Mobile UX Polish — MOSTLY COMPLETE
 
-### Phase F: Offline Support and Mobile UX Polish
+- [x] Add persisted query cache (AsyncStorage + React Query)
+- [x] Add offline queue for upload/update actions (useMutationState)
+- [x] Add connectivity listener and retry/sync manager (NetInfo)
+- [x] Store pending receipt images locally until synced
+- [x] Show offline and pending-sync indicators in the app
+- [x] Add haptics on capture and upload
+- [x] Improve image compression/resizing strategy on device (2048px, 80% JPEG)
+- [x] Error boundary with recovery UI
+- [x] Empty state with CTA button
+- [ ] Add toasts for save/delete confirmation — **deferred**
+- [ ] Add thumbnail caching and perceived-performance improvements — **deferred**
 
-Goal: improve resilience and usability after the online core path is solid.
+### Phase G: Release and Operations — MOSTLY COMPLETE
 
-Checklist:
+- [x] Configure EAS build profiles (development, preview, production)
+- [x] Produce and test development and preview Android builds
+- [x] Create production signing/release configuration
+- [x] Prepare Play Store listing assets and policy requirements
+- [x] Privacy policy hosted and linked on auth screens
+- [x] Add crash reporting framework (Sentry wrapped, DSN not yet configured)
+- [x] Define rollout and rollback plan
+- [x] Document production environment variables and release process (RELEASE_RUNBOOK.md)
+- [x] Production AAB built and submitted to closed testing
+- [ ] Create Sentry project and set DSN — **not done**
+- [ ] Add analytics provider (PostHog/Mixpanel) — **not done**
 
-- [ ] Add persisted query cache
-- [ ] Add offline queue for upload/update actions
-- [ ] Add connectivity listener and retry/sync manager
-- [ ] Store pending receipt images locally until synced
-- [ ] Show offline and pending-sync indicators in the app
-- [ ] Add haptics, toasts, and transition polish
-- [ ] Improve image compression/resizing strategy on device
-- [ ] Add thumbnail caching and perceived-performance improvements
+## Blockers — All Resolved
 
-Definition of done:
-
-- [ ] user can continue limited work when offline
-- [ ] queued items sync automatically when connectivity returns
-- [ ] mobile UX feels production-ready rather than prototype-level
-
-### Phase G: Release and Operations
-
-Goal: get the Android app deployable and supportable.
-
-Checklist:
-
-- [ ] Configure EAS build profiles
-- [ ] Produce and test development and preview Android builds
-- [ ] Create production signing/release configuration
-- [ ] Prepare Play Store listing assets and policy requirements
-- [ ] Add crash reporting
-- [ ] Add analytics or product telemetry
-- [ ] Define rollout and rollback plan
-- [ ] Document production environment variables and release process
-
-Definition of done:
-
-- [ ] preview and production builds are reproducible
-- [ ] release process is documented
-- [ ] crash and usage telemetry are available after launch
-
-## Suggested Timeline
-
-This timeline assumes one primary developer working part-time to full-time on the codebase. If there are multiple contributors, Phases C, D, and E can overlap.
-
-### Week 1
-
-- Phase A: stabilize shared/mobile foundation
-- Fix mobile test runner or decide replacement strategy
-- Clean up local development configuration
-
-### Week 2
-
-- Phase B: finish core mobile workflow
-- Validate capture, upload, detail editing, save, and export on Android emulator
-
-### Week 3
-
-- Finish remaining Phase B gaps
-- Start Phase C auth screens and token handling
-
-### Week 4
-
-- Complete Phase C auth and ownership enforcement
-- Start Phase D storage/OCR production validation
-
-### Week 5
-
-- Complete Phase D
-- Start Phase E backend/shared/mobile test expansion
-
-### Week 6
-
-- Complete Phase E
-- Begin Phase F offline support and mobile polish
-
-### Week 7
-
-- Continue Phase F
-- Start Phase G release setup and operational documentation
-
-### Week 8
-
-- Complete Phase G
-- Run release candidate validation
-- Prepare for internal or limited external testing
+- ~~Mobile Jest stability~~ — deferred, not blocking release
+- ~~Production OCR credentials~~ — working via `GOOGLE_CLIENT_EMAIL` + `GOOGLE_PRIVATE_KEY` on Render
+- ~~Cloud storage configuration~~ — Supabase Storage S3-compatible bucket live
+- ~~Managed Postgres target environment~~ — Supabase pooler connected with RLS enabled
 
 ## Milestones
 
-### Milestone 1: Development Stable
+### Milestone 1: Development Stable — ACHIEVED
 
-Target: end of Week 1
+- [x] shared/mobile foundation stable
+- [x] local setup documented (CLAUDE.md)
+- [x] all active apps build successfully
 
-- [ ] shared/mobile foundation stable
-- [ ] local setup documented
-- [ ] all active apps build successfully
+### Milestone 2: Android Core Workflow Complete — ACHIEVED
 
-### Milestone 2: Android Core Workflow Complete
+- [x] capture/upload/review/edit/export all working in Android
 
-Target: end of Week 3
+### Milestone 3: Production-Ready Backend for Mobile — ACHIEVED
 
-- [ ] capture/upload/review/edit/export all working in Android
+- [x] auth, storage, OCR, and cloud-ready backend configuration complete
+- [x] Deployed on Render with Supabase PostgreSQL and Supabase Storage
 
-### Milestone 3: Production-Ready Backend for Mobile
+### Milestone 4: Release Candidate — ACHIEVED
 
-Target: end of Week 5
-
-- [ ] auth, storage, OCR, and cloud-ready backend configuration complete
-
-### Milestone 4: Release Candidate
-
-Target: end of Week 8
-
-- [ ] automated tests expanded
-- [ ] offline support or explicit deferral decision made
-- [ ] Android preview/production release process ready
-
-## Recommended Immediate Next Steps
-
-Execute these next, in order:
-
-1. Stabilize the mobile test setup and shared package boundaries.
-2. Finish the remaining mobile core workflow gaps.
-3. Turn on auth end-to-end and validate user-scoped receipt access.
-4. Validate S3 and Google Vision in a non-local environment.
-5. Expand integration and mobile tests before release work.
-
-## Status Tracking Template
-
-Use this section as the working checklist during execution.
-
-### In Progress
-
-- [ ] Phase A
-- [ ] Phase B
-- [ ] Phase C
-- [ ] Phase D
-- [ ] Phase E
-- [ ] Phase F
-- [ ] Phase G
-
-### Blockers
-
-- [ ] Mobile Jest stability
-- [ ] Production OCR credentials
-- [ ] Cloud storage configuration
-- [ ] Managed Postgres target environment
-
+- [x] Production AAB built
+- [x] Submitted to Google Play closed testing (alpha track)
+- [x] Privacy policy, listing assets, and descriptions completed
+- [ ] Google Play Console forms (content rating, data safety, target audience) — in progress
+- [ ] Automated test expansion — deferred to post-launch
