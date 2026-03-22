@@ -1,4 +1,5 @@
 import { useDeferredValue, useState } from "react";
+import { Link } from "react-router-dom";
 import type { ReceiptStatus } from "@receipt-ocr/shared/types";
 import { ExportMenu } from "../components/ExportMenu";
 import { ExportHistoryPanel } from "../components/ExportHistoryPanel";
@@ -52,6 +53,26 @@ export const DashboardPage = () => {
             <li>3. Review anything uncertain before it becomes part of your records.</li>
             <li>4. Export the finished ledger when you need to update your spreadsheet.</li>
           </ol>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              to="/app/capture"
+              className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:bg-slate-100"
+            >
+              Open Capture
+            </Link>
+            <Link
+              to="/app/exports"
+              className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-white/40"
+            >
+              Open Exports
+            </Link>
+            <Link
+              to="/app/settings"
+              className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-white/40"
+            >
+              Open Settings
+            </Link>
+          </div>
         </div>
       </section>
       <ReceiptUploader />
