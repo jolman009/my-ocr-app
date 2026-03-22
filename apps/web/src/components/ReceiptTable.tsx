@@ -29,7 +29,7 @@ export const ReceiptTable = ({ receipts }: ReceiptTableProps) => {
             {receipts.map((receipt) => (
               <tr key={receipt.id} className="border-t border-slate-100 hover:bg-slate-50/80">
                 <td className="px-6 py-4 font-medium text-ink">
-                  <Link to={`/receipts/${receipt.id}`} className="hover:text-ember">
+                  <Link to={`/app/receipts/${receipt.id}`} className="hover:text-ember">
                     {receipt.merchantName ?? "Untitled receipt"}
                   </Link>
                 </td>
@@ -46,7 +46,7 @@ export const ReceiptTable = ({ receipts }: ReceiptTableProps) => {
             {!receipts.length ? (
               <tr>
                 <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
-                  No receipts yet. Upload one to start building the ledger.
+                  No receipts yet. Upload one to start building your export-ready ledger.
                 </td>
               </tr>
             ) : null}

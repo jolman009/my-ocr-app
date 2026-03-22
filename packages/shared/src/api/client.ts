@@ -136,7 +136,8 @@ const appendUpload = (formData: FormData, file: UploadReceiptInput) => {
   formData.append("file", file as unknown as Blob);
 };
 
-export const getReceiptImageUrl = (imageUrl: string) => `${getApiOrigin()}${imageUrl}`;
+export const getReceiptImageUrl = (imageUrl: string) =>
+  imageUrl.startsWith("http://") || imageUrl.startsWith("https://") ? imageUrl : `${getApiOrigin()}${imageUrl}`;
 
 export const listReceipts = async (filters?: ReceiptFilters): Promise<ReceiptListResponse> => {
   const query = toQueryString(filters);

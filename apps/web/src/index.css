@@ -20,3 +20,47 @@ body {
 #root {
   min-height: 100vh;
 }
+
+.landing-glow {
+  animation: landingFloat 14s ease-in-out infinite;
+}
+
+.receipt-stage::before {
+  content: "";
+  position: absolute;
+  inset: 8% 5% auto auto;
+  width: 22%;
+  height: 22%;
+  border-top: 1px solid rgba(15, 23, 42, 0.12);
+  border-right: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.receipt-note {
+  animation: noteDrift 10s ease-in-out infinite;
+}
+
+.receipt-note:last-child {
+  animation-duration: 12s;
+}
+
+@keyframes landingFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, 18px, 0);
+  }
+}
+
+@keyframes noteDrift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate3d(0, -8px, 0) rotate(-1deg);
+  }
+}

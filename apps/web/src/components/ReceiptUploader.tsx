@@ -20,7 +20,7 @@ export const ReceiptUploader = () => {
       try {
         const response = await uploadMutation.mutateAsync(file);
         startTransition(() => {
-          navigate(`/receipts/${response.id}`);
+          navigate(`/app/receipts/${response.id}`);
         });
       } catch (uploadError) {
         setError(uploadError instanceof Error ? uploadError.message : "Upload failed.");
@@ -70,7 +70,7 @@ export const ReceiptUploader = () => {
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-slate-500">Upload</p>
             <h3 className="mt-3 text-2xl font-semibold text-ink">Drag the receipt here</h3>
             <p className="mt-3 max-w-md text-sm leading-6 text-slate-600">
-              The backend will auto-rotate, normalize, OCR, and save the result for review.
+              The backend will normalize, OCR, and save the result so you can review the extracted header fields.
             </p>
             {previewUrl ? (
               <img src={previewUrl} alt="Receipt preview" className="mt-6 max-h-72 rounded-3xl object-contain shadow-lg" />

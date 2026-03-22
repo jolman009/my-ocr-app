@@ -19,26 +19,26 @@ export const DashboardPage = () => {
     <div className="space-y-8">
       <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <div className="rounded-[2rem] border border-white/70 bg-white/70 p-8 shadow-panel backdrop-blur">
-          <p className="font-mono text-xs uppercase tracking-[0.35em] text-tide">Receipt Radar</p>
+          <p className="font-mono text-xs uppercase tracking-[0.35em] text-tide">Freelancer workflow</p>
           <h1 className="mt-4 max-w-2xl font-display text-5xl font-semibold tracking-tight text-ink">
-            Turn paper receipts into a clean, searchable expense ledger.
+            Keep your receipts tidy enough for books, taxes, and handoff.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600">
-            Capture a receipt, extract merchant and totals with OCR, review line items, and export the finished records to CSV or Excel.
+            Capture a receipt, confirm the header fields that matter, and export a cleaner record to CSV or Excel when you are ready.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <div className="rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white">React + Tailwind</div>
-            <div className="rounded-full bg-ember px-4 py-2 text-sm font-medium text-white">OCR Ready</div>
-            <div className="rounded-full bg-tide px-4 py-2 text-sm font-medium text-white">CSV/XLSX Export</div>
+            <div className="rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white">Header-field OCR</div>
+            <div className="rounded-full bg-ember px-4 py-2 text-sm font-medium text-white">Manual review</div>
+            <div className="rounded-full bg-tide px-4 py-2 text-sm font-medium text-white">CSV/XLSX export</div>
           </div>
         </div>
         <div className="rounded-[2rem] border border-slate-200 bg-slate-950 p-8 text-white shadow-panel">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-emerald-300">Flow</p>
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-emerald-300">Today&apos;s rhythm</p>
           <ol className="mt-5 space-y-4 text-sm text-slate-300">
-            <li>1. Upload or photograph the receipt.</li>
-            <li>2. Server preprocesses the image and runs OCR.</li>
-            <li>3. Parsed fields are stored for review.</li>
-            <li>4. User corrects anything uncertain and exports the data.</li>
+            <li>1. Upload the next receipt you want off your desk.</li>
+            <li>2. OCR extracts vendor, date, subtotal, tax, and total.</li>
+            <li>3. Review anything uncertain before it becomes part of your records.</li>
+            <li>4. Export the finished ledger when you need to update your spreadsheet.</li>
           </ol>
         </div>
       </section>

@@ -15,7 +15,7 @@ export const ReceiptDetailPage = () => {
     return (
       <div className="rounded-[2rem] bg-white/90 p-6 shadow-panel">
         <p className="text-sm text-red-600">Unable to load this receipt.</p>
-        <Link to="/" className="mt-4 inline-block text-sm font-medium text-ember">
+        <Link to="/app" className="mt-4 inline-block text-sm font-medium text-ember">
           Back to dashboard
         </Link>
       </div>
@@ -24,7 +24,7 @@ export const ReceiptDetailPage = () => {
 
   return (
     <div className="space-y-6">
-      <Link to="/" className="inline-flex rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-medium text-slate-700 shadow-panel">
+      <Link to="/app" className="inline-flex rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-medium text-slate-700 shadow-panel">
         Back to dashboard
       </Link>
       <ReceiptReviewForm receipt={data} saving={updateMutation.isPending} onSave={async (receipt) => {
