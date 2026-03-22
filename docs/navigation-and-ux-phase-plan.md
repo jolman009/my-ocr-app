@@ -15,36 +15,35 @@ This map distinguishes between:
 | 1. Public Landing Page | dedicated page | `"/"` | Implemented |
 | 2. Sign-In / Sign-Up | dedicated page | `"/auth"` | Implemented |
 | 3. Onboarding - Profile Intent | not implemented | n/a | No dedicated onboarding flow yet |
-| 4. Onboarding - Export Template Setup | embedded screen | dashboard export template section | Functionality exists, but not as onboarding |
+| 4. Onboarding - Export Template Setup | embedded screen | exports workspace | Functionality exists, but not as onboarding |
 | 5. Dashboard / Receipt Inbox | dedicated page | `"/app"` | Implemented |
-| 6. Receipt Capture | embedded screen | dashboard uploader section | Not a dedicated task-focused surface yet |
-| 7. OCR Processing State | embedded screen | uploader processing component | Present, but inline rather than a full flow state |
+| 6. Receipt Capture | dedicated page | `"/app/capture"` | Implemented as a focused surface |
+| 7. OCR Processing State | embedded screen | capture uploader processing component | Present inside Capture |
 | 8. Receipt Review | dedicated page | `"/app/receipts/:id"` | Implemented |
-| 9. Export Builder | embedded screen | dashboard export template + export controls | Partial implementation |
-| 10. Export History | embedded screen | dashboard history panel | Lightweight implementation |
-| 11. Settings / Billing | not implemented | n/a | No dedicated settings surface yet |
+| 9. Export Builder | dedicated page / partial implementation | `"/app/exports"` | Live as a dedicated workspace, still lightweight |
+| 10. Export History | dedicated page / lightweight implementation | `"/app/exports"` | Lives with exports workflow |
+| 11. Settings / Billing | dedicated page / not fully implemented | `"/app/settings"` | Route exists, functionality still light |
 
 ## Reality Check
 
 The app is not just a single page, but the core working experience is still too concentrated inside the dashboard.
 
-Right now the dashboard is doing too many jobs:
+Right now the dashboard is much lighter, but there is still one more structural move to finish:
 
 - inbox
-- upload / capture
-- export template setup
-- export initiation
-- export history
+- filters
+- shortcuts into focused workflows
+- high-level workspace guidance
 
-That is acceptable for an MVP, but it makes the product feel more like an admin workbench than a focused freelancer workflow.
+The app has already improved by moving upload and OCR progress into `Capture`, and by moving export tools into `Exports`. The next structural move is to make `Settings` real and finish simplifying the home surface.
 
 ## Best Next UX Phase
 
-The next UX phase should split the core working flow into distinct product surfaces:
+The next UX phase should complete the dedicated product surfaces:
 
-1. dedicated `Capture` screen
-2. dedicated `Export` screen
-3. dedicated `Settings` screen
+1. dedicated `Settings` screen
+2. continued `Home` simplification
+3. transitions and consistency polish
 
 This is the best next move because it improves:
 
@@ -101,7 +100,7 @@ Recommended mobile emphasis:
 
 ### Why this structure is best
 
-- `Capture` becomes a focused action rather than a dashboard block
+- `Capture` already behaves as a focused action
 - `Exports` groups templates and history in one monetizable area
 - `Settings` creates a natural home for plan state and future billing
 - `Home` remains lightweight and operational, not overloaded
@@ -192,29 +191,29 @@ Should not contain:
 
 ### Phase 1: Navigation and routing foundation
 
-- [ ] Add app sub-routes for `"/app/capture"`, `"/app/exports"`, and `"/app/settings"`
-- [ ] Update the workspace shell header to include links to `Home`, `Capture`, `Exports`, and `Settings`
-- [ ] Ensure mobile/responsive navigation adapts cleanly for the new route structure
-- [ ] Keep `"/app/receipts/:id"` as the dedicated review route
+- [x] Add app sub-routes for `"/app/capture"`, `"/app/exports"`, and `"/app/settings"`
+- [x] Update the workspace shell header to include links to `Home`, `Capture`, `Exports`, and `Settings`
+- [x] Ensure mobile/responsive navigation adapts cleanly for the new route structure
+- [x] Keep `"/app/receipts/:id"` as the dedicated review route
 
 ### Phase 2: Dedicated Capture screen
 
-- [ ] Create a new `CapturePage` component
-- [ ] Move the existing upload block out of the dashboard into the new capture page
-- [ ] Move OCR processing state into the capture flow so it feels like part of one dedicated task
-- [ ] Add quality guidance copy for supported receipt image formats
-- [ ] Redirect to the receipt review page after a successful upload
-- [ ] Leave a lightweight “Go to Capture” CTA on the dashboard instead of the full uploader block
+- [x] Create a new `CapturePage` component
+- [x] Move the existing upload block out of the dashboard into the new capture page
+- [x] Move OCR processing state into the capture flow so it feels like part of one dedicated task
+- [x] Add quality guidance copy for supported receipt image formats
+- [x] Redirect to the receipt review page after a successful upload
+- [x] Leave a lightweight "Go to Capture" CTA on the dashboard instead of the full uploader block
 
 ### Phase 3: Dedicated Exports screen
 
-- [ ] Create a new `ExportsPage` component
-- [ ] Move template management into the exports page
-- [ ] Move export history into the exports page
-- [ ] Keep template selection and export action together on the same surface
-- [ ] Add a compact export summary area showing how many receipts match current filters
-- [ ] Add a simple empty state explaining why templates matter for freelancers
-- [ ] Replace the dashboard export controls with a lightweight “Go to Exports” CTA or compact quick-export bar
+- [x] Create a new `ExportsPage` component
+- [x] Move template management into the exports page
+- [x] Move export history into the exports page
+- [x] Keep template selection and export action together on the same surface
+- [x] Add a compact export summary area showing how many receipts match current filters
+- [x] Add a simple empty state explaining why templates matter for freelancers
+- [x] Replace the dashboard export controls with a lightweight "Go to Exports" CTA or compact quick-export bar
 
 ### Phase 4: Dedicated Settings screen
 
@@ -228,11 +227,11 @@ Should not contain:
 
 ### Phase 5: Dashboard simplification
 
-- [ ] Remove the full uploader from the dashboard
-- [ ] Remove the full export template manager from the dashboard
-- [ ] Remove the full export history panel from the dashboard
-- [ ] Keep the dashboard focused on receipt inbox, quick filters, and recent activity
-- [ ] Add clear shortcuts from dashboard to `Capture`, `Exports`, and `Settings`
+- [x] Remove the full uploader from the dashboard
+- [x] Remove the full export template manager from the dashboard
+- [x] Remove the full export history panel from the dashboard
+- [x] Keep the dashboard focused on receipt inbox, quick filters, and recent activity
+- [x] Add clear shortcuts from dashboard to `Capture`, `Exports`, and `Settings`
 
 ### Phase 6: UX polish and transitions
 
@@ -256,8 +255,8 @@ The cleanest execution sequence is:
 1. routing and nav shell
 2. dedicated capture page
 3. dedicated exports page
-4. dedicated settings page
-5. dashboard simplification
+4. dashboard simplification
+5. dedicated settings page
 6. responsive polish
 
 ## Success Criteria

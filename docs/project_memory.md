@@ -89,6 +89,11 @@ Phase 2 completed:
 - uploader and OCR processing flow moved into dedicated `Capture` screen
 - dashboard simplified to behave more like a home surface
 
+Phase 3 completed:
+
+- real export functionality moved into dedicated `Exports` screen
+- dashboard export controls reduced to lighter navigation and workspace-home guidance
+
 ## Current Route Structure
 
 - `/` -> landing
@@ -96,7 +101,7 @@ Phase 2 completed:
 - `/privacy` -> privacy
 - `/app` -> workspace home
 - `/app/capture` -> dedicated capture surface
-- `/app/exports` -> dedicated exports surface stub
+- `/app/exports` -> dedicated exports surface
 - `/app/settings` -> dedicated settings surface stub
 - `/app/receipts/:id` -> receipt review
 
@@ -109,12 +114,13 @@ Implemented as dedicated pages or surfaces:
 - Dashboard / Receipt Inbox
 - Receipt Capture
 - Receipt Review
+- Export Builder / Exports workspace
 
 Implemented but still lightweight / partial:
 
 - OCR Processing State
-- Export Builder
 - Export History
+- Settings / Billing
 
 Not fully implemented yet:
 
@@ -141,27 +147,13 @@ to:
 
 - structured product with dedicated working surfaces
 
-The `Capture` screen is now real.
-The `Exports` and `Settings` screens exist structurally but still need their real feature moves.
+The `Capture` screen is now real and owns ingestion.
+The `Exports` screen is now real and owns templates, filtered downloads, and export history.
+The `Settings` screen still exists structurally and needs real settings behavior.
 
 ## Best Next Steps
 
 ### Immediate next UX phase
-
-Move real export tools into the dedicated `Exports` screen:
-
-- template manager
-- export actions
-- export history
-
-Then simplify the dashboard further so it stays focused on:
-
-- recent receipts
-- filters
-- quick status
-- shortcuts into focused workflows
-
-### After that
 
 Implement real `Settings` behavior:
 
@@ -171,7 +163,7 @@ Implement real `Settings` behavior:
 - default export settings
 - billing-ready structure
 
-### Later
+### After that
 
 - onboarding profile intent
 - onboarding export template setup

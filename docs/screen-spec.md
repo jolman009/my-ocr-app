@@ -68,12 +68,12 @@
 
 - Goal: serve as the main working surface after onboarding
 - Core content:
-  - upload area
   - quick filters for vendor and processing status
   - receipt table
-  - export action
-- Primary action: upload or capture receipt
-- Secondary action: export filtered results
+  - quick status and workflow shortcuts
+  - links into Capture, Exports, and Settings
+- Primary action: open the next focused workflow
+- Secondary action: review receipts that need attention
 
 ## Screen 6: Receipt Capture
 
@@ -121,7 +121,7 @@
 - Core actions:
   - choose saved template
   - create a new template
-  - export current filters
+  - export current filters from the dedicated Exports surface
   - export date range
 - Template options:
   - column inclusion
@@ -129,6 +129,8 @@
   - header labels
   - date format
   - amount formatting
+- Notes:
+  - this now lives as its own working surface rather than a dashboard utility block
 
 ## Screen 10: Export History
 
@@ -140,6 +142,7 @@
   - download again
 - Notes:
   - especially important for paid users
+  - now lives alongside the export builder on the Exports screen
 
 ## Screen 11: Settings / Billing
 
@@ -169,7 +172,7 @@
 
 - landing page
 - sign-up
-- onboarding basics
+- dedicated home, capture, and exports surfaces
 - receipt upload and OCR
 - header-field review
 - CSV/XLSX export

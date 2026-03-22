@@ -1,12 +1,8 @@
 import { useDeferredValue, useState } from "react";
 import { Link } from "react-router-dom";
 import type { ReceiptStatus } from "@receipt-ocr/shared/types";
-import { ExportMenu } from "../components/ExportMenu";
-import { ExportHistoryPanel } from "../components/ExportHistoryPanel";
-import { ExportTemplateManager } from "../components/ExportTemplateManager";
 import { ReceiptTable } from "../components/ReceiptTable";
 import { useReceipts } from "@receipt-ocr/shared/hooks";
-import { useExportPreferences } from "../hooks/useExportPreferences";
 
 export const DashboardPage = () => {
   const [merchant, setMerchant] = useState("");
@@ -17,15 +13,6 @@ export const DashboardPage = () => {
     status: status || undefined
   };
   const { data, isLoading } = useReceipts(filters);
-  const {
-    templates,
-    selectedTemplateId,
-    setSelectedTemplateId,
-    saveTemplate,
-    deleteTemplate,
-    history,
-    recordExport
-  } = useExportPreferences();
 
   return (
     <div className="space-y-8">
@@ -123,32 +110,42 @@ export const DashboardPage = () => {
             <option value="failed">Failed</option>
           </select>
         </div>
-        <ExportMenu
-          filters={filters}
-          recordCount={data?.pagination.total ?? 0}
-          templates={templates}
-          selectedTemplateId={selectedTemplateId}
-          onSelectTemplate={setSelectedTemplateId}
-          onRecordExport={({ format, template }) =>
-            recordExport({
-              format,
-              recordCount: data?.pagination.total ?? 0,
-              filters,
-              template
-            })
-          }
-        />
+        <Link
+          to="/app/exports"
+          className="rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+        >
+          Open Exports
+        </Link>
       </section>
       {isLoading ? <div className="rounded-[2rem] bg-white/90 p-6 shadow-panel">Loading receipts...</div> : <ReceiptTable receipts={data?.data ?? []} />}
-      <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <ExportTemplateManager
-          templates={templates}
-          selectedTemplateId={selectedTemplateId}
-          onSelectTemplate={setSelectedTemplateId}
-          onSaveTemplate={saveTemplate}
-          onDeleteTemplate={deleteTemplate}
-        />
-        <ExportHistoryPanel history={history} />
+      <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-panel">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-tide">Exports now live separately</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-ink">Templates and history moved into Exports.</h2>
+          <p className="mt-4 text-sm leading-7 text-slate-600">
+            Use the dedicated Exports surface for saved templates, filtered downloads, and recent export runs. The dashboard
+            stays focused on the receipt inbox and recent work.
+          </p>
+          <Link
+            to="/app/exports"
+            className="mt-6 inline-flex rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-ink"
+          >
+            Go to Exports
+          </Link>
+        </div>
+        <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-panel">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-slate-500">Home status</p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div>
+              <h3 className="text-lg font-semibold text-ink">Inbox first</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">Home is now for recent receipts, review status, and quick navigation.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-ink">Dedicated tools</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">Capture, Exports, and Settings each now have a clearer role in the product.</p>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );
