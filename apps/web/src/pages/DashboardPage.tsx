@@ -5,7 +5,6 @@ import { ExportMenu } from "../components/ExportMenu";
 import { ExportHistoryPanel } from "../components/ExportHistoryPanel";
 import { ExportTemplateManager } from "../components/ExportTemplateManager";
 import { ReceiptTable } from "../components/ReceiptTable";
-import { ReceiptUploader } from "../components/ReceiptUploader";
 import { useReceipts } from "@receipt-ocr/shared/hooks";
 import { useExportPreferences } from "../hooks/useExportPreferences";
 
@@ -32,12 +31,13 @@ export const DashboardPage = () => {
     <div className="space-y-8">
       <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <div className="rounded-[2rem] border border-white/70 bg-white/70 p-8 shadow-panel backdrop-blur">
-          <p className="font-mono text-xs uppercase tracking-[0.35em] text-tide">Freelancer workflow</p>
+          <p className="font-mono text-xs uppercase tracking-[0.35em] text-tide">Workspace home</p>
           <h1 className="mt-4 max-w-2xl font-display text-5xl font-semibold tracking-tight text-ink">
             Keep your receipts tidy enough for books, taxes, and handoff.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600">
-            Capture a receipt, confirm the header fields that matter, and export a cleaner record to CSV or Excel when you are ready.
+            Use this home surface to track recent receipts, filter what needs attention, and jump into focused Capture, Export,
+            and Settings workflows.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <div className="rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white">Header-field OCR</div>
@@ -75,7 +75,39 @@ export const DashboardPage = () => {
           </div>
         </div>
       </section>
-      <ReceiptUploader />
+      <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-panel">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-tide">Next action</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-ink">Capture now lives in its own workflow.</h2>
+          <p className="mt-4 text-sm leading-7 text-slate-600">
+            Open the dedicated Capture screen when you want to upload or photograph the next receipt. That flow now owns the
+            uploader and OCR progress state.
+          </p>
+          <Link
+            to="/app/capture"
+            className="mt-6 inline-flex rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+          >
+            Open Capture
+          </Link>
+        </div>
+        <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-panel">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-slate-500">Home purpose</p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-3">
+            <div>
+              <h3 className="text-lg font-semibold text-ink">Review</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">Check processed and needs-review receipts.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-ink">Filter</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">Find the vendor or status that needs attention.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-ink">Jump off</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">Move into Capture, Exports, or Settings when needed.</p>
+            </div>
+          </div>
+        </div>
+      </section>
       <section className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap gap-3">
           <input
