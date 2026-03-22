@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc -p tsconfig.json",
+    "build": "npm run build --workspace @receipt-ocr/shared && tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "test": "vitest run --pool=threads",
     "lint": "tsc --noEmit",
@@ -13,6 +13,7 @@
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "@receipt-ocr/shared": "file:../../packages/shared",
     "@aws-sdk/client-s3": "^3.1005.0",
     "@google-cloud/vision": "^4.3.2",
     "@prisma/client": "^6.4.1",
