@@ -1,9 +1,12 @@
 import { useDeferredValue, useState } from "react";
 import type { ReceiptStatus } from "@receipt-ocr/shared/types";
 import { ExportMenu } from "../components/ExportMenu";
+import { ExportHistoryPanel } from "../components/ExportHistoryPanel";
+import { ExportTemplateManager } from "../components/ExportTemplateManager";
 import { ReceiptTable } from "../components/ReceiptTable";
 import { ReceiptUploader } from "../components/ReceiptUploader";
 import { useReceipts } from "@receipt-ocr/shared/hooks";
+import { useExportPreferences } from "../hooks/useExportPreferences";
 
 export const DashboardPage = () => {
   const [merchant, setMerchant] = useState("");
@@ -14,6 +17,15 @@ export const DashboardPage = () => {
     status: status || undefined
   };
   const { data, isLoading } = useReceipts(filters);
+  const {
+    templates,
+    selectedTemplateId,
+    setSelectedTemplateId,
+    saveTemplate,
+    deleteTemplate,
+    history,
+    recordExport
+  } = useExportPreferences();
 
   return (
     <div className="space-y-8">
@@ -58,9 +70,33 @@ export const DashboardPage = () => {
             <option value="failed">Failed</option>
           </select>
         </div>
-        <ExportMenu filters={filters} />
+        <ExportMenu
+          filters={filters}
+          recordCount={data?.pagination.total ?? 0}
+          templates={templates}
+          selectedTemplateId={selectedTemplateId}
+          onSelectTemplate={setSelectedTemplateId}
+          onRecordExport={({ format, template }) =>
+            recordExport({
+              format,
+              recordCount: data?.pagination.total ?? 0,
+              filters,
+              template
+            })
+          }
+        />
       </section>
       {isLoading ? <div className="rounded-[2rem] bg-white/90 p-6 shadow-panel">Loading receipts...</div> : <ReceiptTable receipts={data?.data ?? []} />}
+      <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+        <ExportTemplateManager
+          templates={templates}
+          selectedTemplateId={selectedTemplateId}
+          onSelectTemplate={setSelectedTemplateId}
+          onSaveTemplate={saveTemplate}
+          onDeleteTemplate={deleteTemplate}
+        />
+        <ExportHistoryPanel history={history} />
+      </section>
     </div>
   );
 };

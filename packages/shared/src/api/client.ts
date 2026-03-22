@@ -1,4 +1,6 @@
 import type {
+  ExportFormat,
+  ExportTemplate,
   ReceiptFilters,
   ReceiptListResponse,
   ReceiptRecord,
@@ -78,6 +80,17 @@ const toQueryString = (filters?: ReceiptFilters) => {
   }
   if (filters?.status) {
     params.set("status", filters.status);
+  }
+
+  return params.toString();
+};
+
+const toExportQueryString = (format: ExportFormat, filters?: ReceiptFilters, template?: ExportTemplate) => {
+  const params = new URLSearchParams(toQueryString(filters));
+  params.set("format", format);
+
+  if (template) {
+    params.set("template", JSON.stringify(template));
   }
 
   return params.toString();
@@ -212,6 +225,40 @@ export const updateReceipt = async (receipt: ReceiptRecord): Promise<ReceiptReco
 export const getExportUrl = (format: "csv" | "xlsx", filters?: ReceiptFilters) => {
   const query = toQueryString(filters);
   return `${getApiBaseUrl()}/exports/receipts.${format}${query ? `?${query}` : ""}`;
+};
+
+const getDownloadFilename = (response: Response, fallback: string) => {
+  const disposition = response.headers.get("Content-Disposition");
+  const match = disposition?.match(/filename="?([^"]+)"?/i);
+  return match?.[1] ?? fallback;
+};
+
+export const getTemplatedExportUrl = (format: ExportFormat, filters?: ReceiptFilters, template?: ExportTemplate) => {
+  const query = toExportQueryString(format, filters, template);
+  return `${getApiBaseUrl()}/exports/receipts.${format}${query ? `?${query}` : ""}`;
+};
+
+export const downloadExport = async (
+  format: ExportFormat,
+  filters?: ReceiptFilters,
+  template?: ExportTemplate
+): Promise<{ filename: string }> => {
+  const response = await withTimeout(getTemplatedExportUrl(format, filters, template));
+
+  if (!response.ok) {
+    throw new Error(await readError(response));
+  }
+
+  const blob = await response.blob();
+  const filename = getDownloadFilename(response, `receipts.${format}`);
+  const objectUrl = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(objectUrl);
+
+  return { filename };
 };
 
 export const register = async (input: {
