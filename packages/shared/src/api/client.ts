@@ -11,7 +11,7 @@ import {
   getApiOrigin,
   getAuthToken,
   getRequestTimeoutMs
-} from "./config";
+} from "./config.js";
 
 type UnauthorizedHandler = () => void;
 const unauthorizedHandlers: UnauthorizedHandler[] = [];

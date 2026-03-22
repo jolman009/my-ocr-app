@@ -1,2 +1,2 @@
-export * from "./useReceipts";
-export * from "./useAuth";
+export * from "./useReceipts.js";
+export * from "./useAuth.js";

@@ -5,11 +5,11 @@ import {
   updateReceipt,
   uploadReceipt,
   type UploadReceiptInput
-} from "../api";
+} from "../api/index.js";
 import type {
   ReceiptFilters,
   ReceiptRecord
-} from "../types";
+} from "../types/index.js";
 
 export const receiptKeys = {
   all: ["receipts"] as const,
