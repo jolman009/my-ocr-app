@@ -20,7 +20,7 @@ const planCopy = {
     eyebrow: "Pro preview",
     title: "Join the template-first upgrade path.",
     description:
-      "Create your account now and we’ll keep your signup attached to the Pro preview path as billing and advanced export tooling come online."
+      "Create your account now and we'll keep your signup attached to the Pro preview path as billing and advanced export tooling come online."
   }
 } as const;
 
@@ -78,8 +78,17 @@ export const AuthPage = () => {
   return (
     <div className="min-h-screen bg-[#f3efe6] px-6 py-6 text-ink lg:px-10">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between py-4">
-        <Link to="/" className="font-display text-2xl font-semibold tracking-tight text-ink">
-          Receipt Radar
+        <Link to="/" className="flex items-center gap-3">
+          <img
+            src="/brand/receipt-radar-icon.svg"
+            alt="Receipt Radar icon"
+            className="h-11 w-11 rounded-xl border border-black/10 bg-white/80 p-2 shadow-sm"
+          />
+          <img
+            src="/brand/receipt-radar-dark.svg"
+            alt="Receipt Radar"
+            className="h-9 w-auto"
+          />
         </Link>
         <Link
           to="/"
@@ -224,7 +233,7 @@ export const AuthPage = () => {
                     <p className="font-semibold text-ink">{selectedPlan === "pro" ? "Pro preview" : "Free"}</p>
                     <p className="text-sm text-slate-500">
                       {selectedPlan === "pro"
-                        ? "We’ll preserve your preview interest as the paid upgrade path ships."
+                        ? "We'll preserve your preview interest as the paid upgrade path ships."
                         : "Start with the core receipt workflow and export tools."}
                     </p>
                   </div>

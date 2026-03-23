@@ -23,8 +23,17 @@ const WorkspaceLayout = ({ onLogout }: { onLogout: () => void }) => {
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-6 py-6 lg:px-10">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <NavLink to="/app" className="font-display text-2xl font-semibold text-ink">
-                Receipt Radar
+              <NavLink to="/app" className="flex items-center gap-3">
+                <img
+                  src="/brand/receipt-radar-icon.svg"
+                  alt="Receipt Radar icon"
+                  className="h-10 w-10 rounded-xl border border-slate-200 bg-white p-2 shadow-sm"
+                />
+                <img
+                  src="/brand/receipt-radar-dark.svg"
+                  alt="Receipt Radar"
+                  className="h-8 w-auto"
+                />
               </NavLink>
               <div className="hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-600 shadow-sm md:block">
                 Freelancer receipt workspace

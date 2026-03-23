@@ -44,8 +44,17 @@ export const LandingPage = () => {
         <div className="landing-glow absolute bottom-[-10rem] right-[-8rem] h-[24rem] w-[24rem] rounded-full bg-tide/15 blur-3xl" />
         <div className="mx-auto flex min-h-screen w-full max-w-[90rem] flex-col px-6 pb-12 pt-6 lg:px-10">
           <header className="flex items-center justify-between py-4">
-            <Link to="/" className="font-display text-2xl font-semibold tracking-tight text-ink">
-              Receipt Radar
+            <Link to="/" className="flex items-center gap-3">
+              <img
+                src="/brand/receipt-radar-icon.svg"
+                alt="Receipt Radar icon"
+                className="h-11 w-11 rounded-xl border border-black/10 bg-white/80 p-2 shadow-sm"
+              />
+              <img
+                src="/brand/receipt-radar-dark.svg"
+                alt="Receipt Radar"
+                className="h-9 w-auto"
+              />
             </Link>
             <div className="flex items-center gap-3">
               <a href="#pricing" className="hidden text-sm font-medium text-slate-600 transition hover:text-ink sm:block">
@@ -93,6 +102,14 @@ export const LandingPage = () => {
 
             <div className="relative">
               <div className="receipt-stage relative mx-auto aspect-[0.92] w-full max-w-[36rem]">
+                <div className="absolute left-[8%] top-0 z-10 w-[54%] rounded-[2rem] border border-white/75 bg-white/70 p-4 shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur">
+                  <img
+                    src="/brand/receipt-radar-banner.svg"
+                    alt="Receipt Radar banner"
+                    className="h-auto w-full"
+                  />
+                </div>
+
                 <div className="absolute left-[4%] top-[8%] h-[78%] w-[62%] rounded-[2.75rem] border border-black/10 bg-[#fffdf8] p-8 shadow-[0_42px_90px_rgba(15,23,42,0.16)]">
                   <p className="font-mono text-[0.65rem] uppercase tracking-[0.36em] text-tide">Today</p>
                   <div className="mt-5 border-t border-dashed border-slate-300 pt-5">
