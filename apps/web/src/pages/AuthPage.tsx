@@ -60,14 +60,14 @@ export const AuthPage = () => {
     try {
       if (isLogin) {
         const response = await loginMutation.mutateAsync({ email: data.email, password: data.password });
-        login(response.token);
+        login(response.token, response.user);
       } else {
         const response = await registerMutation.mutateAsync({
           email: data.email,
           password: data.password,
           name: data.name
         });
-        login(response.token);
+        login(response.token, response.user);
       }
       navigate("/app", { replace: true });
     } catch (e) {

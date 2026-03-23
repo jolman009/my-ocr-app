@@ -171,6 +171,18 @@ Implement real `Settings` behavior:
 - billing integration
 - AI-assisted cleanup and categorization
 
+## Needs Revisit
+
+- Local development login is currently blocked by database connectivity:
+  - the local API cannot reach the Supabase pooler host in the current local environment
+  - production on Render works, but local auth testing does not
+  - recommended resolution: use local Postgres for local development instead of depending on the production Supabase connection
+- `apps/web/tsconfig.json` currently uses `noEmit: true`:
+  - this was added to stop stale generated `.js` files from shadowing `.tsx` source in local dev
+  - revisit only if the web build pipeline changes and TypeScript emit becomes intentionally required
+- `receipt-radar-dark.svg` is not currently used in headers:
+  - revisit if dark mode or a theme-aware branding system is added
+
 ## Operational Notes
 
 - Be careful not to commit generated web `.js` artifacts created during builds

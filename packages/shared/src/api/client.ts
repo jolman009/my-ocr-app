@@ -299,3 +299,22 @@ export const login = async (input: {
 
   return response.json();
 };
+
+export const changePassword = async (input: {
+  currentPassword: string;
+  newPassword: string;
+}): Promise<{ message: string }> => {
+  const response = await withTimeout(`${getApiBaseUrl()}/auth/change-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(input)
+  });
+
+  if (!response.ok) {
+    throw new Error(await readError(response));
+  }
+
+  return response.json();
+};
