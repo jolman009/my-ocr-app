@@ -13,7 +13,7 @@ const formatDate = (value: string) =>
 
 export const SettingsPage = () => {
   const { user } = useAuthContext();
-  const { templates, selectedTemplate, selectedTemplateId, setSelectedTemplateId, history } = useExportPreferences();
+  const { templates, selectedTemplate, selectedTemplateId, setSelectedTemplateId, saveTemplate, history } = useExportPreferences();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
@@ -174,18 +174,34 @@ export const SettingsPage = () => {
             </label>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-4">
-                <p className="text-sm font-semibold text-slate-500">Date format</p>
-                <p className="mt-3 text-base font-semibold text-ink">
-                  {selectedTemplate?.dateFormat === "iso" ? "ISO (YYYY-MM-DD)" : "US (MM/DD/YYYY)"}
-                </p>
-              </div>
-              <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-4">
-                <p className="text-sm font-semibold text-slate-500">Amount format</p>
-                <p className="mt-3 text-base font-semibold text-ink">
-                  {selectedTemplate?.amountFormat === "plain" ? "Plain numbers" : "Currency-formatted"}
-                </p>
-              </div>
+              <label className="block rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-4">
+                <span className="text-sm font-semibold text-slate-500">Date format</span>
+                <select
+                  value={selectedTemplate?.dateFormat ?? "us"}
+                  onChange={(event) => {
+                    if (!selectedTemplate) return;
+                    saveTemplate({ ...selectedTemplate, dateFormat: event.target.value as "us" | "iso" });
+                  }}
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-ink outline-none transition focus:border-ember"
+                >
+                  <option value="us">US (MM/DD/YYYY)</option>
+                  <option value="iso">ISO (YYYY-MM-DD)</option>
+                </select>
+              </label>
+              <label className="block rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-4">
+                <span className="text-sm font-semibold text-slate-500">Amount format</span>
+                <select
+                  value={selectedTemplate?.amountFormat ?? "currency"}
+                  onChange={(event) => {
+                    if (!selectedTemplate) return;
+                    saveTemplate({ ...selectedTemplate, amountFormat: event.target.value as "plain" | "currency" });
+                  }}
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-ink outline-none transition focus:border-ember"
+                >
+                  <option value="currency">Currency ($0.00)</option>
+                  <option value="plain">Plain numbers</option>
+                </select>
+              </label>
             </div>
 
             <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-4">

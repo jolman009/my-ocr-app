@@ -217,13 +217,14 @@ Should not contain:
 
 ### Phase 4: Dedicated Settings screen
 
-- [ ] Create a new `SettingsPage` component
-- [ ] Add account summary section
-- [ ] Add current plan / plan preview section
-- [ ] Add scan-usage summary placeholder
-- [ ] Add default export template selector
-- [ ] Add default date / amount formatting preferences if useful
-- [ ] Reserve space for future billing actions without pretending billing is live before it is
+- [x] Create a new `SettingsPage` component
+- [x] Add account summary section (name, email)
+- [x] Add current plan / plan preview section (Free tier with upgrade placeholder)
+- [x] Add scan-usage summary placeholder (total, processed, needs review, failed counts)
+- [x] Add default export template selector
+- [x] Add default date / amount formatting preferences (editable, updates selected template)
+- [x] Reserve space for future billing actions without pretending billing is live before it is
+- [x] Add change password form
 
 ### Phase 5: Dashboard simplification
 
