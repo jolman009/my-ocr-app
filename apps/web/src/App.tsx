@@ -85,7 +85,12 @@ export default function App() {
   const { isAuthenticated, isHydrating, logout } = useAuthContext();
 
   if (isHydrating) {
-    return <div className="flex min-h-screen items-center justify-center bg-mist text-ink">Loading...</div>;
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-mist text-ink">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-ember" />
+        <p className="mt-4 text-sm font-medium text-slate-500">Loading workspace...</p>
+      </div>
+    );
   }
 
   return (

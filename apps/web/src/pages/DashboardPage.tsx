@@ -117,7 +117,23 @@ export const DashboardPage = () => {
           Open Exports
         </Link>
       </section>
-      {isLoading ? <div className="rounded-[2rem] bg-white/90 p-6 shadow-panel">Loading receipts...</div> : <ReceiptTable receipts={data?.data ?? []} />}
+      {isLoading ? (
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse rounded-[1.5rem] border border-slate-200 bg-white/90 p-5 shadow-sm">
+              <div className="flex items-center justify-between gap-4">
+                <div className="space-y-2">
+                  <div className="h-4 w-36 rounded-full bg-slate-200" />
+                  <div className="h-3 w-24 rounded-full bg-slate-100" />
+                </div>
+                <div className="h-6 w-16 rounded-full bg-slate-100" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <ReceiptTable receipts={data?.data ?? []} />
+      )}
       <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-panel">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-tide">Exports now live separately</p>

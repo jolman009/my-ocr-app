@@ -81,6 +81,12 @@ export const ExportTemplateManager = ({
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-3">
+          {templates.length === 0 && (
+            <div className="rounded-[1.5rem] border border-dashed border-slate-200 px-5 py-8 text-center">
+              <p className="font-semibold text-ink">No templates yet</p>
+              <p className="mt-2 text-sm text-slate-500">Create your first export template to save column, date, and amount preferences for reuse.</p>
+            </div>
+          )}
           {templates.map((template) => (
             <button
               key={template.id}

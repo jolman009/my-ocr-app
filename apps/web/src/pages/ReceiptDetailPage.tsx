@@ -8,14 +8,35 @@ export const ReceiptDetailPage = () => {
   const updateMutation = useUpdateReceipt();
 
   if (isLoading) {
-    return <div className="rounded-[2rem] bg-white/90 p-6 shadow-panel">Loading receipt...</div>;
+    return (
+      <div className="space-y-6 py-6">
+        <div className="h-10 w-40 animate-pulse rounded-full bg-slate-200" />
+        <div className="animate-pulse rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-panel">
+          <div className="space-y-4">
+            <div className="h-5 w-48 rounded-full bg-slate-200" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="h-12 rounded-2xl bg-slate-100" />
+              <div className="h-12 rounded-2xl bg-slate-100" />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="h-12 rounded-2xl bg-slate-100" />
+              <div className="h-12 rounded-2xl bg-slate-100" />
+              <div className="h-12 rounded-2xl bg-slate-100" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error || !data) {
     return (
-      <div className="rounded-[2rem] bg-white/90 p-6 shadow-panel">
-        <p className="text-sm text-red-600">Unable to load this receipt.</p>
-        <Link to="/app" className="mt-4 inline-block text-sm font-medium text-ember">
+      <div className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-panel">
+        <p className="font-semibold text-ink">Unable to load this receipt</p>
+        <p className="mt-2 text-sm text-slate-500">
+          {error?.message || "The receipt could not be found or a network error occurred."}
+        </p>
+        <Link to="/app" className="mt-5 inline-flex rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
           Back to dashboard
         </Link>
       </div>

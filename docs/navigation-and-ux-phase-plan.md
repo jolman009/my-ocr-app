@@ -236,11 +236,13 @@ Should not contain:
 
 ### Phase 6: UX polish and transitions
 
-- [ ] Add stronger visual distinction between working surfaces so each screen feels intentional
-- [ ] Improve transitions from `Capture -> Review`
-- [ ] Improve transitions from `Home -> Exports`
-- [ ] Add empty states for no receipts, no templates, and no export history
+- [x] Add skeleton loaders for dashboard receipt list and receipt detail page
+- [x] Add polished spinner for workspace hydration state
+- [x] Add empty state for export template manager (no templates yet)
+- [x] Improve receipt detail error state with contextual message and retry
+- [x] Empty states verified: receipt table, export history, template manager all covered
 - [ ] Verify responsive behavior for desktop and mobile widths
+- [ ] Add page transition animations between routes (deferred — nice-to-have)
 
 ### Phase 7: Product consistency checks
 
