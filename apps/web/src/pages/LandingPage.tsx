@@ -45,16 +45,15 @@ export const LandingPage = () => {
         <div className="mx-auto flex min-h-screen w-full max-w-[90rem] flex-col px-6 pb-12 pt-6 lg:px-10">
           <header className="flex items-center justify-between py-4">
             <Link to="/" className="flex items-center gap-3">
-              <img
-                src="/brand/receipt-radar-icon.svg"
-                alt="Receipt Radar icon"
-                className="h-11 w-11 rounded-xl border border-black/10 bg-white/80 p-2 shadow-sm"
-              />
-              <img
-                src="/brand/receipt-radar-dark.svg"
-                alt="Receipt Radar"
-                className="h-9 w-auto"
-              />
+              <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-white/80 shadow-sm">
+                <img
+                  src="/brand/receipt-radar-icon.svg"
+                  alt="Receipt Radar icon"
+                  className="h-[4.5rem] w-[4.5rem] max-w-none shrink-0"
+                />
+              </span>
+              <span className="font-display text-2xl font-semibold tracking-tight text-ink">Receipt Radar</span>
+              {/* TODO: Revisit receipt-radar-dark.svg for header branding if we implement dark mode. */}
             </Link>
             <div className="flex items-center gap-3">
               <a href="#pricing" className="hidden text-sm font-medium text-slate-600 transition hover:text-ink sm:block">
@@ -102,11 +101,11 @@ export const LandingPage = () => {
 
             <div className="relative">
               <div className="receipt-stage relative mx-auto aspect-[0.92] w-full max-w-[36rem]">
-                <div className="absolute left-[8%] top-0 z-10 w-[54%] rounded-[2rem] border border-white/75 bg-white/70 p-4 shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur">
+                <div className="absolute left-[8%] top-0 z-10 flex w-[54%] items-center justify-center overflow-hidden rounded-[2rem] border border-white/75 bg-white/70 p-2 shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur">
                   <img
                     src="/brand/receipt-radar-banner.svg"
                     alt="Receipt Radar banner"
-                    className="h-auto w-full"
+                    className="h-auto w-[118%] max-w-none shrink-0"
                   />
                 </div>
 

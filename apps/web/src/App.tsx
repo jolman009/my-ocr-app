@@ -24,16 +24,15 @@ const WorkspaceLayout = ({ onLogout }: { onLogout: () => void }) => {
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <NavLink to="/app" className="flex items-center gap-3">
-                <img
-                  src="/brand/receipt-radar-icon.svg"
-                  alt="Receipt Radar icon"
-                  className="h-10 w-10 rounded-xl border border-slate-200 bg-white p-2 shadow-sm"
-                />
-                <img
-                  src="/brand/receipt-radar-dark.svg"
-                  alt="Receipt Radar"
-                  className="h-8 w-auto"
-                />
+                <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm">
+                  <img
+                    src="/brand/receipt-radar-icon.svg"
+                    alt="Receipt Radar icon"
+                    className="h-16 w-16 max-w-none shrink-0"
+                  />
+                </span>
+                <span className="font-display text-2xl font-semibold tracking-tight text-ink">Receipt Radar</span>
+                {/* TODO: Revisit receipt-radar-dark.svg for header branding if we implement dark mode. */}
               </NavLink>
               <div className="hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-600 shadow-sm md:block">
                 Freelancer receipt workspace
