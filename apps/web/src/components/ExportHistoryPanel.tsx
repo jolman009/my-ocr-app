@@ -21,7 +21,7 @@ export const ExportHistoryPanel = ({ history }: ExportHistoryPanelProps) => {
                   </p>
                 </div>
                 <div className="text-right text-xs uppercase tracking-[0.18em] text-slate-400">
-                  {new Date(entry.exportedAt).toLocaleString()}
+                  {entry.exportedAt ? new Date(entry.exportedAt).toLocaleString() : "—"}
                 </div>
               </div>
               <p className="mt-3 text-sm text-slate-600">{entry.filtersLabel}</p>

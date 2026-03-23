@@ -65,26 +65,23 @@ export const availableExportFields = [
   { key: "id", label: "Receipt ID" }
 ] as const;
 
-export const useExportPreferences = () => {
-  const [state, setState] = useState<ExportPreferencesState>(initialState);
-
-  useEffect(() => {
+const loadState = (): ExportPreferencesState => {
+  try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return;
-    }
+    if (!raw) return initialState();
+    const parsed = JSON.parse(raw) as Partial<ExportPreferencesState>;
+    return {
+      templates: parsed.templates?.length ? parsed.templates : initialState().templates,
+      selectedTemplateId: parsed.selectedTemplateId ?? initialState().selectedTemplateId,
+      history: parsed.history ?? []
+    };
+  } catch {
+    return initialState();
+  }
+};
 
-    try {
-      const parsed = JSON.parse(raw) as Partial<ExportPreferencesState>;
-      setState({
-        templates: parsed.templates?.length ? parsed.templates : initialState().templates,
-        selectedTemplateId: parsed.selectedTemplateId ?? initialState().selectedTemplateId,
-        history: parsed.history ?? []
-      });
-    } catch {
-      setState(initialState());
-    }
-  }, []);
+export const useExportPreferences = () => {
+  const [state, setState] = useState<ExportPreferencesState>(loadState);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
