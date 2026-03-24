@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import type { ReceiptStatus } from "@receipt-ocr/shared/types";
 import { ReceiptTable } from "../components/ReceiptTable";
 import { useReceipts } from "@receipt-ocr/shared/hooks";
+import { useAuthContext } from "../providers/AuthProvider";
 
 export const DashboardPage = () => {
+  const { user } = useAuthContext();
   const [merchant, setMerchant] = useState("");
   const [status, setStatus] = useState<"" | ReceiptStatus>("");
   const deferredMerchant = useDeferredValue(merchant);
@@ -18,7 +20,9 @@ export const DashboardPage = () => {
     <div className="space-y-8">
       <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <div className="rounded-[2rem] border border-white/70 bg-white/70 p-8 shadow-panel backdrop-blur">
-          <p className="font-mono text-xs uppercase tracking-[0.35em] text-tide">Workspace home</p>
+          <p className="font-mono text-xs uppercase tracking-[0.35em] text-tide">
+            {user?.name ? `Welcome, ${user.name}` : user?.email ? `Welcome, ${user.email}` : "Workspace home"}
+          </p>
           <h1 className="mt-4 max-w-2xl font-display text-5xl font-semibold tracking-tight text-ink">
             Keep your receipts tidy enough for books, taxes, and handoff.
           </h1>
