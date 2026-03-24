@@ -246,10 +246,10 @@ Should not contain:
 
 ### Phase 7: Product consistency checks
 
-- [ ] Update `screen-spec.md` to reflect which screens are now dedicated surfaces versus embedded flows
-- [ ] Update any marketing/product copy that still implies a one-surface dashboard experience
-- [ ] Verify auth redirects land users on the correct app surface
-- [ ] Verify route guards still protect all app routes
+- [x] Update `screen-spec.md` to reflect which screens are now dedicated surfaces versus embedded flows
+- [x] Update any marketing/product copy that still implies a one-surface dashboard experience (audit: clean)
+- [x] Verify auth redirects land users on the correct app surface (all passing)
+- [x] Verify route guards still protect all app routes (all `/app/*` protected)
 
 ## Recommended Build Order
 

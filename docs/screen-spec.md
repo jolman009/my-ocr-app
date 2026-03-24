@@ -166,25 +166,48 @@
   - Exports
   - Settings
 
+## Implementation Status
+
+| Screen | Route | Status |
+|---|---|---|
+| 1. Public Landing Page | `/` | Dedicated page |
+| 2. Sign-In / Sign-Up | `/auth` | Dedicated page (includes forgot password flow) |
+| 3. Onboarding - Profile Intent | — | Not implemented (future) |
+| 4. Onboarding - Export Template Setup | — | Not implemented (future; functionality exists in Exports) |
+| 5. Dashboard / Receipt Inbox | `/app` | Dedicated page |
+| 6. Receipt Capture | `/app/capture` | Dedicated page |
+| 7. OCR Processing State | `/app/capture` | Embedded in Capture page |
+| 8. Receipt Review | `/app/receipts/:id` | Dedicated page |
+| 9. Export Builder | `/app/exports` | Dedicated page |
+| 10. Export History | `/app/exports` | Embedded in Exports page |
+| 11. Settings / Billing | `/app/settings` | Dedicated page |
+
+Additional routes:
+- `/privacy` — Privacy policy (public, no auth required)
+- `/auth/reset-password` — Password reset (public, token-based)
+
 ## Release Priorities
 
-### V1
+### V1 — Complete
 
-- landing page
-- sign-up
-- dedicated home, capture, and exports surfaces
-- receipt upload and OCR
-- header-field review
-- CSV/XLSX export
-- one saved export template
+- [x] landing page
+- [x] sign-up with plan selection
+- [x] dedicated home, capture, exports, and settings surfaces
+- [x] receipt upload and OCR
+- [x] header-field review with confidence indicators
+- [x] CSV/XLSX export with template support
+- [x] saved export templates (localStorage)
+- [x] export history
+- [x] password reset via email (Resend)
+- [x] privacy policy page
 
 ### V1.1
 
 - unlimited templates on paid tier
-- export history
 - vendor memory
 - auto-categorization suggestions
 - bulk upload
+- onboarding flow (profile intent + export template setup)
 
 ### Later
 
