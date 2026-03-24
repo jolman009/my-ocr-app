@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Pressable,
   RefreshControl,
@@ -11,21 +10,24 @@ import {
   TextInput,
   View
 } from "react-native";
-import * as Haptics from "expo-haptics";
+import type { CompositeScreenProps } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useReceipts } from "@receipt-ocr/shared/hooks";
 import { ReceiptListItem } from "../components/ReceiptListItem";
 import { colors } from "../lib/theme";
-import type { RootStackParamList } from "../types/navigation";
-import { downloadAndShareExport } from "../lib/export";
+import type { RootStackParamList, TabParamList } from "../types/navigation";
 import { useIsRestoring, useMutationState } from "@tanstack/react-query";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useAuthContext } from "../providers/AuthProvider";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Dashboard">;
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<TabParamList, "Home">,
+  NativeStackScreenProps<RootStackParamList>
+>;
 
 export const DashboardScreen = ({ navigation }: Props) => {
-  const { logout } = useAuthContext();
+  const { user } = useAuthContext();
   const netInfo = useNetInfo();
   const isHydrating = useIsRestoring();
   // Extract pending uploads from the paused background mutations queue
@@ -75,21 +77,6 @@ export const DashboardScreen = ({ navigation }: Props) => {
     return [...inFlightReceipts, ...serverData];
   }, [inFlightReceipts, receiptsQuery.data?.data]);
 
-  const [isExporting, setIsExporting] = useState<"csv" | "xlsx" | null>(null);
-
-  const handleExport = async (format: "csv" | "xlsx") => {
-    if (isExporting) return;
-    setIsExporting(format);
-    try {
-      await Haptics.selectionAsync();
-      await downloadAndShareExport(format, filters);
-    } catch (e) {
-      Alert.alert("Export Error", e instanceof Error ? e.message : "Failed to generate export");
-    } finally {
-      setIsExporting(null);
-    }
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
@@ -101,13 +88,10 @@ export const DashboardScreen = ({ navigation }: Props) => {
         }
         ListHeaderComponent={
           <View style={styles.header}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <Text style={styles.eyebrow}>Mobile OCR</Text>
-              <Pressable onPress={() => logout()} hitSlop={8}>
-                <Text style={styles.logoutText}>Log out</Text>
-              </Pressable>
-            </View>
-            <Text style={styles.title}>Receipt ledger on the move</Text>
+            <Text style={styles.eyebrow}>
+              {user?.name ? `Welcome, ${user.name}` : user?.email ? `Welcome, ${user.email}` : "Receipt Radar"}
+            </Text>
+            <Text style={styles.title}>Your receipts</Text>
             
             {isOffline && (
               <View style={styles.offlineBanner}>
@@ -120,7 +104,7 @@ export const DashboardScreen = ({ navigation }: Props) => {
             )}
 
             <Text style={styles.subtitle}>
-              Capture, review, and export receipts from Android using the same backend contract as the web app.
+              Filter, review, and track your scanned receipts.
             </Text>
             <TextInput
               value={merchant}
@@ -146,26 +130,6 @@ export const DashboardScreen = ({ navigation }: Props) => {
                 </Pressable>
               ))}
             </View>
-            <View style={styles.exportRow}>
-              <Pressable 
-                style={[styles.exportButtonPrimary, isExporting && { opacity: 0.5 }]} 
-                onPress={() => void handleExport("csv")}
-                disabled={!!isExporting}
-              >
-                <Text style={styles.exportTextPrimary}>
-                  {isExporting === "csv" ? "Exporting..." : "Share CSV"}
-                </Text>
-              </Pressable>
-              <Pressable 
-                style={[styles.exportButtonSecondary, isExporting && { opacity: 0.5 }]} 
-                onPress={() => void handleExport("xlsx")}
-                disabled={!!isExporting}
-              >
-                <Text style={styles.exportTextSecondary}>
-                  {isExporting === "xlsx" ? "Exporting..." : "Share XLSX"}
-                </Text>
-              </Pressable>
-            </View>
           </View>
         }
         ItemSeparatorComponent={() => <View style={{ height: 14 }} />}
@@ -180,10 +144,10 @@ export const DashboardScreen = ({ navigation }: Props) => {
               <Text style={styles.emptyTitle}>Could not load ledger</Text>
               <Text style={styles.emptyBody}>Check your connection and try again.</Text>
               <Pressable
-                style={[styles.exportButtonPrimary, { marginTop: 12, paddingHorizontal: 24 }]}
+                style={[styles.actionButton, { marginTop: 12 }]}
                 onPress={() => void receiptsQuery.refetch()}
               >
-                <Text style={styles.exportTextPrimary}>Retry</Text>
+                <Text style={styles.actionButtonText}>Retry</Text>
               </Pressable>
             </View>
           ) : (
@@ -192,26 +156,17 @@ export const DashboardScreen = ({ navigation }: Props) => {
               <Text style={styles.emptyTitle}>No receipts yet</Text>
               <Text style={styles.emptyBody}>Tap below to scan your first receipt and start tracking expenses.</Text>
               <Pressable
-                style={[styles.exportButtonPrimary, { marginTop: 16, paddingHorizontal: 32 }]}
-                onPress={() => navigation.navigate("Camera")}
+                style={[styles.actionButton, { marginTop: 16 }]}
+                onPress={() => navigation.navigate("Scan")}
                 accessibilityRole="button"
                 accessibilityLabel="Scan your first receipt"
               >
-                <Text style={styles.exportTextPrimary}>Scan a Receipt</Text>
+                <Text style={styles.actionButtonText}>Scan a Receipt</Text>
               </Pressable>
             </View>
           )
         }
       />
-      <Pressable
-        style={styles.fab}
-        onPress={() => navigation.navigate("Camera")}
-        accessibilityRole="button"
-        accessibilityLabel="Scan new receipt"
-        hitSlop={12}
-      >
-        <Text style={styles.fabText}>Scan</Text>
-      </Pressable>
     </SafeAreaView>
   );
 };
@@ -235,11 +190,6 @@ const styles = StyleSheet.create({
     color: colors.tide,
     fontWeight: "700",
     fontSize: 12
-  },
-  logoutText: {
-    color: colors.ember,
-    fontWeight: "600",
-    fontSize: 14
   },
   title: {
     color: colors.ink,
@@ -282,29 +232,14 @@ const styles = StyleSheet.create({
   filterTextActive: {
     color: colors.white
   },
-  exportRow: {
-    flexDirection: "row",
-    gap: 12
-  },
-  exportButtonPrimary: {
-    flex: 1,
+  actionButton: {
     borderRadius: 18,
     backgroundColor: colors.ink,
     paddingVertical: 14,
+    paddingHorizontal: 24,
     alignItems: "center"
   },
-  exportButtonSecondary: {
-    flex: 1,
-    borderRadius: 18,
-    backgroundColor: colors.ember,
-    paddingVertical: 14,
-    alignItems: "center"
-  },
-  exportTextPrimary: {
-    color: colors.white,
-    fontWeight: "700"
-  },
-  exportTextSecondary: {
+  actionButtonText: {
     color: colors.white,
     fontWeight: "700"
   },
@@ -329,21 +264,6 @@ const styles = StyleSheet.create({
   emptyBody: {
     color: "#64748b",
     fontSize: 14
-  },
-  fab: {
-    position: "absolute",
-    right: 24,
-    bottom: 28,
-    borderRadius: 999,
-    backgroundColor: colors.ember,
-    paddingHorizontal: 22,
-    paddingVertical: 18,
-    elevation: 4
-  },
-  fabText: {
-    color: colors.white,
-    fontWeight: "800",
-    fontSize: 16
   },
   offlineBanner: {
     backgroundColor: "#fffbeb",

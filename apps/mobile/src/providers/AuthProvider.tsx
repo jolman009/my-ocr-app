@@ -2,10 +2,17 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { getAuthToken, setAuthToken as setSecureAuthToken, clearAuthToken } from "../lib/authStorage";
 import { setAuthToken, onUnauthorized } from "@receipt-ocr/shared/api";
 
+interface AuthUser {
+  id: string;
+  email: string;
+  name: string | null;
+}
+
 interface AuthContextValue {
   isAuthenticated: boolean;
   isHydrating: boolean;
-  login: (token: string) => Promise<void>;
+  user: AuthUser | null;
+  login: (token: string, user?: AuthUser | null) => Promise<void>;
   logout: () => Promise<void>;
   token: string | null;
 }
@@ -14,6 +21,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setTokenState] = useState<string | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [isHydrating, setIsHydrating] = useState(true);
 
   useEffect(() => {
@@ -39,16 +47,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return unsubscribe;
   }, []);
 
-  const login = async (newToken: string) => {
+  const login = async (newToken: string, nextUser?: AuthUser | null) => {
     await setSecureAuthToken(newToken);
     setTokenState(newToken);
     setAuthToken(newToken);
+    setUser(nextUser ?? null);
   };
 
   const logout = async () => {
     await clearAuthToken();
     setTokenState(null);
     setAuthToken(null);
+    setUser(null);
   };
 
   return (
@@ -56,6 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         isAuthenticated: !!token,
         isHydrating,
+        user,
         login,
         logout,
         token

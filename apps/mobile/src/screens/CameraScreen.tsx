@@ -13,14 +13,14 @@ import { CameraView, FlashMode, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as Haptics from "expo-haptics";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useUploadReceipt } from "@receipt-ocr/shared/hooks";
 import { colors } from "../lib/theme";
 import type { RootStackParamList } from "../types/navigation";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Camera">;
-
-export const CameraScreen = ({ navigation }: Props) => {
+export const CameraScreen = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const uploadMutation = useUploadReceipt();
@@ -54,7 +54,7 @@ export const CameraScreen = ({ navigation }: Props) => {
       uploadMutation.mutate(optimized, {
         onSuccess: (data) => {
           void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          navigation.replace("ReceiptDetail", { receiptId: data.id });
+          navigation.navigate("ReceiptDetail", { receiptId: data.id });
         },
         onError: (error) => {
           Alert.alert("Upload failed", error.message || "Unable to upload receipt.");

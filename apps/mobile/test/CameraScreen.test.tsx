@@ -38,7 +38,7 @@ describe("CameraScreen", () => {
 
     // The CameraScreen uses an Ionicons icon named "camera" for the capture button,
     // so it doesn't have literal text "Take Photo".
-    const { getByLabelText, queryByLabelText, queryByText } = render(<CameraScreen {...mockProps} />);
+    const { getByLabelText, queryByLabelText, queryByText } = render(<CameraScreen />);
     
     // Check if the camera screen rendered (no strict text assertion needed if we test UI containers)
     expect(queryByText("We need your permission to show the camera")).toBeNull();

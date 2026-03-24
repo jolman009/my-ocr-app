@@ -13,6 +13,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "11.5.2",
+    "@react-navigation/bottom-tabs": "^7.15.7",
     "@react-navigation/native": "^7.1.33",
     "@react-navigation/native-stack": "^7.14.4",
     "@receipt-ocr/shared": "file:../../packages/shared",

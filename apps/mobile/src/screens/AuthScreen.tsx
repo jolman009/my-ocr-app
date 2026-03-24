@@ -39,10 +39,10 @@ export const AuthScreen = () => {
     try {
       if (isLogin) {
         const response = await loginMutation.mutateAsync({ email: data.email, password: data.password });
-        await login(response.token);
+        await login(response.token, response.user);
       } else {
         const response = await registerMutation.mutateAsync({ email: data.email, password: data.password, name: data.name });
-        await login(response.token);
+        await login(response.token, response.user);
       }
     } catch (e) {
       Alert.alert("Authentication failed", e instanceof Error ? e.message : "An error occurred.");
