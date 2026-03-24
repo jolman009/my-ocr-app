@@ -318,3 +318,40 @@ export const changePassword = async (input: {
 
   return response.json();
 };
+
+export const forgotPassword = async (input: {
+  email: string;
+}): Promise<{ message: string }> => {
+  const response = await withTimeout(`${getApiBaseUrl()}/auth/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(input)
+  });
+
+  if (!response.ok) {
+    throw new Error(await readError(response));
+  }
+
+  return response.json();
+};
+
+export const resetPassword = async (input: {
+  token: string;
+  newPassword: string;
+}): Promise<{ message: string }> => {
+  const response = await withTimeout(`${getApiBaseUrl()}/auth/reset-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(input)
+  });
+
+  if (!response.ok) {
+    throw new Error(await readError(response));
+  }
+
+  return response.json();
+};

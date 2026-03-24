@@ -1,3 +1,4 @@
+import { randomBytes, createHash } from "node:crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
@@ -67,6 +68,32 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(input.newPassword, 10);
     await this.users.updatePassword(userId, passwordHash);
+  }
+
+  async forgotPassword(email: string): Promise<string | null> {
+    const user = await this.users.findByEmail(email);
+    if (!user) {
+      return null;
+    }
+
+    const token = randomBytes(32).toString("hex");
+    const tokenHash = createHash("sha256").update(token).digest("hex");
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await this.users.setResetToken(user.id, tokenHash, expiresAt);
+    return token;
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const tokenHash = createHash("sha256").update(token).digest("hex");
+    const user = await this.users.findByResetToken(tokenHash);
+
+    if (!user) {
+      throw new HttpError(400, "Invalid or expired reset link.");
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await this.users.updatePassword(user.id, passwordHash);
   }
 
   verifyToken(token: string) {

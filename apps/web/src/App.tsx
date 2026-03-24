@@ -6,6 +6,7 @@ import { ReceiptDetailPage } from "./pages/ReceiptDetailPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { AuthPage } from "./pages/AuthPage";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { useAuthContext } from "./providers/AuthProvider";
 import { LandingPage } from "./pages/LandingPage";
 
@@ -97,6 +98,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={isAuthenticated ? <Navigate to="/app" replace /> : <LandingPage />} />
       <Route path="/auth" element={isAuthenticated ? <Navigate to="/app" replace /> : <AuthPage />} />
+      <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
       <Route
         path="/privacy"
         element={

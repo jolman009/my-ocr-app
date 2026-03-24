@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useLogin, useRegister } from "@receipt-ocr/shared/hooks";
+import { useForgotPassword, useLogin, useRegister } from "@receipt-ocr/shared/hooks";
 import { useAuthContext } from "../providers/AuthProvider";
 
 type AuthFormValues = {
@@ -42,7 +42,11 @@ export const AuthPage = () => {
 
   const loginMutation = useLogin();
   const registerMutation = useRegister();
+  const forgotMutation = useForgotPassword();
   const isPending = loginMutation.isPending || registerMutation.isPending;
+  const [forgotMode, setForgotMode] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotMessage, setForgotMessage] = useState<string | null>(null);
 
   const setMode = (mode: "login" | "signup") => {
     const next = new URLSearchParams(searchParams);
@@ -222,7 +226,55 @@ export const AuthPage = () => {
                 </button>
               </div>
               {errors.password && <p className="text-sm text-ember">{String(errors.password.message)}</p>}
+              {isLogin && (
+                <button
+                  type="button"
+                  onClick={() => { setForgotMode(true); setForgotMessage(null); }}
+                  className="mt-1 text-xs font-semibold text-slate-400 hover:text-ember transition"
+                >
+                  Forgot password?
+                </button>
+              )}
             </div>
+
+            {forgotMode && isLogin && (
+              <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-4 space-y-3">
+                <p className="text-sm font-semibold text-ink">Reset your password</p>
+                <p className="text-xs text-slate-500">Enter your email and we'll send a reset link.</p>
+                <input
+                  type="email"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm outline-none transition focus:border-ember"
+                />
+                {forgotMessage && <p className="text-xs text-tide">{forgotMessage}</p>}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    disabled={forgotMutation.isPending || !forgotEmail}
+                    onClick={async () => {
+                      try {
+                        const res = await forgotMutation.mutateAsync({ email: forgotEmail });
+                        setForgotMessage(res.message);
+                      } catch (e) {
+                        setForgotMessage(e instanceof Error ? e.message : "Failed to send reset email.");
+                      }
+                    }}
+                    className="rounded-full bg-ink px-4 py-2 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:opacity-70"
+                  >
+                    {forgotMutation.isPending ? "Sending..." : "Send reset link"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForgotMode(false)}
+                    className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-500 hover:text-ink transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
 
             {!isLogin ? (
               <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-4">
