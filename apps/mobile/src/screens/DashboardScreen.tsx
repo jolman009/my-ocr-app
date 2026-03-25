@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
@@ -137,7 +136,24 @@ export const DashboardScreen = ({ navigation }: Props) => {
         )}
         ListEmptyComponent={
           receiptsQuery.isLoading ? (
-            <ActivityIndicator color={colors.ember} size="large" />
+            <View style={{ gap: 12 }}>
+              {[1, 2, 3].map((i) => (
+                <View key={i} style={styles.skeletonCard}>
+                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <View style={{ gap: 6 }}>
+                      <View style={styles.skeletonLine} />
+                      <View style={[styles.skeletonLine, { width: 100 }]} />
+                    </View>
+                    <View style={[styles.skeletonLine, { width: 70, height: 24, borderRadius: 12 }]} />
+                  </View>
+                  <View style={[styles.skeletonLine, { width: 180, marginTop: 8 }]} />
+                  <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
+                    <View style={[styles.skeletonLine, { width: 60 }]} />
+                    <View style={[styles.skeletonLine, { width: 50 }]} />
+                  </View>
+                </View>
+              ))}
+            </View>
           ) : receiptsQuery.isError ? (
             <View style={styles.emptyState}>
               <Text style={styles.emptyTitle}>Could not load ledger</Text>
@@ -263,6 +279,19 @@ const styles = StyleSheet.create({
   emptyBody: {
     color: "#64748b",
     fontSize: 14
+  },
+  skeletonCard: {
+    borderRadius: 20,
+    backgroundColor: colors.white,
+    padding: 18,
+    gap: 4
+  },
+  skeletonLine: {
+    height: 14,
+    width: 140,
+    borderRadius: 8,
+    backgroundColor: "#e2e8f0",
+    opacity: 0.6
   },
   offlineBanner: {
     backgroundColor: "#fffbeb",

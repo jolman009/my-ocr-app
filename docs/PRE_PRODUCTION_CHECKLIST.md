@@ -24,7 +24,7 @@
 - [x] **Password Visibility Toggle** — Show/Hide on login/signup (mobile + web)
 - [x] **Change Password Endpoint** — `POST /api/auth/change-password`
 - [x] **Empty Dashboard CTA** — "Scan a Receipt" button when no receipts exist
-- [ ] **Sentry Project Setup** — Create project in Sentry dashboard, set `EXPO_PUBLIC_SENTRY_DSN`
+- [x] **Sentry Project Setup** — DSN configured, org: `literatipro`, project: `receipt-ocr`
 - [ ] **Analytics Integration** — `analytics.ts` currently logs to console only; needs a real provider
 - [ ] **Multi-device Testing** — Test on Android 9-15, different screen sizes
 - [ ] **Auth Token Refresh** — Currently forces logout when token expires mid-session

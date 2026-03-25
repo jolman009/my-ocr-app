@@ -12,6 +12,7 @@ import {
   View
 } from "react-native";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { getReceiptImageUrl } from "@receipt-ocr/shared/api";
@@ -199,14 +200,15 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
             <Text style={styles.sectionTitle}>Line items</Text>
             <Pressable
               style={styles.addButton}
-              onPress={() =>
+              onPress={() => {
+                void Haptics.selectionAsync();
                 itemsFieldArray.append({
                   name: "",
                   quantity: "",
                   unitPrice: "",
                   totalPrice: "0"
-                })
-              }
+                });
+              }}
               accessibilityRole="button"
               accessibilityLabel="Add new line item"
               hitSlop={8}
@@ -284,7 +286,7 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
                 />
                 <Pressable 
                   style={styles.removeButton} 
-                  onPress={() => itemsFieldArray.remove(index)}
+                  onPress={() => { void Haptics.selectionAsync(); itemsFieldArray.remove(index); }}
                   accessibilityRole="button"
                   accessibilityLabel={`Remove line item ${index + 1}`}
                   hitSlop={12}
@@ -298,6 +300,7 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
         <Pressable
           style={styles.saveButton}
           onPress={form.handleSubmit(async (values) => {
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             await updateMutation.mutateAsync({
               ...receipt,
               merchantName: values.merchantName.trim() || null,
@@ -317,6 +320,7 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
                 }))
                 .filter((item) => item.name.length > 0)
             });
+            void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           })}
           accessibilityRole="button"
           accessibilityLabel={updateMutation.isPending ? "Saving receipt" : "Save receipt"}
