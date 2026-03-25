@@ -1,6 +1,7 @@
 import { ActivityIndicator, SafeAreaView, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../lib/theme";
 import type { RootStackParamList, TabParamList } from "../types/navigation";
 import { useAuthContext } from "../providers/AuthProvider";
@@ -14,9 +15,16 @@ import { ReceiptDetailScreen } from "../screens/ReceiptDetailScreen";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
+const TAB_ICONS: Record<keyof TabParamList, { focused: keyof typeof Ionicons.glyphMap; default: keyof typeof Ionicons.glyphMap }> = {
+  Home: { focused: "home", default: "home-outline" },
+  Scan: { focused: "camera", default: "camera-outline" },
+  Exports: { focused: "download", default: "download-outline" },
+  Settings: { focused: "settings", default: "settings-outline" },
+};
+
 const MainTabs = () => (
   <Tab.Navigator
-    screenOptions={{
+    screenOptions={({ route }) => ({
       headerStyle: { backgroundColor: colors.ink },
       headerTintColor: colors.white,
       headerTitleStyle: { fontWeight: "700" },
@@ -24,36 +32,43 @@ const MainTabs = () => (
         backgroundColor: colors.white,
         borderTopColor: "#e2e8f0",
         borderTopWidth: 1,
-        paddingTop: 10,
-        height: 60
+        paddingTop: 8,
+        paddingBottom: 60,
+        height: 110
       },
       tabBarActiveTintColor: colors.ember,
       tabBarInactiveTintColor: "#94a3b8",
       tabBarLabelStyle: {
         fontSize: 11,
-        fontWeight: "600"
+        fontWeight: "600",
+        marginTop: 2
+      },
+      tabBarIcon: ({ focused, color, size }) => {
+        const icons = TAB_ICONS[route.name];
+        const iconName = focused ? icons.focused : icons.default;
+        return <Ionicons name={iconName} size={22} color={color} />;
       }
-    }}
+    })}
   >
     <Tab.Screen
       name="Home"
       component={DashboardScreen}
-      options={{ title: "Receipt Radar", tabBarLabel: "Home" }}
+      options={{ title: "Receipt Radar" }}
     />
     <Tab.Screen
       name="Scan"
       component={CameraScreen}
-      options={{ title: "Scan Receipt", tabBarLabel: "Scan" }}
+      options={{ title: "Scan Receipt" }}
     />
     <Tab.Screen
       name="Exports"
       component={ExportsScreen}
-      options={{ title: "Exports", tabBarLabel: "Exports" }}
+      options={{ title: "Exports" }}
     />
     <Tab.Screen
       name="Settings"
       component={SettingsScreen}
-      options={{ title: "Settings", tabBarLabel: "Settings" }}
+      options={{ title: "Settings" }}
     />
   </Tab.Navigator>
 );
