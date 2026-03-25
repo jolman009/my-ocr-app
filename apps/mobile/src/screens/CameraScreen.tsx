@@ -111,20 +111,46 @@ export const CameraScreen = () => {
   }
 
   if (previewUri) {
+    const isUploading = uploadMutation.isPending;
+
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.previewHeader}>
-          <Text style={styles.previewTitle}>Preview receipt</Text>
-          <Text style={styles.previewBody}>Use the image or retake before uploading.</Text>
+          <Text style={styles.previewTitle}>
+            {isUploading ? "Processing receipt..." : "Preview receipt"}
+          </Text>
+          <Text style={styles.previewBody}>
+            {isUploading
+              ? "Uploading image and running OCR. This may take a moment."
+              : "Use the image or retake before uploading."}
+          </Text>
         </View>
-        <Image source={{ uri: previewUri }} style={styles.previewImage} />
+
+        {isUploading && (
+          <View style={styles.progressContainer}>
+            <View style={styles.progressTrack}>
+              <View style={styles.progressBar} />
+            </View>
+            <Text style={styles.progressText}>Uploading and extracting receipt data...</Text>
+          </View>
+        )}
+
+        <Image source={{ uri: previewUri }} style={[styles.previewImage, isUploading && { opacity: 0.5 }]} />
         <View style={styles.previewActions}>
-          <Pressable style={styles.secondaryButton} onPress={() => setPreviewUri(null)}>
+          <Pressable
+            style={[styles.secondaryButton, isUploading && { opacity: 0.4 }]}
+            onPress={() => setPreviewUri(null)}
+            disabled={isUploading}
+          >
             <Text style={styles.secondaryButtonText}>Retake</Text>
           </Pressable>
-          <Pressable style={styles.primaryButton} onPress={() => void handleUsePhoto()}>
+          <Pressable
+            style={[styles.primaryButton, isUploading && { opacity: 0.7 }]}
+            onPress={() => void handleUsePhoto()}
+            disabled={isUploading}
+          >
             <Text style={styles.primaryButtonText}>
-              {uploadMutation.isPending ? "Uploading..." : "Use Photo"}
+              {isUploading ? "Uploading..." : "Use Photo"}
             </Text>
           </Pressable>
         </View>
@@ -182,6 +208,27 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mist,
     padding: 20,
     gap: 20
+  },
+  progressContainer: {
+    gap: 8
+  },
+  progressTrack: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#e2e8f0",
+    overflow: "hidden" as const
+  },
+  progressBar: {
+    width: "60%",
+    height: "100%",
+    borderRadius: 3,
+    backgroundColor: colors.ember
+  },
+  progressText: {
+    color: "#64748b",
+    fontSize: 13,
+    fontWeight: "500" as const,
+    textAlign: "center" as const
   },
   cameraSafeArea: {
     flex: 1,
