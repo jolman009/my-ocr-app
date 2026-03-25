@@ -1,4 +1,4 @@
-import { ActivityIndicator, SafeAreaView, StyleSheet, Text } from "react-native";
+import { ActivityIndicator, SafeAreaView, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { colors } from "../lib/theme";
@@ -14,12 +14,6 @@ import { ReceiptDetailScreen } from "../screens/ReceiptDetailScreen";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const TabIcon = ({ label, focused }: { label: string; focused: boolean }) => (
-  <Text style={{ fontSize: 11, fontWeight: focused ? "800" : "600", color: focused ? colors.ember : "#94a3b8" }}>
-    {label}
-  </Text>
-);
-
 const MainTabs = () => (
   <Tab.Navigator
     screenOptions={{
@@ -29,46 +23,37 @@ const MainTabs = () => (
       tabBarStyle: {
         backgroundColor: colors.white,
         borderTopColor: "#e2e8f0",
-        paddingTop: 8,
-        paddingBottom: 8,
-        height: 64
+        borderTopWidth: 1,
+        paddingTop: 10,
+        height: 60
       },
       tabBarActiveTintColor: colors.ember,
       tabBarInactiveTintColor: "#94a3b8",
-      tabBarShowLabel: false
+      tabBarLabelStyle: {
+        fontSize: 11,
+        fontWeight: "600"
+      }
     }}
   >
     <Tab.Screen
       name="Home"
       component={DashboardScreen}
-      options={{
-        title: "Receipt Radar",
-        tabBarIcon: ({ focused }) => <TabIcon label="Home" focused={focused} />
-      }}
+      options={{ title: "Receipt Radar", tabBarLabel: "Home" }}
     />
     <Tab.Screen
       name="Scan"
       component={CameraScreen}
-      options={{
-        title: "Scan Receipt",
-        tabBarIcon: ({ focused }) => <TabIcon label="Scan" focused={focused} />
-      }}
+      options={{ title: "Scan Receipt", tabBarLabel: "Scan" }}
     />
     <Tab.Screen
       name="Exports"
       component={ExportsScreen}
-      options={{
-        title: "Exports",
-        tabBarIcon: ({ focused }) => <TabIcon label="Exports" focused={focused} />
-      }}
+      options={{ title: "Exports", tabBarLabel: "Exports" }}
     />
     <Tab.Screen
       name="Settings"
       component={SettingsScreen}
-      options={{
-        title: "Settings",
-        tabBarIcon: ({ focused }) => <TabIcon label="Settings" focused={focused} />
-      }}
+      options={{ title: "Settings", tabBarLabel: "Settings" }}
     />
   </Tab.Navigator>
 );

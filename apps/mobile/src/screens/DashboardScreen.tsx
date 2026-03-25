@@ -4,7 +4,6 @@ import {
   FlatList,
   Pressable,
   RefreshControl,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -78,7 +77,7 @@ export const DashboardScreen = ({ navigation }: Props) => {
   }, [inFlightReceipts, receiptsQuery.data?.data]);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <FlatList
         data={displayData}
         keyExtractor={(item) => item.id}
@@ -167,7 +166,7 @@ export const DashboardScreen = ({ navigation }: Props) => {
           )
         }
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

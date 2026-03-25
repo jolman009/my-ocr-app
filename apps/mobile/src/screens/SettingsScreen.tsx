@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   Alert,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -42,7 +41,7 @@ export const SettingsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.eyebrow}>Settings</Text>
         <Text style={styles.title}>Your account</Text>
@@ -121,7 +120,7 @@ export const SettingsScreen = () => {
           <Text style={styles.logoutText}>Log out</Text>
         </Pressable>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
