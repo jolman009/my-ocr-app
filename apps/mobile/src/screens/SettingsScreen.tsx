@@ -8,12 +8,21 @@ import {
   TextInput,
   View
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useChangePassword, useReceipts } from "@receipt-ocr/shared/hooks";
 import { useAuthContext } from "../providers/AuthProvider";
-import { colors } from "../lib/theme";
+import { useTheme } from "../providers/ThemeProvider";
+import type { ThemeMode } from "../lib/theme";
+
+const THEME_OPTIONS: { value: ThemeMode; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+  { value: "light", label: "Light", icon: "sunny-outline" },
+  { value: "dark", label: "Dark", icon: "moon-outline" },
+  { value: "system", label: "System", icon: "phone-portrait-outline" },
+];
 
 export const SettingsScreen = () => {
   const { user, logout } = useAuthContext();
+  const { mode, setMode, colors } = useTheme();
   const changePasswordMutation = useChangePassword();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -41,73 +50,105 @@ export const SettingsScreen = () => {
   };
 
   return (
-    <View style={styles.safeArea}>
+    <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.eyebrow}>Settings</Text>
-        <Text style={styles.title}>Your account</Text>
+        <Text style={[styles.eyebrow, { color: colors.accentSecondary }]}>Settings</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Your account</Text>
 
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Name</Text>
-          <Text style={styles.cardValue}>{user?.name || "Receipt Radar user"}</Text>
-          <View style={styles.divider} />
-          <Text style={styles.cardLabel}>Email</Text>
-          <Text style={styles.cardValue}>{user?.email || "Signed in"}</Text>
+        <View style={[styles.card, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.cardLabel, { color: colors.textTertiary }]}>Name</Text>
+          <Text style={[styles.cardValue, { color: colors.text }]}>{user?.name || "Receipt Radar user"}</Text>
+          <View style={[styles.divider, { borderColor: colors.borderLight }]} />
+          <Text style={[styles.cardLabel, { color: colors.textTertiary }]}>Email</Text>
+          <Text style={[styles.cardValue, { color: colors.text }]}>{user?.email || "Signed in"}</Text>
         </View>
 
-        <View style={styles.darkCard}>
-          <Text style={styles.darkCardLabel}>Current plan</Text>
-          <Text style={styles.darkCardValue}>Free</Text>
+        <View style={[styles.darkCard, { backgroundColor: colors.surfaceAlt }]}>
+          <Text style={[styles.darkCardLabel, { color: colors.textTertiary }]}>Current plan</Text>
+          <Text style={[styles.darkCardValue, { color: colors.textOnSurface }]}>Free</Text>
           <View style={[styles.divider, { borderColor: "rgba(255,255,255,0.1)" }]} />
-          <Text style={styles.darkCardLabel}>Receipt library</Text>
-          <Text style={styles.darkCardValue}>
+          <Text style={[styles.darkCardLabel, { color: colors.textTertiary }]}>Receipt library</Text>
+          <Text style={[styles.darkCardValue, { color: colors.textOnSurface }]}>
             {totalsQuery.isLoading ? "..." : totalReceipts} receipts
           </Text>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Change password</Text>
+        <View style={[styles.card, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Appearance</Text>
+          <View style={styles.themeRow}>
+            {THEME_OPTIONS.map((opt) => (
+              <Pressable
+                key={opt.value}
+                style={[
+                  styles.themeOption,
+                  { borderColor: colors.border },
+                  mode === opt.value && { borderColor: colors.accent, backgroundColor: colors.accent + "18" }
+                ]}
+                onPress={() => setMode(opt.value)}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: mode === opt.value }}
+                accessibilityLabel={`${opt.label} theme`}
+              >
+                <Ionicons
+                  name={opt.icon}
+                  size={20}
+                  color={mode === opt.value ? colors.accent : colors.textTertiary}
+                />
+                <Text style={[
+                  styles.themeLabel,
+                  { color: mode === opt.value ? colors.accent : colors.textSecondary }
+                ]}>
+                  {opt.label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+
+        <View style={[styles.card, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Change password</Text>
           <View style={styles.inputRow}>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBg, color: colors.inputText }]}
               value={currentPassword}
               onChangeText={setCurrentPassword}
               placeholder="Current password"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor={colors.placeholder}
               secureTextEntry={!showCurrent}
             />
             <Pressable onPress={() => setShowCurrent(!showCurrent)} hitSlop={8}>
-              <Text style={styles.showHide}>{showCurrent ? "Hide" : "Show"}</Text>
+              <Text style={[styles.showHide, { color: colors.textTertiary }]}>{showCurrent ? "Hide" : "Show"}</Text>
             </Pressable>
           </View>
           <View style={styles.inputRow}>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBg, color: colors.inputText }]}
               value={newPassword}
               onChangeText={setNewPassword}
               placeholder="New password (min 8 chars)"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor={colors.placeholder}
               secureTextEntry={!showNew}
             />
             <Pressable onPress={() => setShowNew(!showNew)} hitSlop={8}>
-              <Text style={styles.showHide}>{showNew ? "Hide" : "Show"}</Text>
+              <Text style={[styles.showHide, { color: colors.textTertiary }]}>{showNew ? "Hide" : "Show"}</Text>
             </Pressable>
           </View>
-          {passwordMessage && <Text style={styles.message}>{passwordMessage}</Text>}
+          {passwordMessage && <Text style={[styles.message, { color: colors.accentSecondary }]}>{passwordMessage}</Text>}
           <Pressable
-            style={[styles.button, changePasswordMutation.isPending && { opacity: 0.7 }]}
+            style={[styles.button, { backgroundColor: colors.surfaceAlt }, changePasswordMutation.isPending && { opacity: 0.7 }]}
             onPress={onChangePassword}
             disabled={changePasswordMutation.isPending}
             accessibilityRole="button"
             accessibilityLabel="Update password"
           >
-            <Text style={styles.buttonText}>
+            <Text style={[styles.buttonText, { color: colors.textOnSurface }]}>
               {changePasswordMutation.isPending ? "Saving..." : "Update password"}
             </Text>
           </Pressable>
         </View>
 
         <Pressable
-          style={styles.logoutButton}
+          style={[styles.logoutButton, { backgroundColor: colors.surface, borderColor: colors.danger }]}
           onPress={() => {
             Alert.alert("Log out", "Are you sure you want to log out?", [
               { text: "Cancel", style: "cancel" },
@@ -117,7 +158,7 @@ export const SettingsScreen = () => {
           accessibilityRole="button"
           accessibilityLabel="Log out"
         >
-          <Text style={styles.logoutText}>Log out</Text>
+          <Text style={[styles.logoutText, { color: colors.danger }]}>Log out</Text>
         </Pressable>
       </ScrollView>
     </View>
@@ -125,34 +166,50 @@ export const SettingsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: colors.mist },
+  safeArea: { flex: 1 },
   content: { padding: 20, paddingBottom: 40, gap: 16 },
   eyebrow: {
     textTransform: "uppercase",
     letterSpacing: 2,
-    color: colors.tide,
     fontWeight: "700",
     fontSize: 12
   },
-  title: { color: colors.ink, fontSize: 28, fontWeight: "800" },
+  title: { fontSize: 28, fontWeight: "800" },
   card: {
-    backgroundColor: colors.white,
     borderRadius: 20,
     padding: 20,
     gap: 8
   },
   darkCard: {
-    backgroundColor: colors.ink,
     borderRadius: 20,
     padding: 20,
     gap: 8
   },
-  cardLabel: { color: "#94a3b8", fontSize: 13, fontWeight: "600" },
-  cardValue: { color: colors.ink, fontSize: 17, fontWeight: "700" },
-  darkCardLabel: { color: "#94a3b8", fontSize: 13, fontWeight: "600" },
-  darkCardValue: { color: colors.white, fontSize: 22, fontWeight: "800" },
-  divider: { borderBottomWidth: 1, borderColor: "#e2e8f0", marginVertical: 4 },
-  sectionTitle: { color: colors.ink, fontSize: 18, fontWeight: "700", marginBottom: 4 },
+  cardLabel: { fontSize: 13, fontWeight: "600" },
+  cardValue: { fontSize: 17, fontWeight: "700" },
+  darkCardLabel: { fontSize: 13, fontWeight: "600" },
+  darkCardValue: { fontSize: 22, fontWeight: "800" },
+  divider: { borderBottomWidth: 1, marginVertical: 4 },
+  sectionTitle: { fontSize: 18, fontWeight: "700", marginBottom: 4 },
+  themeRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 4
+  },
+  themeOption: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 6,
+    borderRadius: 16,
+    borderWidth: 2,
+    paddingVertical: 14,
+    paddingHorizontal: 8
+  },
+  themeLabel: {
+    fontSize: 13,
+    fontWeight: "600"
+  },
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -162,30 +219,24 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#cbd5e1",
-    backgroundColor: colors.mist,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    fontSize: 15,
-    color: colors.ink
+    fontSize: 15
   },
-  showHide: { color: "#94a3b8", fontSize: 13, fontWeight: "600" },
-  message: { color: colors.tide, fontSize: 13 },
+  showHide: { fontSize: 13, fontWeight: "600" },
+  message: { fontSize: 13 },
   button: {
-    backgroundColor: colors.ink,
     borderRadius: 16,
     paddingVertical: 14,
     alignItems: "center",
     marginTop: 4
   },
-  buttonText: { color: colors.white, fontWeight: "700", fontSize: 15 },
+  buttonText: { fontWeight: "700", fontSize: 15 },
   logoutButton: {
-    backgroundColor: colors.white,
     borderRadius: 20,
     paddingVertical: 16,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: colors.danger
+    borderWidth: 1
   },
-  logoutText: { color: colors.danger, fontWeight: "700", fontSize: 15 }
+  logoutText: { fontWeight: "700", fontSize: 15 }
 });

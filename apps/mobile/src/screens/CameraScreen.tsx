@@ -16,10 +16,11 @@ import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useUploadReceipt } from "@receipt-ocr/shared/hooks";
-import { colors } from "../lib/theme";
+import { useTheme } from "../providers/ThemeProvider";
 import type { RootStackParamList } from "../types/navigation";
 
 export const CameraScreen = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
@@ -93,18 +94,18 @@ export const CameraScreen = () => {
 
   if (!permission) {
     return (
-      <SafeAreaView style={styles.centered}>
-        <ActivityIndicator color={colors.ember} size="large" />
+      <SafeAreaView style={[styles.centered, { backgroundColor: colors.background }]}>
+        <ActivityIndicator color={colors.accent} size="large" />
       </SafeAreaView>
     );
   }
 
   if (!permission.granted) {
     return (
-      <SafeAreaView style={styles.centered}>
-        <Text style={styles.permissionTitle}>Camera access is required to scan receipts.</Text>
-        <Pressable style={styles.primaryButton} onPress={() => void requestPermission()}>
-          <Text style={styles.primaryButtonText}>Allow camera</Text>
+      <SafeAreaView style={[styles.centered, { backgroundColor: colors.background }]}>
+        <Text style={[styles.permissionTitle, { color: colors.text }]}>Camera access is required to scan receipts.</Text>
+        <Pressable style={[styles.primaryButton, { backgroundColor: colors.accent }]} onPress={() => void requestPermission()}>
+          <Text style={[styles.primaryButtonText, { color: colors.textOnAccent }]}>Allow camera</Text>
         </Pressable>
       </SafeAreaView>
     );
@@ -114,12 +115,12 @@ export const CameraScreen = () => {
     const isUploading = uploadMutation.isPending;
 
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <View style={styles.previewHeader}>
-          <Text style={styles.previewTitle}>
+          <Text style={[styles.previewTitle, { color: colors.text }]}>
             {isUploading ? "Processing receipt..." : "Preview receipt"}
           </Text>
-          <Text style={styles.previewBody}>
+          <Text style={[styles.previewBody, { color: colors.textSecondary }]}>
             {isUploading
               ? "Uploading image and running OCR. This may take a moment."
               : "Use the image or retake before uploading."}
@@ -128,28 +129,28 @@ export const CameraScreen = () => {
 
         {isUploading && (
           <View style={styles.progressContainer}>
-            <View style={styles.progressTrack}>
-              <View style={styles.progressBar} />
+            <View style={[styles.progressTrack, { backgroundColor: colors.skeleton }]}>
+              <View style={[styles.progressBar, { backgroundColor: colors.accent }]} />
             </View>
-            <Text style={styles.progressText}>Uploading and extracting receipt data...</Text>
+            <Text style={[styles.progressText, { color: colors.textSecondary }]}>Uploading and extracting receipt data...</Text>
           </View>
         )}
 
-        <Image source={{ uri: previewUri }} style={[styles.previewImage, isUploading && { opacity: 0.5 }]} />
+        <Image source={{ uri: previewUri }} style={[styles.previewImage, { backgroundColor: colors.skeleton }, isUploading && { opacity: 0.5 }]} />
         <View style={styles.previewActions}>
           <Pressable
-            style={[styles.secondaryButton, isUploading && { opacity: 0.4 }]}
+            style={[styles.secondaryButton, { backgroundColor: colors.surface, borderColor: colors.border }, isUploading && { opacity: 0.4 }]}
             onPress={() => setPreviewUri(null)}
             disabled={isUploading}
           >
-            <Text style={styles.secondaryButtonText}>Retake</Text>
+            <Text style={[styles.secondaryButtonText, { color: colors.text }]}>Retake</Text>
           </Pressable>
           <Pressable
-            style={[styles.primaryButton, isUploading && { opacity: 0.7 }]}
+            style={[styles.primaryButton, { backgroundColor: colors.accent }, isUploading && { opacity: 0.7 }]}
             onPress={() => void handleUsePhoto()}
             disabled={isUploading}
           >
-            <Text style={styles.primaryButtonText}>
+            <Text style={[styles.primaryButtonText, { color: colors.textOnAccent }]}>
               {isUploading ? "Uploading..." : "Use Photo"}
             </Text>
           </Pressable>
@@ -159,12 +160,12 @@ export const CameraScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.cameraSafeArea}>
+    <SafeAreaView style={[styles.cameraSafeArea, { backgroundColor: colors.headerBg }]}>
       <CameraView ref={cameraRef} style={styles.camera} facing="back" flash={flash}>
         <View style={styles.overlay}>
           <View style={styles.topControls}>
             <Pressable
-              style={styles.overlayButton}
+              style={[styles.overlayButton, { backgroundColor: colors.overlay }]}
               onPress={() => setFlash((current) => (current === "off" ? "on" : "off"))}
               disabled={isProcessing}
               accessibilityRole="button"
@@ -173,8 +174,8 @@ export const CameraScreen = () => {
             >
               <Text style={styles.overlayButtonText}>{flash === "off" ? "Flash off" : "Flash on"}</Text>
             </Pressable>
-            <Pressable 
-              style={[styles.overlayButton, isProcessing && { opacity: 0.5 }]} 
+            <Pressable
+              style={[styles.overlayButton, { backgroundColor: colors.overlay }, isProcessing && { opacity: 0.5 }]}
               onPress={() => void handleLibraryPick()}
               disabled={isProcessing}
               accessibilityRole="button"
@@ -187,9 +188,9 @@ export const CameraScreen = () => {
             </Pressable>
           </View>
           <View style={styles.captureContainer}>
-            <Pressable 
-              style={[styles.captureButton, isProcessing && { opacity: 0.5 }]} 
-              onPress={() => void handleCapture()} 
+            <Pressable
+              style={[styles.captureButton, { borderColor: colors.accent }]}
+              onPress={() => void handleCapture()}
               disabled={isProcessing}
               accessibilityRole="button"
               accessibilityLabel="Take picture of receipt"
@@ -205,7 +206,6 @@ export const CameraScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.mist,
     padding: 20,
     gap: 20
   },
@@ -215,31 +215,26 @@ const styles = StyleSheet.create({
   progressTrack: {
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#e2e8f0",
     overflow: "hidden" as const
   },
   progressBar: {
     width: "60%",
     height: "100%",
-    borderRadius: 3,
-    backgroundColor: colors.ember
+    borderRadius: 3
   },
   progressText: {
-    color: "#64748b",
     fontSize: 13,
     fontWeight: "500" as const,
     textAlign: "center" as const
   },
   cameraSafeArea: {
-    flex: 1,
-    backgroundColor: colors.ink
+    flex: 1
   },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
-    backgroundColor: colors.mist,
     gap: 16
   },
   camera: {
@@ -256,12 +251,11 @@ const styles = StyleSheet.create({
   },
   overlayButton: {
     borderRadius: 999,
-    backgroundColor: "rgba(15,23,42,0.68)",
     paddingHorizontal: 14,
     paddingVertical: 10
   },
   overlayButtonText: {
-    color: colors.white,
+    color: "#ffffff",
     fontWeight: "700"
   },
   captureContainer: {
@@ -272,26 +266,22 @@ const styles = StyleSheet.create({
     width: 84,
     height: 84,
     borderRadius: 42,
-    backgroundColor: colors.white,
-    borderWidth: 8,
-    borderColor: colors.ember
+    backgroundColor: "#ffffff",
+    borderWidth: 8
   },
   previewHeader: {
     gap: 8
   },
   previewTitle: {
-    color: colors.ink,
     fontSize: 28,
     fontWeight: "800"
   },
   previewBody: {
-    color: "#475569",
     fontSize: 15
   },
   previewImage: {
     flex: 1,
-    borderRadius: 24,
-    backgroundColor: "#e2e8f0"
+    borderRadius: 24
   },
   previewActions: {
     flexDirection: "row",
@@ -300,29 +290,23 @@ const styles = StyleSheet.create({
   primaryButton: {
     flex: 1,
     borderRadius: 20,
-    backgroundColor: colors.ember,
     paddingVertical: 16,
     alignItems: "center"
   },
   primaryButtonText: {
-    color: colors.white,
     fontWeight: "800"
   },
   secondaryButton: {
     flex: 1,
     borderRadius: 20,
-    backgroundColor: colors.white,
     paddingVertical: 16,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#cbd5e1"
+    borderWidth: 1
   },
   secondaryButtonText: {
-    color: colors.ink,
     fontWeight: "700"
   },
   permissionTitle: {
-    color: colors.ink,
     fontSize: 18,
     fontWeight: "700",
     textAlign: "center"

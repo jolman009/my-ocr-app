@@ -2,7 +2,7 @@ import { ActivityIndicator, SafeAreaView, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../lib/theme";
+import { useTheme } from "../providers/ThemeProvider";
 import type { RootStackParamList, TabParamList } from "../types/navigation";
 import { useAuthContext } from "../providers/AuthProvider";
 import { AuthScreen } from "../screens/AuthScreen";
@@ -22,64 +22,69 @@ const TAB_ICONS: Record<keyof TabParamList, { focused: keyof typeof Ionicons.gly
   Settings: { focused: "settings", default: "settings-outline" },
 };
 
-const MainTabs = () => (
-  <Tab.Navigator
-    screenOptions={({ route }) => ({
-      headerStyle: { backgroundColor: colors.ink },
-      headerTintColor: colors.white,
-      headerTitleStyle: { fontWeight: "700" },
-      tabBarStyle: {
-        backgroundColor: colors.white,
-        borderTopColor: "#e2e8f0",
-        borderTopWidth: 1,
-        paddingTop: 8,
-        paddingBottom: 60,
-        height: 110
-      },
-      tabBarActiveTintColor: colors.ember,
-      tabBarInactiveTintColor: "#94a3b8",
-      tabBarLabelStyle: {
-        fontSize: 11,
-        fontWeight: "600",
-        marginTop: 2
-      },
-      tabBarIcon: ({ focused, color, size }) => {
-        const icons = TAB_ICONS[route.name];
-        const iconName = focused ? icons.focused : icons.default;
-        return <Ionicons name={iconName} size={22} color={color} />;
-      }
-    })}
-  >
-    <Tab.Screen
-      name="Home"
-      component={DashboardScreen}
-      options={{ title: "Receipt Radar" }}
-    />
-    <Tab.Screen
-      name="Scan"
-      component={CameraScreen}
-      options={{ title: "Scan Receipt" }}
-    />
-    <Tab.Screen
-      name="Exports"
-      component={ExportsScreen}
-      options={{ title: "Exports" }}
-    />
-    <Tab.Screen
-      name="Settings"
-      component={SettingsScreen}
-      options={{ title: "Settings" }}
-    />
-  </Tab.Navigator>
-);
+const MainTabs = () => {
+  const { colors } = useTheme();
+
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerStyle: { backgroundColor: colors.headerBg },
+        headerTintColor: colors.headerText,
+        headerTitleStyle: { fontWeight: "700" },
+        tabBarStyle: {
+          backgroundColor: colors.tabBg,
+          borderTopColor: colors.tabBorder,
+          borderTopWidth: 1,
+          paddingTop: 8,
+          paddingBottom: 60,
+          height: 110
+        },
+        tabBarActiveTintColor: colors.tabActive,
+        tabBarInactiveTintColor: colors.tabInactive,
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: "600",
+          marginTop: 2
+        },
+        tabBarIcon: ({ focused, color, size }) => {
+          const icons = TAB_ICONS[route.name];
+          const iconName = focused ? icons.focused : icons.default;
+          return <Ionicons name={iconName} size={22} color={color} />;
+        }
+      })}
+    >
+      <Tab.Screen
+        name="Home"
+        component={DashboardScreen}
+        options={{ title: "Receipt Radar" }}
+      />
+      <Tab.Screen
+        name="Scan"
+        component={CameraScreen}
+        options={{ title: "Scan Receipt" }}
+      />
+      <Tab.Screen
+        name="Exports"
+        component={ExportsScreen}
+        options={{ title: "Exports" }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ title: "Settings" }}
+      />
+    </Tab.Navigator>
+  );
+};
 
 export const RootNavigator = () => {
   const { isHydrating, isAuthenticated } = useAuthContext();
+  const { colors } = useTheme();
 
   if (isHydrating) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator color={colors.ember} size="large" />
+      <SafeAreaView style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator color={colors.accent} size="large" />
       </SafeAreaView>
     );
   }
@@ -87,10 +92,10 @@ export const RootNavigator = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: colors.ink },
-        headerTintColor: colors.white,
+        headerStyle: { backgroundColor: colors.headerBg },
+        headerTintColor: colors.headerText,
         headerTitleStyle: { fontWeight: "700" },
-        contentStyle: { backgroundColor: colors.mist }
+        contentStyle: { backgroundColor: colors.background }
       }}
     >
       {!isAuthenticated ? (
@@ -109,7 +114,6 @@ export const RootNavigator = () => {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    backgroundColor: colors.mist,
     justifyContent: "center",
     alignItems: "center"
   }

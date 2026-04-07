@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { StatusBadge } from "./StatusBadge";
 import type { ReceiptRecord } from "@receipt-ocr/shared/types";
-import { colors } from "../lib/theme";
+import { useTheme } from "../providers/ThemeProvider";
 
 const formatMoney = (value: number | null) => (value === null ? "-" : `$${value.toFixed(2)}`);
 
@@ -10,28 +10,30 @@ interface ReceiptListItemProps {
   onPress: () => void;
 }
 
-export const ReceiptListItem = ({ receipt, onPress }: ReceiptListItemProps) => (
-  <Pressable style={styles.card} onPress={onPress}>
-    <View style={styles.header}>
-      <Text style={styles.title}>{receipt.merchantName ?? "Untitled receipt"}</Text>
-      <StatusBadge status={receipt.status} />
-    </View>
-    <Text style={styles.meta}>{receipt.receiptDate ?? "No date"}</Text>
-    <Text style={styles.meta}>{receipt.address ?? "No address captured"}</Text>
-    <View style={styles.footer}>
-      <Text style={styles.total}>{formatMoney(receipt.total)}</Text>
-      <Text style={styles.meta}>{receipt.items.length} items</Text>
-    </View>
-  </Pressable>
-);
+export const ReceiptListItem = ({ receipt, onPress }: ReceiptListItemProps) => {
+  const { colors } = useTheme();
+
+  return (
+    <Pressable style={[styles.card, { backgroundColor: colors.surface, shadowColor: colors.text }]} onPress={onPress}>
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: colors.text }]}>{receipt.merchantName ?? "Untitled receipt"}</Text>
+        <StatusBadge status={receipt.status} />
+      </View>
+      <Text style={[styles.meta, { color: colors.textSecondary }]}>{receipt.receiptDate ?? "No date"}</Text>
+      <Text style={[styles.meta, { color: colors.textSecondary }]}>{receipt.address ?? "No address captured"}</Text>
+      <View style={styles.footer}>
+        <Text style={[styles.total, { color: colors.accent }]}>{formatMoney(receipt.total)}</Text>
+        <Text style={[styles.meta, { color: colors.textSecondary }]}>{receipt.items.length} items</Text>
+      </View>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
   card: {
     borderRadius: 24,
-    backgroundColor: colors.white,
     padding: 18,
     gap: 8,
-    shadowColor: colors.ink,
     shadowOpacity: 0.06,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 6 },
@@ -44,13 +46,11 @@ const styles = StyleSheet.create({
     gap: 12
   },
   title: {
-    color: colors.ink,
     fontSize: 18,
     fontWeight: "700",
     flex: 1
   },
   meta: {
-    color: "#64748b",
     fontSize: 14
   },
   footer: {
@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   total: {
-    color: colors.ember,
     fontSize: 18,
     fontWeight: "700"
   }

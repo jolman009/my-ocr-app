@@ -1,14 +1,16 @@
 import { StyleSheet, Text, View } from "react-native";
 import type { ReceiptStatus } from "@receipt-ocr/shared/types";
-import { colors } from "../lib/theme";
-
-const statusStyles: Record<ReceiptStatus, { backgroundColor: string; color: string }> = {
-  processed: { backgroundColor: "#dcfce7", color: colors.tide },
-  needs_review: { backgroundColor: "#fef3c7", color: "#92400e" },
-  failed: { backgroundColor: "#fee2e2", color: colors.danger }
-};
+import { useTheme } from "../providers/ThemeProvider";
 
 export const StatusBadge = ({ status }: { status: ReceiptStatus }) => {
+  const { colors } = useTheme();
+
+  const statusStyles: Record<ReceiptStatus, { backgroundColor: string; color: string }> = {
+    processed: { backgroundColor: colors.successBg, color: colors.successText },
+    needs_review: { backgroundColor: colors.warningBg, color: colors.warningText },
+    failed: { backgroundColor: colors.failedBg, color: colors.failedText }
+  };
+
   const style = statusStyles[status];
 
   return (

@@ -15,10 +15,11 @@ import { Controller, useForm } from "react-hook-form";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useLogin, useRegister } from "@receipt-ocr/shared/hooks";
 import { LabeledInput } from "../components/LabeledInput";
-import { colors } from "../lib/theme";
+import { useTheme } from "../providers/ThemeProvider";
 import { useAuthContext } from "../providers/AuthProvider";
 
 export const AuthScreen = () => {
+  const { colors } = useTheme();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuthContext();
@@ -50,15 +51,15 @@ export const AuthScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <View style={styles.content}>
           <View style={styles.header}>
-            <Text style={styles.title}>Welcome to Receipt Radar</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: colors.text }]}>Welcome to Receipt Radar</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
               {isLogin ? "Log in to view your ledger." : "Create an account to get started."}
             </Text>
           </View>
@@ -80,7 +81,7 @@ export const AuthScreen = () => {
                 )}
               />
             )}
-            
+
             <Controller
               control={control}
               name="email"
@@ -118,18 +119,18 @@ export const AuthScreen = () => {
                     accessibilityLabel={showPassword ? "Hide password" : "Show password"}
                     hitSlop={8}
                   >
-                    <Text style={styles.eyeText}>{showPassword ? "Hide" : "Show"}</Text>
+                    <Text style={[styles.eyeText, { color: colors.textTertiary }]}>{showPassword ? "Hide" : "Show"}</Text>
                   </Pressable>
                 </View>
               )}
             />
 
             <Pressable
-              style={[styles.submitButton, isPending && { opacity: 0.7 }]}
+              style={[styles.submitButton, { backgroundColor: colors.accent }, isPending && { opacity: 0.7 }]}
               onPress={handleSubmit(onSubmit)}
               disabled={isPending}
             >
-              <Text style={styles.submitButtonText}>
+              <Text style={[styles.submitButtonText, { color: colors.textOnAccent }]}>
                 {isPending ? "Loading..." : isLogin ? "Log in" : "Sign up"}
               </Text>
             </Pressable>
@@ -141,7 +142,7 @@ export const AuthScreen = () => {
                 reset();
               }}
             >
-              <Text style={styles.toggleButtonText}>
+              <Text style={[styles.toggleButtonText, { color: colors.text }]}>
                 {isLogin
                   ? "Don't have an account? Sign up"
                   : "Already have an account? Log in"}
@@ -154,7 +155,7 @@ export const AuthScreen = () => {
               accessibilityRole="link"
               accessibilityLabel="View privacy policy"
             >
-              <Text style={styles.privacyLinkText}>Privacy Policy</Text>
+              <Text style={[styles.privacyLinkText, { color: colors.textTertiary }]}>Privacy Policy</Text>
             </Pressable>
           </View>
         </View>
@@ -165,8 +166,7 @@ export const AuthScreen = () => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1,
-    backgroundColor: colors.mist
+    flex: 1
   },
   keyboardView: {
     flex: 1,
@@ -180,26 +180,22 @@ const styles = StyleSheet.create({
     gap: 12
   },
   title: {
-    color: colors.ink,
     fontSize: 34,
     fontWeight: "800"
   },
   subtitle: {
-    color: "#475569",
     fontSize: 16
   },
   form: {
     gap: 16
   },
   submitButton: {
-    backgroundColor: colors.ember,
     borderRadius: 20,
     paddingVertical: 18,
     alignItems: "center",
     marginTop: 8
   },
   submitButtonText: {
-    color: colors.white,
     fontSize: 16,
     fontWeight: "800"
   },
@@ -208,7 +204,6 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   toggleButtonText: {
-    color: colors.ink,
     fontSize: 15,
     fontWeight: "600"
   },
@@ -218,7 +213,6 @@ const styles = StyleSheet.create({
     top: 38,
   },
   eyeText: {
-    color: "#94a3b8",
     fontSize: 13,
     fontWeight: "600" as const,
   },
@@ -227,7 +221,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4
   },
   privacyLinkText: {
-    color: "#94a3b8",
     fontSize: 13,
     textDecorationLine: "underline" as const
   }

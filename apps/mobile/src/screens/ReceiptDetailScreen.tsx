@@ -19,7 +19,7 @@ import { getReceiptImageUrl } from "@receipt-ocr/shared/api";
 import { useReceipt, useUpdateReceipt } from "@receipt-ocr/shared/hooks";
 import type { ReceiptRecord } from "@receipt-ocr/shared/types";
 import { LabeledInput } from "../components/LabeledInput";
-import { colors } from "../lib/theme";
+import { useTheme } from "../providers/ThemeProvider";
 import type { RootStackParamList } from "../types/navigation";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ReceiptDetail">;
@@ -71,6 +71,7 @@ const toFormValues = (receipt: ReceiptRecord): ReceiptFormValues => ({
 });
 
 export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
+  const { colors } = useTheme();
   const receiptId = route.params.receiptId;
   const receiptQuery = useReceipt(receiptId);
   const updateMutation = useUpdateReceipt();
@@ -78,7 +79,7 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
   const form = useForm<ReceiptFormValues>({
     defaultValues: receiptQuery.data ? toFormValues(receiptQuery.data) : undefined
   });
-  
+
   const itemsFieldArray = useFieldArray({
     control: form.control,
     name: "items"
@@ -108,7 +109,6 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
     return unsubscribe;
   }, [navigation, isDirty, updateMutation.isSuccess]);
 
-  // Sync data to form when query loads/updates initially
   useEffect(() => {
     if (receiptQuery.data && !isDirty) {
       form.reset(toFormValues(receiptQuery.data));
@@ -122,8 +122,8 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
 
   if (receiptQuery.isLoading || !receiptQuery.data) {
     return (
-      <SafeAreaView style={styles.centered}>
-        <ActivityIndicator color={colors.ember} size="large" />
+      <SafeAreaView style={[styles.centered, { backgroundColor: colors.background }]}>
+        <ActivityIndicator color={colors.accent} size="large" />
       </SafeAreaView>
     );
   }
@@ -132,28 +132,28 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView contentContainerStyle={styles.content}>
         <Image
           source={getReceiptImageUrl(receipt.imageUrl)}
-          style={styles.receiptImage}
+          style={[styles.receiptImage, { backgroundColor: colors.skeleton }]}
           contentFit="cover"
         />
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Confidence</Text>
+        <View style={[styles.section, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Confidence</Text>
           <View style={styles.confidenceGrid}>
             {confidenceEntries.map(([key, value]) => (
-              <View key={key} style={styles.confidenceCard}>
-                <Text style={styles.confidenceKey}>{key}</Text>
-                <Text style={styles.confidenceValue}>{Math.round(value * 100)}%</Text>
+              <View key={key} style={[styles.confidenceCard, { backgroundColor: colors.background }]}>
+                <Text style={[styles.confidenceKey, { color: colors.textSecondary }]}>{key}</Text>
+                <Text style={[styles.confidenceValue, { color: colors.text }]}>{Math.round(value * 100)}%</Text>
               </View>
             ))}
           </View>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Receipt fields</Text>
+        <View style={[styles.section, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Receipt fields</Text>
           <Controller
             control={form.control}
             name="merchantName"
@@ -195,11 +195,11 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
             render={({ field }) => <LabeledInput label="Currency" value={field.value} onChangeText={field.onChange} lowConfidence={(receiptQuery.data?.confidence.currency || 1) < 0.6} />}
           />
         </View>
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Line items</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Line items</Text>
             <Pressable
-              style={styles.addButton}
+              style={[styles.addButton, { backgroundColor: colors.surfaceAlt }]}
               onPress={() => {
                 void Haptics.selectionAsync();
                 itemsFieldArray.append({
@@ -213,24 +213,22 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
               accessibilityLabel="Add new line item"
               hitSlop={8}
             >
-              <Text style={styles.addButtonText}>Add item</Text>
+              <Text style={[styles.addButtonText, { color: colors.textOnSurface }]}>Add item</Text>
             </Pressable>
           </View>
           {itemsFieldArray.fields.map((field, index) => {
             const isLast = index === itemsFieldArray.fields.length - 1;
-            // The API doesn't currently provide structured confidence per-line-item 
-            // inside the Record<string, number>. Defaulting Line Item lowConfidence to false.
             const isItemLowConfidence = false;
             return (
-              <View key={field.id} style={styles.lineItemCard}>
+              <View key={field.id} style={[styles.lineItemCard, { borderColor: colors.borderLight }]}>
                 <Controller
                   control={form.control}
                   name={`items.${index}.name`}
                   render={({ field }) => (
-                    <LabeledInput 
-                      label="Name" 
-                      value={field.value} 
-                      onChangeText={field.onChange} 
+                    <LabeledInput
+                      label="Name"
+                      value={field.value}
+                      onChangeText={field.onChange}
                       returnKeyType="next"
                       lowConfidence={isItemLowConfidence}
                     />
@@ -242,11 +240,11 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
                       control={form.control}
                       name={`items.${index}.quantity`}
                       render={({ field }) => (
-                        <LabeledInput 
-                          label="Qty" 
-                          value={field.value} 
-                          onChangeText={field.onChange} 
-                          keyboardType="numeric" 
+                        <LabeledInput
+                          label="Qty"
+                          value={field.value}
+                          onChangeText={field.onChange}
+                          keyboardType="numeric"
                           returnKeyType="next"
                           lowConfidence={isItemLowConfidence}
                         />
@@ -258,11 +256,11 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
                       control={form.control}
                       name={`items.${index}.unitPrice`}
                       render={({ field }) => (
-                        <LabeledInput 
-                          label="Unit Price" 
-                          value={field.value} 
-                          onChangeText={field.onChange} 
-                          keyboardType="numeric" 
+                        <LabeledInput
+                          label="Unit Price"
+                          value={field.value}
+                          onChangeText={field.onChange}
+                          keyboardType="numeric"
                           returnKeyType="next"
                           lowConfidence={isItemLowConfidence}
                         />
@@ -274,31 +272,31 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
                   control={form.control}
                   name={`items.${index}.totalPrice`}
                   render={({ field }) => (
-                    <LabeledInput 
-                      label="Total Price" 
-                      value={field.value} 
-                      onChangeText={field.onChange} 
-                      keyboardType="numeric" 
+                    <LabeledInput
+                      label="Total Price"
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      keyboardType="numeric"
                       returnKeyType={isLast ? "done" : "next"}
                       lowConfidence={isItemLowConfidence}
                     />
                   )}
                 />
-                <Pressable 
-                  style={styles.removeButton} 
+                <Pressable
+                  style={[styles.removeButton, { backgroundColor: colors.dangerBg }]}
                   onPress={() => { void Haptics.selectionAsync(); itemsFieldArray.remove(index); }}
                   accessibilityRole="button"
                   accessibilityLabel={`Remove line item ${index + 1}`}
                   hitSlop={12}
                 >
-                  <Text style={styles.removeButtonText}>Remove</Text>
+                  <Text style={[styles.removeButtonText, { color: colors.danger }]}>Remove</Text>
                 </Pressable>
               </View>
             );
           })}
         </View>
         <Pressable
-          style={styles.saveButton}
+          style={[styles.saveButton, { backgroundColor: colors.accent }]}
           onPress={form.handleSubmit(async (values) => {
             void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             await updateMutation.mutateAsync({
@@ -325,7 +323,7 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
           accessibilityRole="button"
           accessibilityLabel={updateMutation.isPending ? "Saving receipt" : "Save receipt"}
         >
-          <Text style={styles.saveButtonText}>
+          <Text style={[styles.saveButtonText, { color: colors.textOnAccent }]}>
             {updateMutation.isPending ? "Saving..." : "Save receipt"}
           </Text>
         </Pressable>
@@ -336,14 +334,12 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: colors.mist
+    flex: 1
   },
   centered: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.mist
+    alignItems: "center"
   },
   content: {
     padding: 20,
@@ -352,12 +348,10 @@ const styles = StyleSheet.create({
   receiptImage: {
     width: "100%",
     height: 320,
-    borderRadius: 24,
-    backgroundColor: "#e2e8f0"
+    borderRadius: 24
   },
   section: {
     borderRadius: 24,
-    backgroundColor: colors.white,
     padding: 18,
     gap: 14
   },
@@ -367,7 +361,6 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   sectionTitle: {
-    color: colors.ink,
     fontSize: 20,
     fontWeight: "800"
   },
@@ -378,59 +371,49 @@ const styles = StyleSheet.create({
   },
   confidenceCard: {
     borderRadius: 18,
-    backgroundColor: colors.mist,
     paddingHorizontal: 14,
     paddingVertical: 12,
     minWidth: "47%"
   },
   confidenceKey: {
-    color: "#475569",
     fontSize: 12,
     textTransform: "capitalize"
   },
   confidenceValue: {
-    color: colors.ink,
     fontSize: 18,
     fontWeight: "700",
     marginTop: 4
   },
   addButton: {
     borderRadius: 999,
-    backgroundColor: colors.ink,
     paddingHorizontal: 14,
     paddingVertical: 10
   },
   addButtonText: {
-    color: colors.white,
     fontWeight: "700"
   },
   lineItemCard: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
     padding: 14,
     gap: 12
   },
   removeButton: {
     alignSelf: "flex-start",
     borderRadius: 999,
-    backgroundColor: "#fee2e2",
     paddingHorizontal: 12,
     paddingVertical: 8
   },
   removeButtonText: {
-    color: colors.danger,
     fontWeight: "700"
   },
   saveButton: {
     borderRadius: 22,
-    backgroundColor: colors.ember,
     paddingVertical: 18,
     alignItems: "center",
     marginBottom: 40
   },
   saveButtonText: {
-    color: colors.white,
     fontSize: 16,
     fontWeight: "800"
   }

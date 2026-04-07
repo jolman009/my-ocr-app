@@ -13,7 +13,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useReceipts } from "@receipt-ocr/shared/hooks";
 import { ReceiptListItem } from "../components/ReceiptListItem";
-import { colors } from "../lib/theme";
+import { useTheme } from "../providers/ThemeProvider";
 import type { RootStackParamList, TabParamList } from "../types/navigation";
 import { useIsRestoring, useMutationState } from "@tanstack/react-query";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -25,12 +25,12 @@ type Props = CompositeScreenProps<
 >;
 
 export const DashboardScreen = ({ navigation }: Props) => {
+  const { colors } = useTheme();
   const { user } = useAuthContext();
   const netInfo = useNetInfo();
   const isHydrating = useIsRestoring();
-  // Extract pending uploads from the paused background mutations queue
   const pendingMutations = useMutationState({ filters: { status: "pending", mutationKey: ["uploadReceipt"] } });
-  
+
   const inFlightReceipts = useMemo(() => {
     return pendingMutations.map((mutation: any, index: number) => {
       const input = mutation?.variables as any;
@@ -69,14 +69,13 @@ export const DashboardScreen = ({ navigation }: Props) => {
   );
   const receiptsQuery = useReceipts(filters);
 
-  // Merge the standard server cache with local-only pending creations
   const displayData = useMemo(() => {
     const serverData = receiptsQuery.data?.data ?? [];
     return [...inFlightReceipts, ...serverData];
   }, [inFlightReceipts, receiptsQuery.data?.data]);
 
   return (
-    <View style={styles.safeArea}>
+    <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <FlatList
         data={displayData}
         keyExtractor={(item) => item.id}
@@ -86,14 +85,14 @@ export const DashboardScreen = ({ navigation }: Props) => {
         }
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.eyebrow}>
+            <Text style={[styles.eyebrow, { color: colors.accentSecondary }]}>
               {user?.name ? `Welcome, ${user.name}` : user?.email ? `Welcome, ${user.email}` : "Receipt Radar"}
             </Text>
-            <Text style={styles.title}>Your receipts</Text>
-            
+            <Text style={[styles.title, { color: colors.text }]}>Your receipts</Text>
+
             {isOffline && (
-              <View style={styles.offlineBanner}>
-                <Text style={styles.offlineText}>
+              <View style={[styles.offlineBanner, { backgroundColor: colors.tipBg, borderColor: colors.tipBorder }]}>
+                <Text style={[styles.offlineText, { color: colors.tipText }]}>
                   {pendingMutations.length > 0
                     ? `Offline: ${pendingMutations.length} upload(s) queued`
                     : "You are offline. Showing cached ledger."}
@@ -101,28 +100,36 @@ export const DashboardScreen = ({ navigation }: Props) => {
               </View>
             )}
 
-            <Text style={styles.subtitle}>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
               Filter, review, and track your scanned receipts.
             </Text>
             <TextInput
               value={merchant}
               onChangeText={setMerchant}
               placeholder="Search merchant"
-              style={styles.input}
-              placeholderTextColor="#94a3b8"
+              style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBg, color: colors.inputText }]}
+              placeholderTextColor={colors.placeholder}
             />
             <View style={styles.filterRow} accessibilityRole="radiogroup">
               {["", "processed", "needs_review", "failed"].map((value) => (
                 <Pressable
                   key={value || "all"}
-                  style={[styles.filterChip, status === value && styles.filterChipActive]}
+                  style={[
+                    styles.filterChip,
+                    { backgroundColor: colors.surface },
+                    status === value && { backgroundColor: colors.surfaceAlt }
+                  ]}
                   onPress={() => setStatus(value as typeof status)}
                   accessibilityRole="radio"
                   accessibilityState={{ checked: status === value }}
                   accessibilityLabel={`Filter by ${value ? value.replace("_", " ") : "All"}`}
                   hitSlop={8}
                 >
-                  <Text style={[styles.filterText, status === value && styles.filterTextActive]}>
+                  <Text style={[
+                    styles.filterText,
+                    { color: colors.text },
+                    status === value && { color: colors.textOnSurface }
+                  ]}>
                     {value ? value.replace("_", " ") : "All"}
                   </Text>
                 </Pressable>
@@ -138,45 +145,45 @@ export const DashboardScreen = ({ navigation }: Props) => {
           receiptsQuery.isLoading ? (
             <View style={{ gap: 12 }}>
               {[1, 2, 3].map((i) => (
-                <View key={i} style={styles.skeletonCard}>
+                <View key={i} style={[styles.skeletonCard, { backgroundColor: colors.surface }]}>
                   <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                     <View style={{ gap: 6 }}>
-                      <View style={styles.skeletonLine} />
-                      <View style={[styles.skeletonLine, { width: 100 }]} />
+                      <View style={[styles.skeletonLine, { backgroundColor: colors.skeleton }]} />
+                      <View style={[styles.skeletonLine, { width: 100, backgroundColor: colors.skeleton }]} />
                     </View>
-                    <View style={[styles.skeletonLine, { width: 70, height: 24, borderRadius: 12 }]} />
+                    <View style={[styles.skeletonLine, { width: 70, height: 24, borderRadius: 12, backgroundColor: colors.skeleton }]} />
                   </View>
-                  <View style={[styles.skeletonLine, { width: 180, marginTop: 8 }]} />
+                  <View style={[styles.skeletonLine, { width: 180, marginTop: 8, backgroundColor: colors.skeleton }]} />
                   <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
-                    <View style={[styles.skeletonLine, { width: 60 }]} />
-                    <View style={[styles.skeletonLine, { width: 50 }]} />
+                    <View style={[styles.skeletonLine, { width: 60, backgroundColor: colors.skeleton }]} />
+                    <View style={[styles.skeletonLine, { width: 50, backgroundColor: colors.skeleton }]} />
                   </View>
                 </View>
               ))}
             </View>
           ) : receiptsQuery.isError ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyTitle}>Could not load ledger</Text>
-              <Text style={styles.emptyBody}>Check your connection and try again.</Text>
+            <View style={[styles.emptyState, { backgroundColor: colors.surface }]}>
+              <Text style={[styles.emptyTitle, { color: colors.text }]}>Could not load ledger</Text>
+              <Text style={[styles.emptyBody, { color: colors.textSecondary }]}>Check your connection and try again.</Text>
               <Pressable
-                style={[styles.actionButton, { marginTop: 12 }]}
+                style={[styles.actionButton, { backgroundColor: colors.surfaceAlt, marginTop: 12 }]}
                 onPress={() => void receiptsQuery.refetch()}
               >
-                <Text style={styles.actionButtonText}>Retry</Text>
+                <Text style={[styles.actionButtonText, { color: colors.textOnSurface }]}>Retry</Text>
               </Pressable>
             </View>
           ) : (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>+</Text>
-              <Text style={styles.emptyTitle}>No receipts yet</Text>
-              <Text style={styles.emptyBody}>Tap below to scan your first receipt and start tracking expenses.</Text>
+            <View style={[styles.emptyState, { backgroundColor: colors.surface }]}>
+              <Text style={[styles.emptyIcon, { color: colors.accent }]}>+</Text>
+              <Text style={[styles.emptyTitle, { color: colors.text }]}>No receipts yet</Text>
+              <Text style={[styles.emptyBody, { color: colors.textSecondary }]}>Tap below to scan your first receipt and start tracking expenses.</Text>
               <Pressable
-                style={[styles.actionButton, { marginTop: 16 }]}
+                style={[styles.actionButton, { backgroundColor: colors.surfaceAlt, marginTop: 16 }]}
                 onPress={() => navigation.navigate("Scan")}
                 accessibilityRole="button"
                 accessibilityLabel="Scan your first receipt"
               >
-                <Text style={styles.actionButtonText}>Scan a Receipt</Text>
+                <Text style={[styles.actionButtonText, { color: colors.textOnSurface }]}>Scan a Receipt</Text>
               </Pressable>
             </View>
           )
@@ -188,8 +195,7 @@ export const DashboardScreen = ({ navigation }: Props) => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1,
-    backgroundColor: colors.mist
+    flex: 1
   },
   content: {
     padding: 20,
@@ -202,29 +208,23 @@ const styles = StyleSheet.create({
   eyebrow: {
     textTransform: "uppercase",
     letterSpacing: 2,
-    color: colors.tide,
     fontWeight: "700",
     fontSize: 12
   },
   title: {
-    color: colors.ink,
     fontSize: 30,
     fontWeight: "800"
   },
   subtitle: {
-    color: "#475569",
     fontSize: 15,
     lineHeight: 22
   },
   input: {
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: "#cbd5e1",
-    backgroundColor: colors.white,
     paddingHorizontal: 16,
     paddingVertical: 14,
-    fontSize: 15,
-    color: colors.ink
+    fontSize: 15
   },
   filterRow: {
     flexDirection: "row",
@@ -234,33 +234,22 @@ const styles = StyleSheet.create({
   filterChip: {
     borderRadius: 999,
     paddingHorizontal: 14,
-    paddingVertical: 10,
-    backgroundColor: colors.white
-  },
-  filterChipActive: {
-    backgroundColor: colors.ink
+    paddingVertical: 10
   },
   filterText: {
-    color: colors.ink,
     fontWeight: "600"
-  },
-  filterTextActive: {
-    color: colors.white
   },
   actionButton: {
     borderRadius: 18,
-    backgroundColor: colors.ink,
     paddingVertical: 14,
     paddingHorizontal: 24,
     alignItems: "center"
   },
   actionButtonText: {
-    color: colors.white,
     fontWeight: "700"
   },
   emptyState: {
     borderRadius: 24,
-    backgroundColor: colors.white,
     padding: 28,
     alignItems: "center",
     gap: 8
@@ -268,21 +257,17 @@ const styles = StyleSheet.create({
   emptyIcon: {
     fontSize: 40,
     fontWeight: "800",
-    color: colors.ember,
-    marginBottom: 4,
+    marginBottom: 4
   },
   emptyTitle: {
-    color: colors.ink,
     fontSize: 18,
     fontWeight: "700"
   },
   emptyBody: {
-    color: "#64748b",
     fontSize: 14
   },
   skeletonCard: {
     borderRadius: 20,
-    backgroundColor: colors.white,
     padding: 18,
     gap: 4
   },
@@ -290,20 +275,16 @@ const styles = StyleSheet.create({
     height: 14,
     width: 140,
     borderRadius: 8,
-    backgroundColor: "#e2e8f0",
     opacity: 0.6
   },
   offlineBanner: {
-    backgroundColor: "#fffbeb",
     borderWidth: 1,
-    borderColor: "#fde68a",
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 16,
     marginTop: -4
   },
   offlineText: {
-    color: "#b45309",
     fontWeight: "600",
     fontSize: 14
   }

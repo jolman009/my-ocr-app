@@ -6,10 +6,11 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ApiConfigProvider } from "./src/providers/ApiConfigProvider";
 import { AuthProvider } from "./src/providers/AuthProvider";
+import { ThemeProvider, useTheme } from "./src/providers/ThemeProvider";
 import { ErrorBoundary } from "./src/components/ErrorBoundary";
 import { RootNavigator } from "./src/navigation/RootNavigator";
 
@@ -44,16 +45,32 @@ const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
 });
 
-const navTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: "#f8fafc",
-    card: "#0f172a",
-    primary: "#f97316",
-    text: "#0f172a",
-    border: "#e2e8f0"
-  }
+const AppInner = () => {
+  const { isDark, colors } = useTheme();
+
+  const navTheme = {
+    ...(isDark ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(isDark ? DarkTheme : DefaultTheme).colors,
+      background: colors.background,
+      card: colors.headerBg,
+      primary: colors.accent,
+      text: colors.text,
+      border: colors.borderLight,
+    },
+  };
+
+  return (
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: asyncStoragePersister }}
+    >
+      <NavigationContainer theme={navTheme}>
+        <StatusBar style={isDark ? "light" : "dark"} />
+        <RootNavigator />
+      </NavigationContainer>
+    </PersistQueryClientProvider>
+  );
 };
 
 function App() {
@@ -62,15 +79,9 @@ function App() {
       <ErrorBoundary>
         <ApiConfigProvider>
           <AuthProvider>
-            <PersistQueryClientProvider
-              client={queryClient}
-              persistOptions={{ persister: asyncStoragePersister }}
-            >
-              <NavigationContainer theme={navTheme}>
-                <StatusBar style="dark" />
-                <RootNavigator />
-              </NavigationContainer>
-            </PersistQueryClientProvider>
+            <ThemeProvider>
+              <AppInner />
+            </ThemeProvider>
           </AuthProvider>
         </ApiConfigProvider>
       </ErrorBoundary>
