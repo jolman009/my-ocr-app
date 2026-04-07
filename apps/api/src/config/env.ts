@@ -6,6 +6,7 @@ dotenv.config({ path: "../../.env" });
 
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
+  DIRECT_URL: z.string().optional(),
   PORT: z.coerce.number().default(4000),
   WEB_ORIGIN: z.string().default("http://localhost:5173"),
   WEB_ORIGINS: z.string().optional(),
