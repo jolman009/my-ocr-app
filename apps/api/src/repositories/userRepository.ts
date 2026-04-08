@@ -11,13 +11,26 @@ export class UserRepository {
     return prisma.user.findUnique({ where: { id } });
   }
 
-  create(input: { email: string; name?: string; passwordHash: string }) {
+  findByGoogleId(googleId: string) {
+    return prisma.user.findUnique({ where: { googleId } });
+  }
+
+  create(input: { email: string; name?: string; passwordHash?: string; googleId?: string; authProvider?: string }) {
     return prisma.user.create({
       data: {
         email: input.email,
         name: input.name,
-        passwordHash: input.passwordHash
+        passwordHash: input.passwordHash,
+        googleId: input.googleId,
+        authProvider: input.authProvider ?? "password"
       }
+    });
+  }
+
+  linkGoogle(id: string, googleId: string) {
+    return prisma.user.update({
+      where: { id },
+      data: { googleId, authProvider: "google" }
     });
   }
 

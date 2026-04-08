@@ -11,8 +11,8 @@ Last updated: 2026-04-07
 External testers (Testers Community) found zero bugs/crashes. These are their top recommendations:
 
 - [ ] **Play Store screenshots redesign** — current screenshots are plain captures; need feature highlights, annotations, engaging visuals to improve conversion
-- [ ] **Google Sign-in** — expand login options beyond email/password; reduces friction for new users
-- [ ] **Onboarding walkthrough** — interactive first-time tutorial highlighting major features + in-app help/FAQ section
+- [x] **Google Sign-in** — backend endpoint + mobile OAuth flow via expo-auth-session (needs GCP OAuth client IDs configured)
+- [x] **Onboarding walkthrough** — 3-slide swipeable intro for first-time users (Scan, Review, Export)
 - [x] **Dark mode** — light/dark/system toggle in Settings, full theme system with semantic color tokens
 
 ## High Priority — Existing

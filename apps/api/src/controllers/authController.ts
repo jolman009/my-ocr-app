@@ -29,6 +29,10 @@ const resetPasswordSchema = z.object({
   newPassword: z.string().min(8)
 });
 
+const googleLoginSchema = z.object({
+  idToken: z.string().min(1)
+});
+
 export class AuthController {
   private readonly emailService: EmailService;
 
@@ -64,6 +68,12 @@ export class AuthController {
     const { token, newPassword } = resetPasswordSchema.parse(req.body);
     await this.authService.resetPassword(token, newPassword);
     res.json({ message: "Password has been reset. You can now log in with your new password." });
+  });
+
+  googleLogin = asyncHandler(async (req: Request, res: Response) => {
+    const { idToken } = googleLoginSchema.parse(req.body);
+    const auth = await this.authService.googleLogin(idToken);
+    res.json(auth);
   });
 
   changePassword = asyncHandler(async (req: Request, res: Response) => {

@@ -19,6 +19,8 @@ model User {
   email                String    @unique
   name                 String?
   passwordHash         String?
+  googleId             String?   @unique
+  authProvider         String    @default("password")
   resetTokenHash       String?
   resetTokenExpiresAt  DateTime?
   receipts             Receipt[]

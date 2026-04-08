@@ -15,6 +15,7 @@ const envSchema = z.object({
   GOOGLE_CREDENTIALS_JSON: z.string().optional(),
   GOOGLE_CLIENT_EMAIL: z.string().optional(),
   GOOGLE_PRIVATE_KEY: z.string().optional(),
+  GOOGLE_OAUTH_CLIENT_ID: z.string().optional(),
   UPLOAD_DIR: z.string().default("uploads"),
   AUTH_REQUIRED: z.coerce.boolean().default(false),
   JWT_SECRET: z.string().default("development-secret"),

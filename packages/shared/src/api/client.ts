@@ -300,6 +300,22 @@ export const login = async (input: {
   return response.json();
 };
 
+export const googleLogin = async (idToken: string): Promise<AuthResponse> => {
+  const response = await withTimeout(`${getApiBaseUrl()}/auth/google`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ idToken })
+  });
+
+  if (!response.ok) {
+    throw new Error(await readError(response));
+  }
+
+  return response.json();
+};
+
 export const changePassword = async (input: {
   currentPassword: string;
   newPassword: string;

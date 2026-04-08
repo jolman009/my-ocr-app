@@ -1,6 +1,7 @@
 import { randomBytes, createHash } from "node:crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { OAuth2Client } from "google-auth-library";
 import { env } from "../config/env.js";
 import { UserRepository } from "../repositories/userRepository.js";
 import { HttpError } from "../utils/httpError.js";
@@ -94,6 +95,57 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(newPassword, 10);
     await this.users.updatePassword(user.id, passwordHash);
+  }
+
+  async googleLogin(idToken: string) {
+    const clientId = env.GOOGLE_OAUTH_CLIENT_ID;
+    if (!clientId) {
+      throw new HttpError(500, "Google Sign-in is not configured.");
+    }
+
+    const client = new OAuth2Client(clientId);
+    let payload;
+    try {
+      const ticket = await client.verifyIdToken({ idToken, audience: clientId });
+      payload = ticket.getPayload();
+    } catch {
+      throw new HttpError(401, "Invalid Google token.");
+    }
+
+    if (!payload?.email) {
+      throw new HttpError(401, "Google token missing email.");
+    }
+
+    const googleId = payload.sub;
+    const email = payload.email;
+    const name = payload.name ?? null;
+
+    // Check if user exists by googleId or email
+    let user = await this.users.findByGoogleId(googleId);
+    if (!user) {
+      user = await this.users.findByEmail(email);
+      if (user) {
+        // Link existing email account to Google
+        user = await this.users.linkGoogle(user.id, googleId);
+      } else {
+        // Create new user
+        user = await this.users.create({
+          email,
+          name: name ?? undefined,
+          googleId,
+          authProvider: "google"
+        });
+      }
+    }
+
+    return {
+      token: createToken(user),
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
+      }
+    };
   }
 
   verifyToken(token: string) {
