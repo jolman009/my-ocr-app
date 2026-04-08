@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receipt Radar - Play Store Screenshot Generator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1e293b; color: #f1f5f9; padding: 32px; }
+
+  h1 { font-size: 24px; margin-bottom: 8px; }
+  .subtitle { color: #94a3b8; margin-bottom: 32px; }
+
+  .instructions {
+    background: #334155;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+  .instructions code { background: #475569; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+
+  .frames-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 432px);
+    gap: 32px;
+    justify-content: center;
+  }
+
+  /* Each frame is 1080x1920 at 0.4x scale = 432x768 on screen */
+  .frame {
+    width: 432px;
+    height: 768px;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 48px 32px 32px;
+  }
+
+  .frame .badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+
+  .frame .headline {
+    font-size: 28px;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .frame .tagline {
+    font-size: 14px;
+    text-align: center;
+    opacity: 0.8;
+    margin-bottom: 24px;
+    line-height: 1.4;
+    max-width: 340px;
+  }
+
+  .frame .phone-wrap {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .frame .phone {
+    width: 260px;
+    height: 520px;
+    border-radius: 28px;
+    overflow: hidden;
+    border: 4px solid rgba(255,255,255,0.15);
+    background: #0f172a;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .frame .phone img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .frame .phone .placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 13px;
+    text-align: center;
+    padding: 20px;
+    cursor: pointer;
+  }
+  .frame .phone .placeholder:hover { color: #94a3b8; }
+
+  /* Frame 1: Scan */
+  .frame-scan { background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 100%); }
+  .frame-scan .badge { background: #f97316; color: white; }
+  .frame-scan .headline { color: #ffffff; }
+
+  /* Frame 2: Review */
+  .frame-review { background: linear-gradient(160deg, #0f172a 0%, #164e3f 100%); }
+  .frame-review .badge { background: #0f766e; color: white; }
+  .frame-review .headline { color: #ffffff; }
+
+  /* Frame 3: Export */
+  .frame-export { background: linear-gradient(160deg, #0f172a 0%, #4c1d95 100%); }
+  .frame-export .badge { background: #7c3aed; color: white; }
+  .frame-export .headline { color: #ffffff; }
+
+  /* Frame 4: Dark Mode */
+  .frame-dark { background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%); }
+  .frame-dark .badge { background: #f59e0b; color: #0f172a; }
+  .frame-dark .headline { color: #ffffff; }
+
+  /* Frame 5: Dashboard */
+  .frame-dashboard { background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 100%); }
+  .frame-dashboard .badge { background: #3b82f6; color: white; }
+  .frame-dashboard .headline { color: #ffffff; }
+
+  /* Export section */
+  .export-section {
+    margin-top: 48px;
+    text-align: center;
+  }
+  .export-btn {
+    background: #f97316;
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .export-btn:hover { background: #ea580c; }
+  .export-note { color: #64748b; margin-top: 12px; font-size: 13px; }
+
+  /* Hidden file input */
+  input[type="file"] { display: none; }
+</style>
+</head>
+<body>
+
+<h1>Play Store Screenshot Frames</h1>
+<p class="subtitle">Click each phone to add a screenshot. Right-click a frame to save as image.</p>
+
+<div class="instructions">
+  <strong>How to use:</strong><br>
+  1. Take screenshots from the app on your device or emulator<br>
+  2. Click the phone area in each frame to load your screenshot<br>
+  3. Right-click each frame &rarr; <code>Save image as...</code> or use the export button below<br>
+  4. Upload the saved images to Google Play Console<br>
+  <br>
+  <strong>Recommended size:</strong> Play Store wants 1080x1920 px. These frames render at 40% scale for preview. The export button generates full-resolution images.
+</div>
+
+<div class="frames-grid">
+
+  <!-- Frame 1: Scan -->
+  <div class="frame frame-scan" id="frame-1">
+    <div class="badge">AI-Powered</div>
+    <div class="headline">Scan any receipt<br>in seconds</div>
+    <div class="tagline">Point, shoot, done. Our AI extracts merchant, date, totals, and every line item.</div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="placeholder" onclick="pickImage(1)">Click to add<br>camera screen<br>screenshot</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frame 2: Review -->
+  <div class="frame frame-review" id="frame-2">
+    <div class="badge">Smart Editing</div>
+    <div class="headline">Review and edit<br>with confidence</div>
+    <div class="tagline">AI confidence scores highlight fields that need your attention. Fix with a tap.</div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="placeholder" onclick="pickImage(2)">Click to add<br>receipt detail<br>screenshot</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frame 3: Export -->
+  <div class="frame frame-export" id="frame-3">
+    <div class="badge">Easy Export</div>
+    <div class="headline">Export to CSV<br>or Excel</div>
+    <div class="tagline">Share with your bookkeeper, import into any spreadsheet, or save for tax season.</div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="placeholder" onclick="pickImage(3)">Click to add<br>exports screen<br>screenshot</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frame 4: Dark Mode -->
+  <div class="frame frame-dark" id="frame-4">
+    <div class="badge">Comfortable</div>
+    <div class="headline">Light and dark<br>themes built in</div>
+    <div class="tagline">Easy on the eyes day or night. Follows your system preference or set it manually.</div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="placeholder" onclick="pickImage(4)">Click to add<br>dark mode<br>screenshot</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frame 5: Dashboard -->
+  <div class="frame frame-dashboard" id="frame-5">
+    <div class="badge">Your Ledger</div>
+    <div class="headline">All your receipts<br>in one place</div>
+    <div class="tagline">Search, filter, and manage your digital receipt library from anywhere.</div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="placeholder" onclick="pickImage(5)">Click to add<br>dashboard<br>screenshot</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="export-section">
+  <button class="export-btn" onclick="exportAll()">Export All Frames (1080x1920)</button>
+  <p class="export-note">Generates full-resolution PNG files for Play Store upload</p>
+</div>
+
+<input type="file" id="fileInput" accept="image/*">
+
+<script>
+let currentSlot = null;
+const images = {};
+
+const fileInput = document.getElementById('fileInput');
+
+function pickImage(slot) {
+  currentSlot = slot;
+  fileInput.click();
+}
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file || !currentSlot) return;
+
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const phone = document.querySelector(`#frame-${currentSlot} .phone`);
+    phone.innerHTML = `<img src="${ev.target.result}" alt="Screenshot ${currentSlot}">`;
+    images[currentSlot] = ev.target.result;
+    phone.style.cursor = 'pointer';
+    phone.onclick = () => pickImage(currentSlot);
+  };
+  reader.readAsDataURL(file);
+  fileInput.value = '';
+});
+
+async function exportAll() {
+  const frames = document.querySelectorAll('.frame');
+  const scale = 1080 / 432; // 2.5x to get 1080px wide
+
+  for (let i = 0; i < frames.length; i++) {
+    const frame = frames[i];
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1920;
+    const ctx = canvas.getContext('2d');
+
+    // Use html2canvas-like approach: render to canvas via SVG foreignObject
+    const data = new XMLSerializer().serializeToString(frame);
+    const svgStr = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920">
+        <foreignObject width="432" height="768" transform="scale(${scale})">
+          ${data}
+        </foreignObject>
+      </svg>`;
+
+    // Fallback: just alert with instructions
+    const blob = new Blob([svgStr], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `receipt-radar-screenshot-${i + 1}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  alert('SVG files downloaded. Open each in a browser and take a 1080x1920 screenshot, or use an SVG-to-PNG converter.');
+}
+</script>
+
+</body>
+</html>

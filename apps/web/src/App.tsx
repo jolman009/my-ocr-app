@@ -19,36 +19,35 @@ const WorkspaceLayout = ({ onLogout }: { onLogout: () => void }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-mist">
-      <header className="border-b border-slate-200/80 bg-white/70 backdrop-blur">
+    <div className="min-h-screen bg-mist dark:bg-slate-950">
+      <header className="border-b border-slate-200/80 bg-white/70 backdrop-blur dark:border-slate-700/80 dark:bg-slate-900/70">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-6 py-6 lg:px-10">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <NavLink to="/app" className="flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm">
+                <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm dark:bg-slate-800">
                   <img
                     src="/brand/receipt-radar-icon.svg"
                     alt="Receipt Radar icon"
                     className="h-16 w-16 max-w-none shrink-0"
                   />
                 </span>
-                <span className="font-display text-2xl font-semibold tracking-tight text-ink">Receipt Radar</span>
-                {/* TODO: Revisit receipt-radar-dark.svg for header branding if we implement dark mode. */}
+                <span className="font-display text-2xl font-semibold tracking-tight text-ink dark:text-slate-100">Receipt Radar</span>
               </NavLink>
-              <div className="hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-600 shadow-sm md:block">
+              <div className="hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-600 shadow-sm md:block dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
                 Freelancer receipt workspace
               </div>
             </div>
             <div className="flex items-center gap-3">
               <NavLink
                 to="/"
-                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-ink"
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-ink dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200"
               >
                 Marketing site
               </NavLink>
               <button
                 onClick={onLogout}
-                className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+                className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600"
               >
                 Log out
               </button>
@@ -64,8 +63,8 @@ const WorkspaceLayout = ({ onLogout }: { onLogout: () => void }) => {
                 className={({ isActive }) =>
                   `rounded-full px-4 py-2 text-sm font-semibold transition ${
                     isActive
-                      ? "bg-ink text-white"
-                      : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-ink"
+                      ? "bg-ink text-white dark:bg-ember dark:text-white"
+                      : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-ink dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200"
                   }`
                 }
               >
@@ -87,8 +86,8 @@ export default function App() {
 
   if (isHydrating) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-mist text-ink">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-ember" />
+      <div className="flex min-h-screen flex-col items-center justify-center bg-mist text-ink dark:bg-slate-950 dark:text-slate-100">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-ember dark:border-slate-700" />
         <p className="mt-4 text-sm font-medium text-slate-500">Loading workspace...</p>
       </div>
     );
@@ -102,7 +101,7 @@ export default function App() {
       <Route
         path="/privacy"
         element={
-          <div className="min-h-screen bg-mist">
+          <div className="min-h-screen bg-mist dark:bg-slate-950">
             <PrivacyPolicyPage />
           </div>
         }

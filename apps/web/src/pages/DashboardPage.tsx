@@ -19,11 +19,11 @@ export const DashboardPage = () => {
   return (
     <div className="space-y-8">
       <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-[2rem] border border-white/70 bg-white/70 p-8 shadow-panel backdrop-blur">
+        <div className="rounded-[2rem] border border-white/70 bg-white/70 p-8 shadow-panel backdrop-blur dark:border-slate-700 dark:bg-slate-800/70">
           <p className="font-mono text-xs uppercase tracking-[0.35em] text-tide">
             {user?.name ? `Welcome, ${user.name}` : user?.email ? `Welcome, ${user.email}` : "Workspace home"}
           </p>
-          <h1 className="mt-4 max-w-2xl font-display text-5xl font-semibold tracking-tight text-ink">
+          <h1 className="mt-4 max-w-2xl font-display text-5xl font-semibold tracking-tight text-ink dark:text-slate-100">
             Keep your receipts tidy enough for books, taxes, and handoff.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600">
@@ -67,10 +67,10 @@ export const DashboardPage = () => {
         </div>
       </section>
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-panel">
+        <div className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-panel dark:border-slate-700 dark:bg-slate-800/90">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-tide">Next action</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold text-ink">Capture now lives in its own workflow.</h2>
-          <p className="mt-4 text-sm leading-7 text-slate-600">
+          <h2 className="mt-3 font-display text-3xl font-semibold text-ink dark:text-slate-100">Capture now lives in its own workflow.</h2>
+          <p className="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-400">
             Open the dedicated Capture screen when you want to upload or photograph the next receipt. That flow now owns the
             uploader and OCR progress state.
           </p>
@@ -81,20 +81,20 @@ export const DashboardPage = () => {
             Open Capture
           </Link>
         </div>
-        <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-panel">
+        <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-panel dark:border-slate-600 dark:bg-slate-700/50">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-slate-500">Home purpose</p>
           <div className="mt-5 grid gap-4 sm:grid-cols-3">
             <div>
-              <h3 className="text-lg font-semibold text-ink">Review</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">Check processed and needs-review receipts.</p>
+              <h3 className="text-lg font-semibold text-ink dark:text-slate-100">Review</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">Check processed and needs-review receipts.</p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-ink">Filter</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">Find the vendor or status that needs attention.</p>
+              <h3 className="text-lg font-semibold text-ink dark:text-slate-100">Filter</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">Find the vendor or status that needs attention.</p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-ink">Jump off</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">Move into Capture, Exports, or Settings when needed.</p>
+              <h3 className="text-lg font-semibold text-ink dark:text-slate-100">Jump off</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">Move into Capture, Exports, or Settings when needed.</p>
             </div>
           </div>
         </div>
@@ -105,9 +105,9 @@ export const DashboardPage = () => {
             value={merchant}
             onChange={(event) => setMerchant(event.target.value)}
             placeholder="Filter by merchant"
-            className="rounded-full border border-slate-200 bg-white/85 px-4 py-3 text-sm shadow-panel"
+            className="rounded-full border border-slate-200 bg-white/85 px-4 py-3 text-sm shadow-panel dark:border-slate-600 dark:bg-slate-800/85 dark:text-slate-100"
           />
-          <select value={status} onChange={(event) => setStatus(event.target.value as "" | ReceiptStatus)} className="rounded-full border border-slate-200 bg-white/85 px-4 py-3 text-sm shadow-panel">
+          <select value={status} onChange={(event) => setStatus(event.target.value as "" | ReceiptStatus)} className="rounded-full border border-slate-200 bg-white/85 px-4 py-3 text-sm shadow-panel dark:border-slate-600 dark:bg-slate-800/85 dark:text-slate-100">
             <option value="">All statuses</option>
             <option value="processed">Processed</option>
             <option value="needs_review">Needs review</option>
@@ -124,7 +124,7 @@ export const DashboardPage = () => {
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse rounded-[1.5rem] border border-slate-200 bg-white/90 p-5 shadow-sm">
+            <div key={i} className="animate-pulse rounded-[1.5rem] border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-600 dark:bg-slate-800/90">
               <div className="flex items-center justify-between gap-4">
                 <div className="space-y-2">
                   <div className="h-4 w-36 rounded-full bg-slate-200" />
@@ -139,10 +139,10 @@ export const DashboardPage = () => {
         <ReceiptTable receipts={data?.data ?? []} />
       )}
       <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-panel">
+        <div className="rounded-[2rem] border border-white/70 bg-white/90 p-8 shadow-panel dark:border-slate-700 dark:bg-slate-800/90">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-tide">Exports now live separately</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold text-ink">Templates and history moved into Exports.</h2>
-          <p className="mt-4 text-sm leading-7 text-slate-600">
+          <h2 className="mt-3 font-display text-3xl font-semibold text-ink dark:text-slate-100">Templates and history moved into Exports.</h2>
+          <p className="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-400">
             Use the dedicated Exports surface for saved templates, filtered downloads, and recent export runs. The dashboard
             stays focused on the receipt inbox and recent work.
           </p>
@@ -153,16 +153,16 @@ export const DashboardPage = () => {
             Go to Exports
           </Link>
         </div>
-        <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-panel">
+        <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-panel dark:border-slate-600 dark:bg-slate-700/50">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-slate-500">Home status</p>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div>
-              <h3 className="text-lg font-semibold text-ink">Inbox first</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">Home is now for recent receipts, review status, and quick navigation.</p>
+              <h3 className="text-lg font-semibold text-ink dark:text-slate-100">Inbox first</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">Home is now for recent receipts, review status, and quick navigation.</p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-ink">Dedicated tools</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">Capture, Exports, and Settings each now have a clearer role in the product.</p>
+              <h3 className="text-lg font-semibold text-ink dark:text-slate-100">Dedicated tools</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">Capture, Exports, and Settings each now have a clearer role in the product.</p>
             </div>
           </div>
         </div>
