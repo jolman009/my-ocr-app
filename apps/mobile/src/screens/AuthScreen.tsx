@@ -13,15 +13,32 @@ import {
   View
 } from "react-native";
 import { Controller, useForm } from "react-hook-form";
-import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
 import { Ionicons } from "@expo/vector-icons";
 import { useLogin, useRegister, useGoogleLogin } from "@receipt-ocr/shared/hooks";
 import { LabeledInput } from "../components/LabeledInput";
 import { useTheme } from "../providers/ThemeProvider";
 import { useAuthContext } from "../providers/AuthProvider";
 
-WebBrowser.maybeCompleteAuthSession();
+const GOOGLE_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_OAUTH_ANDROID_CLIENT_ID;
+const GOOGLE_ENABLED = !!GOOGLE_CLIENT_ID;
+
+// Lazy-load Google auth only when configured
+let useGoogleAuth: () => { promptAsync: (() => Promise<any>) | null } = () => ({ promptAsync: null });
+if (GOOGLE_ENABLED) {
+  try {
+    const WebBrowser = require("expo-web-browser");
+    const Google = require("expo-auth-session/providers/google");
+    WebBrowser.maybeCompleteAuthSession();
+    useGoogleAuth = () => {
+      const [_request, _response, promptAsync] = Google.useIdTokenAuthRequest({
+        androidClientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_ANDROID_CLIENT_ID,
+        iosClientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_IOS_CLIENT_ID,
+        webClientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_WEB_CLIENT_ID,
+      });
+      return { promptAsync };
+    };
+  } catch {}
+}
 
 export const AuthScreen = () => {
   const { colors } = useTheme();
@@ -39,16 +56,12 @@ export const AuthScreen = () => {
   const loginMutation = useLogin();
   const registerMutation = useRegister();
   const googleLoginMutation = useGoogleLogin();
-
-  const [_request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_ANDROID_CLIENT_ID,
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_IOS_CLIENT_ID,
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_WEB_CLIENT_ID,
-  });
+  const { promptAsync } = useGoogleAuth();
 
   const isPending = loginMutation.isPending || registerMutation.isPending || googleLoginMutation.isPending;
 
   const handleGoogleSignIn = async () => {
+    if (!promptAsync) return;
     try {
       const result = await promptAsync();
       if (result?.type === "success" && result.params?.id_token) {
@@ -90,30 +103,34 @@ export const AuthScreen = () => {
             </View>
 
             <View style={styles.form}>
-              <Pressable
-                style={[styles.googleButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-                onPress={handleGoogleSignIn}
-                disabled={isPending}
-                accessibilityRole="button"
-                accessibilityLabel="Sign in with Google"
-              >
-                {googleLoginMutation.isPending ? (
-                  <ActivityIndicator size="small" color={colors.text} />
-                ) : (
-                  <>
-                    <Ionicons name="logo-google" size={20} color="#4285F4" />
-                    <Text style={[styles.googleButtonText, { color: colors.text }]}>
-                      Continue with Google
-                    </Text>
-                  </>
-                )}
-              </Pressable>
+              {GOOGLE_ENABLED && (
+                <>
+                  <Pressable
+                    style={[styles.googleButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+                    onPress={handleGoogleSignIn}
+                    disabled={isPending}
+                    accessibilityRole="button"
+                    accessibilityLabel="Sign in with Google"
+                  >
+                    {googleLoginMutation.isPending ? (
+                      <ActivityIndicator size="small" color={colors.text} />
+                    ) : (
+                      <>
+                        <Ionicons name="logo-google" size={20} color="#4285F4" />
+                        <Text style={[styles.googleButtonText, { color: colors.text }]}>
+                          Continue with Google
+                        </Text>
+                      </>
+                    )}
+                  </Pressable>
 
-              <View style={styles.dividerRow}>
-                <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
-                <Text style={[styles.dividerText, { color: colors.textTertiary }]}>or</Text>
-                <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
-              </View>
+                  <View style={styles.dividerRow}>
+                    <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
+                    <Text style={[styles.dividerText, { color: colors.textTertiary }]}>or</Text>
+                    <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
+                  </View>
+                </>
+              )}
 
               {!isLogin && (
                 <Controller

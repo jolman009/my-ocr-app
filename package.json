@@ -8,6 +8,10 @@
     "apps/mobile",
     "packages/shared"
   ],
+  "overrides": {
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
   "scripts": {
     "dev:api": "npm run dev --workspace api",
     "dev:web": "npm run dev --workspace web",
