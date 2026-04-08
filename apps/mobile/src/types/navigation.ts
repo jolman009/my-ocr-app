@@ -7,6 +7,7 @@ export type TabParamList = {
 
 export type RootStackParamList = {
   Auth: undefined;
+  Onboarding: undefined;
   MainTabs: undefined;
   Camera: undefined;
   ReceiptDetail: { receiptId: string };

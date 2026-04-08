@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { ActivityIndicator, SafeAreaView, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -6,6 +7,7 @@ import { useTheme } from "../providers/ThemeProvider";
 import type { RootStackParamList, TabParamList } from "../types/navigation";
 import { useAuthContext } from "../providers/AuthProvider";
 import { AuthScreen } from "../screens/AuthScreen";
+import { OnboardingScreen, checkOnboardingDone } from "../screens/OnboardingScreen";
 import { CameraScreen } from "../screens/CameraScreen";
 import { DashboardScreen } from "../screens/DashboardScreen";
 import { ExportsScreen } from "../screens/ExportsScreen";
@@ -80,8 +82,13 @@ const MainTabs = () => {
 export const RootNavigator = () => {
   const { isHydrating, isAuthenticated } = useAuthContext();
   const { colors } = useTheme();
+  const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
 
-  if (isHydrating) {
+  useEffect(() => {
+    checkOnboardingDone().then(setOnboardingDone);
+  }, []);
+
+  if (isHydrating || onboardingDone === null) {
     return (
       <SafeAreaView style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator color={colors.accent} size="large" />
@@ -99,7 +106,12 @@ export const RootNavigator = () => {
       }}
     >
       {!isAuthenticated ? (
-        <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
+        <>
+          {!onboardingDone && (
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{ headerShown: false }} />
+          )}
+          <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
+        </>
       ) : (
         <>
           <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
