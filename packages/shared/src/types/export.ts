@@ -10,6 +10,7 @@ export const exportColumnKeys = [
   "tip",
   "total",
   "currency",
+  "category",
   "status",
   "item_count",
   "created_at"

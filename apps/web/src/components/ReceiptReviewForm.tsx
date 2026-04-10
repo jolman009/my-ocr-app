@@ -1,6 +1,6 @@
 import { useFieldArray, useForm } from "react-hook-form";
 import { getReceiptImageUrl } from "@receipt-ocr/shared/api";
-import type { ReceiptRecord } from "@receipt-ocr/shared/types";
+import { RECEIPT_CATEGORIES, type ReceiptRecord } from "@receipt-ocr/shared/types";
 
 interface ReceiptReviewFormProps {
   receipt: ReceiptRecord;
@@ -17,6 +17,7 @@ interface ReceiptFormValues {
   tip: string;
   total: string;
   currency: string;
+  category: string;
   items: Array<{
     name: string;
     quantity: string;
@@ -49,6 +50,7 @@ const toFormValues = (receipt: ReceiptRecord): ReceiptFormValues => ({
   tip: toInputString(receipt.tip),
   total: toInputString(receipt.total),
   currency: toInputString(receipt.currency),
+  category: toInputString(receipt.category),
   items: receipt.items.map((item) => ({
     name: item.name,
     quantity: toInputString(item.quantity),
@@ -79,6 +81,7 @@ export const ReceiptReviewForm = ({ receipt, onSave, saving }: ReceiptReviewForm
           tip: toNullableNumber(values.tip),
           total: toNullableNumber(values.total),
           currency: values.currency.trim() || null,
+          category: values.category.trim() || null,
           items: values.items
             .map((item) => ({
               name: item.name.trim(),
@@ -153,6 +156,17 @@ export const ReceiptReviewForm = ({ receipt, onSave, saving }: ReceiptReviewForm
           <label className="space-y-2 text-sm">
             <span className="text-slate-600">Currency</span>
             <input {...register("currency")} className="w-full rounded-2xl border border-slate-200 px-4 py-3" />
+          </label>
+          <label className="space-y-2 text-sm">
+            <span className="text-slate-600">Category</span>
+            <select {...register("category")} className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3">
+              <option value="">Uncategorized</option>
+              {RECEIPT_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
           </label>
         </div>
         <div className="mt-8">

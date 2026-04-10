@@ -1,6 +1,6 @@
 import { useDeferredValue, useState } from "react";
 import { Link } from "react-router-dom";
-import type { ReceiptStatus } from "@receipt-ocr/shared/types";
+import { RECEIPT_CATEGORIES, type ReceiptStatus } from "@receipt-ocr/shared/types";
 import { ReceiptTable } from "../components/ReceiptTable";
 import { useReceipts } from "@receipt-ocr/shared/hooks";
 import { useAuthContext } from "../providers/AuthProvider";
@@ -9,10 +9,12 @@ export const DashboardPage = () => {
   const { user } = useAuthContext();
   const [merchant, setMerchant] = useState("");
   const [status, setStatus] = useState<"" | ReceiptStatus>("");
+  const [category, setCategory] = useState<string>("");
   const deferredMerchant = useDeferredValue(merchant);
   const filters = {
     merchant: deferredMerchant || undefined,
-    status: status || undefined
+    status: status || undefined,
+    category: category || undefined
   };
   const { data, isLoading } = useReceipts(filters);
 
@@ -112,6 +114,14 @@ export const DashboardPage = () => {
             <option value="processed">Processed</option>
             <option value="needs_review">Needs review</option>
             <option value="failed">Failed</option>
+          </select>
+          <select value={category} onChange={(event) => setCategory(event.target.value)} className="rounded-full border border-slate-200 bg-white/85 px-4 py-3 text-sm shadow-panel dark:border-slate-600 dark:bg-slate-800/85 dark:text-slate-100">
+            <option value="">All categories</option>
+            {RECEIPT_CATEGORIES.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
           </select>
         </div>
         <Link

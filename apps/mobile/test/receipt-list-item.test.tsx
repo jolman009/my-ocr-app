@@ -17,6 +17,7 @@ describe("ReceiptListItem", () => {
           tip: 1.5,
           total: 14.73,
           currency: "USD",
+          category: null,
           status: "processed",
           confidence: { total: 0.95 },
           rawText: "Cafe Central",

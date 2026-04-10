@@ -30,6 +30,7 @@ export interface ParsedReceipt {
   tip: number | null;
   total: number | null;
   currency: string | null;
+  category: string | null;
   items: ParsedReceiptItem[];
   confidence: Record<string, number>;
   rawText: string;
@@ -42,6 +43,7 @@ export interface ReceiptFilters {
   dateFrom?: string;
   dateTo?: string;
   status?: ReceiptStatus;
+  category?: string;
 }
 
 export interface ReceiptRecord extends ParsedReceipt {

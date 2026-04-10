@@ -186,6 +186,7 @@ export class ReceiptExtractor {
       tip,
       total,
       currency,
+      category: null,
       items,
       confidence,
       rawText: result.rawText

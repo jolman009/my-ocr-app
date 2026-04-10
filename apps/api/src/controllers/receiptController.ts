@@ -10,7 +10,8 @@ const filtersSchema = z.object({
   merchant: z.string().optional(),
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),
-  status: z.enum(["processed", "needs_review", "failed"]).optional()
+  status: z.enum(["processed", "needs_review", "failed"]).optional(),
+  category: z.string().optional()
 });
 
 const updateSchema = z.object({
@@ -22,6 +23,7 @@ const updateSchema = z.object({
   tip: z.number().nullable().optional(),
   total: z.number().nullable().optional(),
   currency: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
   rawText: z.string().optional(),
   confidence: z.record(z.number()).optional(),
   items: z.array(z.object({

@@ -12,6 +12,7 @@ import type { CompositeScreenProps } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useReceipts } from "@receipt-ocr/shared/hooks";
+import { RECEIPT_CATEGORIES } from "@receipt-ocr/shared/types";
 import { ReceiptListItem } from "../components/ReceiptListItem";
 import { useTheme } from "../providers/ThemeProvider";
 import type { RootStackParamList, TabParamList } from "../types/navigation";
@@ -46,6 +47,7 @@ export const DashboardScreen = ({ navigation }: Props) => {
         tip: null,
         total: null,
         currency: null,
+        category: null,
         status: "needs_review" as any,
         confidence: {},
         items: [],
@@ -60,12 +62,14 @@ export const DashboardScreen = ({ navigation }: Props) => {
 
   const [merchant, setMerchant] = useState("");
   const [status, setStatus] = useState<"" | "processed" | "needs_review" | "failed">("");
+  const [category, setCategory] = useState<string>("");
   const filters = useMemo(
     () => ({
       merchant: merchant || undefined,
-      status: status || undefined
+      status: status || undefined,
+      category: category || undefined
     }),
-    [merchant, status]
+    [merchant, status, category]
   );
   const receiptsQuery = useReceipts(filters);
 
@@ -131,6 +135,51 @@ export const DashboardScreen = ({ navigation }: Props) => {
                     status === value && { color: colors.textOnSurface }
                   ]}>
                     {value ? value.replace("_", " ") : "All"}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <View style={styles.filterRow} accessibilityRole="radiogroup" accessibilityLabel="Filter by category">
+              <Pressable
+                style={[
+                  styles.filterChip,
+                  { backgroundColor: colors.surface },
+                  category === "" && { backgroundColor: colors.surfaceAlt }
+                ]}
+                onPress={() => setCategory("")}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: category === "" }}
+                accessibilityLabel="All categories"
+                hitSlop={8}
+              >
+                <Text style={[
+                  styles.filterText,
+                  { color: colors.text },
+                  category === "" && { color: colors.textOnSurface }
+                ]}>
+                  All categories
+                </Text>
+              </Pressable>
+              {RECEIPT_CATEGORIES.map((value) => (
+                <Pressable
+                  key={value}
+                  style={[
+                    styles.filterChip,
+                    { backgroundColor: colors.surface },
+                    category === value && { backgroundColor: colors.surfaceAlt }
+                  ]}
+                  onPress={() => setCategory(value)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: category === value }}
+                  accessibilityLabel={`Filter by ${value}`}
+                  hitSlop={8}
+                >
+                  <Text style={[
+                    styles.filterText,
+                    { color: colors.text },
+                    category === value && { color: colors.textOnSurface }
+                  ]}>
+                    {value}
                   </Text>
                 </Pressable>
               ))}

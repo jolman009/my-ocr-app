@@ -18,6 +18,7 @@ export interface ReceiptRecord {
   tip: number | null;
   total: number | null;
   currency: string | null;
+  category: string | null;
   status: ReceiptStatus;
   confidence: Record<string, number>;
   rawText: string;
@@ -25,6 +26,22 @@ export interface ReceiptRecord {
   createdAt: string;
   updatedAt: string;
 }
+
+export const RECEIPT_CATEGORIES = [
+  "Groceries",
+  "Dining",
+  "Transportation",
+  "Lodging",
+  "Office Supplies",
+  "Utilities",
+  "Entertainment",
+  "Healthcare",
+  "Shopping",
+  "Travel",
+  "Other"
+] as const;
+
+export type ReceiptCategory = (typeof RECEIPT_CATEGORIES)[number];
 
 export interface ReceiptListResponse {
   data: ReceiptRecord[];
@@ -43,6 +60,7 @@ export interface ReceiptFilters {
   dateFrom?: string;
   dateTo?: string;
   status?: ReceiptStatus;
+  category?: string;
 }
 
 export interface UploadableFile {

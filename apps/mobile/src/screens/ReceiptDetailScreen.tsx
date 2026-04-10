@@ -17,7 +17,7 @@ import { Image } from "expo-image";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { getReceiptImageUrl } from "@receipt-ocr/shared/api";
 import { useReceipt, useUpdateReceipt } from "@receipt-ocr/shared/hooks";
-import type { ReceiptRecord } from "@receipt-ocr/shared/types";
+import { RECEIPT_CATEGORIES, type ReceiptRecord } from "@receipt-ocr/shared/types";
 import { LabeledInput } from "../components/LabeledInput";
 import { useTheme } from "../providers/ThemeProvider";
 import type { RootStackParamList } from "../types/navigation";
@@ -33,6 +33,7 @@ interface ReceiptFormValues {
   tip: string;
   total: string;
   currency: string;
+  category: string;
   items: Array<{
     name: string;
     quantity: string;
@@ -62,6 +63,7 @@ const toFormValues = (receipt: ReceiptRecord): ReceiptFormValues => ({
   tip: toInputString(receipt.tip),
   total: toInputString(receipt.total),
   currency: toInputString(receipt.currency),
+  category: toInputString(receipt.category),
   items: receipt.items.map((item) => ({
     name: item.name,
     quantity: toInputString(item.quantity),
@@ -194,6 +196,69 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
             name="currency"
             render={({ field }) => <LabeledInput label="Currency" value={field.value} onChangeText={field.onChange} lowConfidence={(receiptQuery.data?.confidence.currency || 1) < 0.6} />}
           />
+          <Controller
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <View style={styles.categoryField}>
+                <Text style={[styles.categoryLabel, { color: colors.textSecondary }]}>Category</Text>
+                <View style={styles.categoryRow}>
+                  <Pressable
+                    style={[
+                      styles.categoryChip,
+                      { backgroundColor: colors.background, borderColor: colors.borderLight },
+                      field.value === "" && { backgroundColor: colors.accent, borderColor: colors.accent }
+                    ]}
+                    onPress={() => {
+                      void Haptics.selectionAsync();
+                      field.onChange("");
+                    }}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: field.value === "" }}
+                    accessibilityLabel="No category"
+                    hitSlop={6}
+                  >
+                    <Text style={[
+                      styles.categoryChipText,
+                      { color: colors.text },
+                      field.value === "" && { color: colors.textOnAccent }
+                    ]}>
+                      None
+                    </Text>
+                  </Pressable>
+                  {RECEIPT_CATEGORIES.map((value) => {
+                    const selected = field.value === value;
+                    return (
+                      <Pressable
+                        key={value}
+                        style={[
+                          styles.categoryChip,
+                          { backgroundColor: colors.background, borderColor: colors.borderLight },
+                          selected && { backgroundColor: colors.accent, borderColor: colors.accent }
+                        ]}
+                        onPress={() => {
+                          void Haptics.selectionAsync();
+                          field.onChange(value);
+                        }}
+                        accessibilityRole="radio"
+                        accessibilityState={{ checked: selected }}
+                        accessibilityLabel={`Category ${value}`}
+                        hitSlop={6}
+                      >
+                        <Text style={[
+                          styles.categoryChipText,
+                          { color: colors.text },
+                          selected && { color: colors.textOnAccent }
+                        ]}>
+                          {value}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+            )}
+          />
         </View>
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <View style={styles.sectionHeader}>
@@ -309,6 +374,7 @@ export const ReceiptDetailScreen = ({ route, navigation }: Props) => {
               tip: toNullableNumber(values.tip),
               total: toNullableNumber(values.total),
               currency: values.currency.trim() || null,
+              category: values.category.trim() || null,
               items: values.items
                 .map((item) => ({
                   name: item.name.trim(),
@@ -416,5 +482,29 @@ const styles = StyleSheet.create({
   saveButtonText: {
     fontSize: 16,
     fontWeight: "800"
+  },
+  categoryField: {
+    gap: 8
+  },
+  categoryLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 1
+  },
+  categoryRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8
+  },
+  categoryChip: {
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 8
+  },
+  categoryChipText: {
+    fontSize: 13,
+    fontWeight: "600"
   }
 });

@@ -81,6 +81,9 @@ const toQueryString = (filters?: ReceiptFilters) => {
   if (filters?.status) {
     params.set("status", filters.status);
   }
+  if (filters?.category) {
+    params.set("category", filters.category);
+  }
 
   return params.toString();
 };
@@ -204,6 +207,7 @@ export const updateReceipt = async (receipt: ReceiptRecord): Promise<ReceiptReco
       tip: normalizeNumber(receipt.tip),
       total: normalizeNumber(receipt.total),
       currency: normalizeString(receipt.currency),
+      category: normalizeString(receipt.category),
       rawText: receipt.rawText,
       confidence: receipt.confidence,
       items: receipt.items.map((item) => ({

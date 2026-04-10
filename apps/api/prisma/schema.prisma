@@ -40,6 +40,7 @@ model Receipt {
   tip         Decimal?
   total       Decimal?
   currency    String?
+  category    String?
   status      ReceiptStatus  @default(needs_review)
   confidence  Json
   ocrRawText  String
@@ -52,6 +53,7 @@ model Receipt {
   @@index([merchantName])
   @@index([receiptDate])
   @@index([status])
+  @@index([category])
 }
 
 model ReceiptItem {

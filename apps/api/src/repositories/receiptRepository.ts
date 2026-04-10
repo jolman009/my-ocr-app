@@ -20,6 +20,7 @@ const mapRecord = (receipt: ReceiptWithItems): ReceiptRecord => ({
   tip: toNullableNumber(receipt.tip),
   total: toNullableNumber(receipt.total),
   currency: receipt.currency,
+  category: receipt.category,
   status: receipt.status,
   confidence: receipt.confidence as Record<string, number>,
   rawText: receipt.ocrRawText,
@@ -36,6 +37,7 @@ const mapRecord = (receipt: ReceiptWithItems): ReceiptRecord => ({
 const buildWhere = (filters: ReceiptFilters): Prisma.ReceiptWhereInput => ({
   merchantName: filters.merchant ? { contains: filters.merchant, mode: "insensitive" } : undefined,
   status: filters.status as ReceiptStatus | undefined,
+  category: filters.category ? filters.category : undefined,
   receiptDate:
     filters.dateFrom || filters.dateTo
       ? {
@@ -86,6 +88,7 @@ export class ReceiptRepository {
         tip: toDecimalOrUndefined(input.parsed.tip) ?? null,
         total: toDecimalOrUndefined(input.parsed.total) ?? null,
         currency: input.parsed.currency,
+        category: input.parsed.category,
         status: input.status,
         confidence: input.parsed.confidence,
         ocrRawText: input.parsed.rawText,
@@ -158,6 +161,7 @@ export class ReceiptRepository {
         tip: toDecimalOrUndefined(parsed.tip),
         total: toDecimalOrUndefined(parsed.total),
         currency: parsed.currency === undefined ? undefined : parsed.currency,
+        category: parsed.category === undefined ? undefined : parsed.category,
         confidence: parsed.confidence ?? undefined,
         ocrRawText: parsed.rawText ?? undefined,
         status: "processed",

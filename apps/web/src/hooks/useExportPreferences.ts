@@ -58,6 +58,7 @@ export const availableExportFields = [
   { key: "tip", label: "Tip" },
   { key: "total", label: "Total" },
   { key: "currency", label: "Currency" },
+  { key: "category", label: "Category" },
   { key: "status", label: "Status" },
   { key: "address", label: "Address" },
   { key: "item_count", label: "Item count" },

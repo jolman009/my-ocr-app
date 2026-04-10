@@ -20,6 +20,7 @@ export const ReceiptTable = ({ receipts }: ReceiptTableProps) => {
             <tr>
               <th className="px-6 py-4 font-medium">Merchant</th>
               <th className="px-6 py-4 font-medium">Date</th>
+              <th className="px-6 py-4 font-medium">Category</th>
               <th className="px-6 py-4 font-medium">Status</th>
               <th className="px-6 py-4 font-medium">Total</th>
               <th className="px-6 py-4 font-medium">Items</th>
@@ -34,6 +35,15 @@ export const ReceiptTable = ({ receipts }: ReceiptTableProps) => {
                   </Link>
                 </td>
                 <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{receipt.receiptDate ?? "-"}</td>
+                <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
+                  {receipt.category ? (
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-700 dark:text-slate-200">
+                      {receipt.category}
+                    </span>
+                  ) : (
+                    "-"
+                  )}
+                </td>
                 <td className="px-6 py-4">
                   <span className={`rounded-full px-3 py-1 text-xs font-semibold ${receipt.status === "processed" ? "bg-tide/10 text-tide dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"}`}>
                     {receipt.status.replace("_", " ")}
@@ -45,7 +55,7 @@ export const ReceiptTable = ({ receipts }: ReceiptTableProps) => {
             ))}
             {!receipts.length ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                <td colSpan={6} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                   No receipts yet. Upload one to start building your export-ready ledger.
                 </td>
               </tr>

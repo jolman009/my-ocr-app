@@ -17,6 +17,7 @@ const mockReceipt: ReceiptRecord = {
   tip: 2.0,
   total: 13.0,
   currency: "USD",
+  category: null,
   status: "processed",
   confidence: {},
   rawText: "raw ocr text",

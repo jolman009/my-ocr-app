@@ -19,7 +19,7 @@ External testers (Testers Community) found zero bugs/crashes. These are their to
 
 - [ ] **Auth token refresh** — currently forces logout after 7-day JWT expiry; needs silent refresh
 - [ ] **Analytics integration** — `analytics.ts` logs to console only; connect PostHog or Mixpanel
-- [ ] **Settings screen** — real account info, current plan, scan usage, default export settings
+- [x] **Settings screen** — real account info, current plan, scan usage, default export settings
 
 ## Medium Priority
 
@@ -36,7 +36,7 @@ External testers (Testers Community) found zero bugs/crashes. These are their to
 - [ ] Deep linking (`receiptradar://receipt/:id`)
 - [ ] Push notifications (export ready, OCR complete)
 - [ ] Multi-currency support
-- [ ] Receipt categories/tags
+- [x] Receipt categories/tags
 - [ ] Monthly spending charts/analytics
 - [ ] Biometric auth (fingerprint/face unlock)
 - [ ] In-app chat support

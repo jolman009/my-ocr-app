@@ -14,6 +14,7 @@ const receiptFields = [
   "tip",
   "total",
   "currency",
+  "category",
   "status",
   "item_count",
   "created_at"
@@ -40,6 +41,7 @@ const buildReceiptRows = (receipts: ReceiptRecord[]) =>
     tip: receipt.tip,
     total: receipt.total,
     currency: receipt.currency,
+    category: receipt.category,
     status: receipt.status,
     item_count: receipt.items.length,
     created_at: receipt.createdAt
