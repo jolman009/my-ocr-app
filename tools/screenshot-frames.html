@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Receipt Radar - Play Store Screenshot Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1e293b; color: #f1f5f9; padding: 32px; }
@@ -158,16 +159,18 @@
 <body>
 
 <h1>Play Store Screenshot Frames</h1>
-<p class="subtitle">Click each phone to add a screenshot. Right-click a frame to save as image.</p>
+<p class="subtitle">Frames are pre-loaded from <code>screenshots/</code>. Click any phone to swap in a different image.</p>
 
 <div class="instructions">
   <strong>How to use:</strong><br>
-  1. Take screenshots from the app on your device or emulator<br>
-  2. Click the phone area in each frame to load your screenshot<br>
-  3. Right-click each frame &rarr; <code>Save image as...</code> or use the export button below<br>
-  4. Upload the saved images to Google Play Console<br>
+  1. All five frames auto-load from <code>tools/screenshots/</code> (Scan, Review, Export, Dark Mode, Dashboard).<br>
+  2. To swap any pre-loaded screenshot, click the phone area to pick a new file.<br>
+  3. Right-click each frame &rarr; <code>Save image as...</code> or use the export button below.<br>
+  4. Upload the saved images to Google Play Console.<br>
   <br>
-  <strong>Recommended size:</strong> Play Store wants 1080x1920 px. These frames render at 40% scale for preview. The export button generates full-resolution images.
+  <strong>Recommended size:</strong> Play Store wants 1080x1920 px. These frames render at 40% scale for preview. The export button generates full-resolution images.<br>
+  <br>
+  <strong>Marketing graphics:</strong> finished assets in <code>tools/screenshots/marketing/</code> (Built for the Solo Pro, Scan Every Detail, etc.) are already Play Store-ready and don't need wrapping &mdash; upload them directly.
 </div>
 
 <div class="frames-grid">
@@ -178,8 +181,8 @@
     <div class="headline">Scan any receipt<br>in seconds</div>
     <div class="tagline">Point, shoot, done. Our AI extracts merchant, date, totals, and every line item.</div>
     <div class="phone-wrap">
-      <div class="phone">
-        <div class="placeholder" onclick="pickImage(1)">Click to add<br>camera screen<br>screenshot</div>
+      <div class="phone" onclick="pickImage(1)">
+        <img src="screenshots/01-scan.png" alt="Capture screen">
       </div>
     </div>
   </div>
@@ -190,8 +193,8 @@
     <div class="headline">Review and edit<br>with confidence</div>
     <div class="tagline">AI confidence scores highlight fields that need your attention. Fix with a tap.</div>
     <div class="phone-wrap">
-      <div class="phone">
-        <div class="placeholder" onclick="pickImage(2)">Click to add<br>receipt detail<br>screenshot</div>
+      <div class="phone" onclick="pickImage(2)">
+        <img src="screenshots/02-review.png" alt="Receipt detail screen">
       </div>
     </div>
   </div>
@@ -202,8 +205,8 @@
     <div class="headline">Export to CSV<br>or Excel</div>
     <div class="tagline">Share with your bookkeeper, import into any spreadsheet, or save for tax season.</div>
     <div class="phone-wrap">
-      <div class="phone">
-        <div class="placeholder" onclick="pickImage(3)">Click to add<br>exports screen<br>screenshot</div>
+      <div class="phone" onclick="pickImage(3)">
+        <img src="screenshots/03-export.png" alt="Exports screen">
       </div>
     </div>
   </div>
@@ -214,8 +217,8 @@
     <div class="headline">Light and dark<br>themes built in</div>
     <div class="tagline">Easy on the eyes day or night. Follows your system preference or set it manually.</div>
     <div class="phone-wrap">
-      <div class="phone">
-        <div class="placeholder" onclick="pickImage(4)">Click to add<br>dark mode<br>screenshot</div>
+      <div class="phone" onclick="pickImage(4)">
+        <img src="screenshots/04-dark-mode.png" alt="Settings screen in dark mode">
       </div>
     </div>
   </div>
@@ -226,8 +229,8 @@
     <div class="headline">All your receipts<br>in one place</div>
     <div class="tagline">Search, filter, and manage your digital receipt library from anywhere.</div>
     <div class="phone-wrap">
-      <div class="phone">
-        <div class="placeholder" onclick="pickImage(5)">Click to add<br>dashboard<br>screenshot</div>
+      <div class="phone" onclick="pickImage(5)">
+        <img src="screenshots/05-dashboard.png" alt="Dashboard home screen">
       </div>
     </div>
   </div>
@@ -235,8 +238,8 @@
 </div>
 
 <div class="export-section">
-  <button class="export-btn" onclick="exportAll()">Export All Frames (1080x1920)</button>
-  <p class="export-note">Generates full-resolution PNG files for Play Store upload</p>
+  <button class="export-btn" onclick="exportAll()">Export All Frames (1080x1920 PNG)</button>
+  <p class="export-note">Generates 5 full-resolution PNG files ready for Play Store upload. May trigger a "download multiple files" prompt &mdash; allow it.</p>
 </div>
 
 <input type="file" id="fileInput" accept="image/*">
@@ -268,38 +271,52 @@ fileInput.addEventListener('change', (e) => {
   fileInput.value = '';
 });
 
+const FRAME_NAMES = ['scan', 'review', 'export', 'dark-mode', 'dashboard'];
+
 async function exportAll() {
-  const frames = document.querySelectorAll('.frame');
-  const scale = 1080 / 432; // 2.5x to get 1080px wide
-
-  for (let i = 0; i < frames.length; i++) {
-    const frame = frames[i];
-    const canvas = document.createElement('canvas');
-    canvas.width = 1080;
-    canvas.height = 1920;
-    const ctx = canvas.getContext('2d');
-
-    // Use html2canvas-like approach: render to canvas via SVG foreignObject
-    const data = new XMLSerializer().serializeToString(frame);
-    const svgStr = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920">
-        <foreignObject width="432" height="768" transform="scale(${scale})">
-          ${data}
-        </foreignObject>
-      </svg>`;
-
-    // Fallback: just alert with instructions
-    const blob = new Blob([svgStr], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `receipt-radar-screenshot-${i + 1}.svg`;
-    a.click();
-    URL.revokeObjectURL(url);
+  if (typeof html2canvas !== 'function') {
+    alert('html2canvas failed to load. Check your internet connection and reload the page.');
+    return;
   }
 
-  alert('SVG files downloaded. Open each in a browser and take a 1080x1920 screenshot, or use an SVG-to-PNG converter.');
+  const button = document.querySelector('.export-btn');
+  const originalLabel = button.textContent;
+  button.disabled = true;
+
+  const frames = document.querySelectorAll('.frame');
+  try {
+    for (let i = 0; i < frames.length; i++) {
+      button.textContent = `Rendering ${i + 1}/${frames.length}...`;
+
+      const canvas = await html2canvas(frames[i], {
+        width: 432,
+        height: 768,
+        scale: 1080 / 432, // 2.5x to hit 1080x1920
+        backgroundColor: null,
+        useCORS: true,
+        allowTaint: true,
+        logging: false
+      });
+
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `receipt-radar-${String(i + 1).padStart(2, '0')}-${FRAME_NAMES[i] ?? `frame-${i + 1}`}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      // small delay so browsers don't throttle the multi-download
+      await new Promise((r) => setTimeout(r, 150));
+    }
+    button.textContent = 'Done! Check your Downloads folder.';
+    setTimeout(() => { button.textContent = originalLabel; button.disabled = false; }, 2500);
+  } catch (err) {
+    console.error(err);
+    alert('Export failed: ' + (err && err.message ? err.message : 'unknown error') + '\nSee console for details.');
+    button.textContent = originalLabel;
+    button.disabled = false;
+  }
 }
 </script>
 

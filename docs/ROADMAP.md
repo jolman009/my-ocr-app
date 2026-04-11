@@ -10,7 +10,7 @@ Last updated: 2026-04-07
 
 External testers (Testers Community) found zero bugs/crashes. These are their top recommendations:
 
-- [ ] **Play Store screenshots redesign** — current screenshots are plain captures; need feature highlights, annotations, engaging visuals to improve conversion
+- [x] **Play Store screenshots redesign** — wrapper tool now pre-loads 5 web captures (Scan, Review, Export, Dark Mode, Dashboard), 5 finished marketing graphics parked in `tools/screenshots/marketing/`, export button produces real PNGs via html2canvas
 - [x] **Google Sign-in** — backend endpoint + mobile OAuth flow via expo-auth-session (needs GCP OAuth client IDs configured)
 - [x] **Onboarding walkthrough** — 3-slide swipeable intro for first-time users (Scan, Review, Export)
 - [x] **Dark mode** — light/dark/system toggle in Settings, full theme system with semantic color tokens
