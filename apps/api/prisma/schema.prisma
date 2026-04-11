@@ -14,18 +14,26 @@ enum ReceiptStatus {
   failed
 }
 
+enum ShipmentDocumentStatus {
+  processed
+  needs_review
+  failed
+}
+
 model User {
-  id                   String    @id @default(cuid())
-  email                String    @unique
-  name                 String?
-  passwordHash         String?
-  googleId             String?   @unique
-  authProvider         String    @default("password")
-  resetTokenHash       String?
-  resetTokenExpiresAt  DateTime?
-  receipts             Receipt[]
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  id                        String               @id @default(cuid())
+  email                     String               @unique
+  name                      String?
+  passwordHash              String?
+  googleId                  String?              @unique
+  authProvider              String               @default("password")
+  resetTokenHash            String?
+  resetTokenExpiresAt       DateTime?
+  receipts                  Receipt[]
+  organizationMemberships   OrganizationMember[]
+  uploadedShipmentDocuments ShipmentDocument[]
+  createdAt                 DateTime             @default(now())
+  updatedAt                 DateTime             @updatedAt
 }
 
 model Receipt {
@@ -67,4 +75,61 @@ model ReceiptItem {
   receipt    Receipt  @relation(fields: [receiptId], references: [id], onDelete: Cascade)
 
   @@index([receiptId])
+}
+
+// ============================================================================
+// Manifest 956 — forwarding center logistics document processing
+// Tables are namespaced via @@map so they're clearly partitioned in Postgres.
+// ============================================================================
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members   OrganizationMember[]
+  documents ShipmentDocument[]
+
+  @@map("forwarding_organizations")
+}
+
+model OrganizationMember {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  role           String   @default("member")
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("forwarding_organization_members")
+}
+
+model ShipmentDocument {
+  id             String                 @id @default(cuid())
+  organizationId String
+  uploadedById   String?
+  imageUrl       String
+  trackingNumber String?
+  carrier        String?
+  barcodeRaw     String?
+  barcodeFormat  String?
+  ocrRawText     String?
+  ocrRawJson     Json?
+  confidence     Float?
+  status         ShipmentDocumentStatus @default(processed)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  uploadedBy   User?        @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, trackingNumber])
+  @@index([organizationId, createdAt])
+  @@map("forwarding_shipment_documents")
 }
