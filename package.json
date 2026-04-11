@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "workspaces": [
     "apps/api",
+    "apps/forwarding-api",
     "apps/web",
     "apps/mobile",
     "packages/shared"
@@ -14,10 +15,11 @@
   },
   "scripts": {
     "dev:api": "npm run dev --workspace api",
+    "dev:forwarding-api": "npm run dev --workspace forwarding-api",
     "dev:web": "npm run dev --workspace web",
     "dev:mobile": "npm run start --workspace mobile",
-    "build": "npm run build --workspace @receipt-ocr/shared && npm run build --workspace api && npm run build --workspace web",
+    "build": "npm run build --workspace @receipt-ocr/shared && npm run build --workspace api && npm run build --workspace forwarding-api && npm run build --workspace web",
     "test": "npm run test --workspace api && npm run test --workspace web",
-    "lint": "npm run lint --workspace @receipt-ocr/shared && npm run lint --workspace api && npm run lint --workspace web && npm run lint --workspace mobile"
+    "lint": "npm run lint --workspace @receipt-ocr/shared && npm run lint --workspace api && npm run lint --workspace forwarding-api && npm run lint --workspace web && npm run lint --workspace mobile"
   }
 }
