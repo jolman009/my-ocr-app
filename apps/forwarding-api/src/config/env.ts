@@ -1,7 +1,10 @@
 import dotenv from "dotenv";
 import { z } from "zod";
 
-dotenv.config({ path: ".env" });
+// Local .env is authoritative in dev so shell-inherited PORT or other vars
+// can't shadow the developer's explicit choices. Render injects env vars
+// directly into the container in prod, so this override has no effect there.
+dotenv.config({ path: ".env", override: true });
 dotenv.config({ path: "../../.env" });
 
 const envSchema = z.object({

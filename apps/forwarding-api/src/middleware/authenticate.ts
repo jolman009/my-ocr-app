@@ -25,8 +25,12 @@ export const authenticate = (req: AuthenticatedRequest, _res: Response, next: Ne
   try {
     const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string; email: string };
     req.auth = { userId: payload.sub, email: payload.email };
-  } catch {
-    // Invalid token — leave req.auth unset; requireAuth will reject if needed.
+  } catch (error) {
+    // Invalid token — leave req.auth unset so requireAuth will reject.
+    // Log in dev so JWT_SECRET mismatches / expired tokens are visible.
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[auth] JWT verify failed:", error instanceof Error ? error.message : error);
+    }
   }
   next();
 };
