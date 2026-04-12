@@ -3,10 +3,13 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
+    "composite": true,
     "types": ["node"],
+    "baseUrl": ".",
     "paths": {
       "@receipt-radar/api/*": ["../api/src/*"]
     }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "references": [{ "path": "../api" }]
 }
