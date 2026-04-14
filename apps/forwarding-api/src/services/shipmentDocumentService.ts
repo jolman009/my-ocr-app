@@ -22,6 +22,7 @@ export interface CreateFromUploadInput {
 
 const BARCODE_CONFIDENCE = 0.95;
 const OCR_EXTRACTION_CONFIDENCE = 0.6;
+const UNRECOGNIZED_BARCODE_CONFIDENCE = 0.4;
 const NOT_FOUND_CONFIDENCE = 0.2;
 
 export class ShipmentDocumentService {
@@ -100,15 +101,24 @@ export class ShipmentDocumentService {
     confidence: number;
     status: ShipmentDocumentStatus;
   } {
+    // Best outcome: barcode decoded AND the decoded text matches a known
+    // carrier's tracking format. This is the only path with high confidence.
     if (barcode) {
-      return {
-        trackingNumber: barcode.raw,
-        carrier: inferCarrierFromBarcode(barcode.raw),
-        confidence: BARCODE_CONFIDENCE,
-        status: "processed"
-      };
+      const carrier = inferCarrierFromBarcode(barcode.raw);
+      if (carrier) {
+        return {
+          trackingNumber: barcode.raw,
+          carrier,
+          confidence: BARCODE_CONFIDENCE,
+          status: "processed"
+        };
+      }
     }
 
+    // Barcode missing OR decoded to something that isn't a carrier tracking
+    // number (e.g., a routing code on a UPS label). Try OCR extraction —
+    // the printed tracking number is usually visible in the label text even
+    // when the small barcode encodes something else.
     if (ocrRawText) {
       const extracted = extractTrackingNumber(ocrRawText);
       if (extracted) {
@@ -119,6 +129,19 @@ export class ShipmentDocumentService {
           status: "needs_review"
         };
       }
+    }
+
+    // Nothing recognized. If we at least decoded a barcode, keep its raw
+    // text as the trackingNumber so operators can still find the document
+    // by whatever identifier is on the label — but flag for review with
+    // low confidence so the human review queue surfaces it.
+    if (barcode) {
+      return {
+        trackingNumber: barcode.raw,
+        carrier: null,
+        confidence: UNRECOGNIZED_BARCODE_CONFIDENCE,
+        status: "needs_review"
+      };
     }
 
     return {

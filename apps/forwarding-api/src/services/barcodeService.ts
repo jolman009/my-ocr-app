@@ -1,12 +1,20 @@
 import { readBarcodesFromImageFile } from "zxing-wasm/reader";
+import { inferCarrierFromBarcode } from "../utils/trackingNumberExtractor.js";
 
 /**
  * Reads barcodes/QR codes from an image buffer using zxing-wasm.
- * Returns the first valid decode result, or null if no barcode is found.
+ * Returns the best-looking valid decode result, or null if none found.
  *
  * Tuned for shipping labels — Code128 is by far the most common on UPS,
  * USPS, and FedEx labels. QRCode covers DHL/Amazon, DataMatrix covers
  * some carrier internal codes. PDF417 covers some USPS tracking blocks.
+ *
+ * Shipping labels routinely carry multiple barcodes (tracking, routing,
+ * weight, package-identifier). zxing's detection order is not guaranteed,
+ * so we prefer a barcode whose decoded text matches a known carrier
+ * tracking format over an arbitrary first-hit — otherwise a stray routing
+ * code can get stored as the "tracking number" and the search endpoint
+ * never finds it by the printed number.
  */
 
 const SHIPPING_FORMATS = [
@@ -35,14 +43,22 @@ export class BarcodeService {
         returnErrors: false
       });
 
-      const valid = results.find((result) => result.isValid && result.text);
-      if (!valid) {
+      const valid = results.filter((result) => result.isValid && result.text);
+      if (valid.length === 0) {
         return null;
       }
 
+      // Prefer a barcode whose decoded text matches a known carrier tracking
+      // format (UPS 1Z..., USPS 9x..., FedEx 12/15 digit, DHL 10 digit).
+      // Fall back to the first decoded barcode if nothing matches — the
+      // downstream service still handles the "decoded something but not
+      // recognized" case via OCR fallback.
+      const tracking = valid.find((result) => inferCarrierFromBarcode(result.text) !== null);
+      const chosen = tracking ?? valid[0];
+
       return {
-        raw: valid.text,
-        format: valid.format
+        raw: chosen.text,
+        format: chosen.format
       };
     } catch (error) {
       // Wasm init failures, corrupted images, etc. — treat as "no barcode"
