@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Manifest 956",
+    "slug": "manifest-956",
+    "owner": "jolman009",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "manifest956",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.jolma.manifest956"
+    },
+    "android": {
+      "package": "com.jolma.manifest956",
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES"
+      ]
+    }
+  }
+}

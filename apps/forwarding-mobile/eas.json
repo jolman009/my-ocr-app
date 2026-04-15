@@ -1,0 +1,48 @@
+{
+  "cli": {
+    "version": ">= 12.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
+      },
+      "env": {
+        "EXPO_PUBLIC_AUTH_API_URL": "http://10.0.2.2:4000/api",
+        "EXPO_PUBLIC_FORWARDING_API_URL": "http://10.0.2.2:4001/forwarding"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_AUTH_API_URL": "https://receipt-radar-api.onrender.com/api",
+        "EXPO_PUBLIC_FORWARDING_API_URL": "https://forwarding-api.onrender.com/forwarding"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_AUTH_API_URL": "https://receipt-radar-api.onrender.com/api",
+        "EXPO_PUBLIC_FORWARDING_API_URL": "https://forwarding-api.onrender.com/forwarding"
+      },
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "internal"
+      }
+    }
+  }
+}
