@@ -118,4 +118,53 @@ export const getShipmentDocument = (
 ): Promise<{ document: ShipmentDocumentRecord }> =>
   request(`/documents/${id}`);
 
+/**
+ * Upload a label image to the forwarding pipeline. Uses React Native's
+ * FormData which accepts { uri, name, type } objects for file attachments.
+ * Don't set Content-Type header — fetch auto-generates the multipart boundary.
+ */
+export const uploadDocument = async (
+  imageUri: string
+): Promise<{ document: ShipmentDocumentRecord }> => {
+  const token = getAuthToken();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+  const formData = new FormData();
+  formData.append("image", {
+    uri: imageUri,
+    name: "label.jpg",
+    type: "image/jpeg"
+  } as unknown as Blob);
+
+  try {
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${BASE_URL}/documents`, {
+      method: "POST",
+      headers,
+      body: formData,
+      signal: controller.signal
+    });
+
+    const text = await response.text();
+    const body = text ? JSON.parse(text) : null;
+
+    if (!response.ok) {
+      const message =
+        body && typeof body === "object" && "message" in body
+          ? (body as { message: string }).message
+          : `Upload failed: ${response.status}`;
+      throw new ForwardingApiError(response.status, message);
+    }
+
+    return body as { document: ShipmentDocumentRecord };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
 export const getForwardingApiBaseUrl = () => BASE_URL;

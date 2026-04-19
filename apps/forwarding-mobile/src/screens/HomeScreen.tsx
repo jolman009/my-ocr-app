@@ -1,9 +1,13 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAuthContext } from "@receipt-radar/mobile/providers/AuthProvider";
 import { useOrgContext } from "../providers/OrgProvider";
+import type { RootStackParamList } from "../types/navigation";
 
-export const HomeScreen = () => {
+type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+
+export const HomeScreen = ({ navigation }: Props) => {
   const { user, logout } = useAuthContext();
   const { organization, isBootstrapping, error, retry } = useOrgContext();
 
@@ -41,16 +45,19 @@ export const HomeScreen = () => {
           )}
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>NEXT</Text>
+        <Pressable
+          style={styles.scanCard}
+          onPress={() => navigation.navigate("Camera")}
+        >
+          <Text style={styles.cardLabel}>INTAKE</Text>
           <Text style={styles.cardTitle}>Scan a package</Text>
           <Text style={styles.cardMuted}>
-            Camera + barcode capture lands in the next commit.
+            Point the camera at a shipping label to capture it.
           </Text>
-          <Pressable style={[styles.primaryButton, styles.primaryButtonDisabled]} disabled>
-            <Text style={styles.primaryButtonText}>Coming soon</Text>
-          </Pressable>
-        </View>
+          <View style={styles.primaryButton}>
+            <Text style={styles.primaryButtonText}>Open scanner</Text>
+          </View>
+        </Pressable>
 
         <View style={styles.footer}>
           <Pressable onPress={logout} style={styles.logoutButton}>
@@ -134,15 +141,20 @@ const styles = StyleSheet.create({
     color: "#f8fafc",
     fontWeight: "700"
   },
+  scanCard: {
+    backgroundColor: "#1e293b",
+    borderRadius: 20,
+    padding: 20,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: "#f97316"
+  },
   primaryButton: {
     backgroundColor: "#f97316",
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
     marginTop: 8
-  },
-  primaryButtonDisabled: {
-    backgroundColor: "#475569"
   },
   primaryButtonText: {
     color: "#0f172a",

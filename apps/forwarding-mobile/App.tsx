@@ -1,6 +1,8 @@
+import "react-native-gesture-handler";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   AuthProvider,
@@ -8,10 +10,22 @@ import {
 } from "@receipt-radar/mobile/providers/AuthProvider";
 import { ApiConfigProvider } from "./src/providers/ApiConfigProvider";
 import { OrgProvider } from "./src/providers/OrgProvider";
+import { RootNavigator } from "./src/navigation/RootNavigator";
 import { LoginScreen } from "./src/screens/LoginScreen";
-import { HomeScreen } from "./src/screens/HomeScreen";
 
 const queryClient = new QueryClient();
+
+const navTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: "#0f172a",
+    card: "#1e293b",
+    primary: "#f97316",
+    text: "#f8fafc",
+    border: "#334155"
+  }
+};
 
 const RootRouter = () => {
   const { isAuthenticated, isHydrating } = useAuthContext();
@@ -30,7 +44,9 @@ const RootRouter = () => {
 
   return (
     <OrgProvider>
-      <HomeScreen />
+      <NavigationContainer theme={navTheme}>
+        <RootNavigator />
+      </NavigationContainer>
     </OrgProvider>
   );
 };
