@@ -17,6 +17,11 @@
         "CAMERA",
         "READ_MEDIA_IMAGES"
       ]
+    },
+    "extra": {
+      "eas": {
+        "projectId": "853000ca-d62e-45fa-be8e-a4fd59ab16b5"
+      }
     }
   }
 }
