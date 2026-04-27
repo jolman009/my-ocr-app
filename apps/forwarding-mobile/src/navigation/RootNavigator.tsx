@@ -2,6 +2,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HomeScreen } from "../screens/HomeScreen";
 import { CameraScreen } from "../screens/CameraScreen";
 import { ScanResultScreen } from "../screens/ScanResultScreen";
+import { DocumentsScreen } from "../screens/DocumentsScreen";
+import { DocumentDetailScreen } from "../screens/DocumentDetailScreen";
 import type { RootStackParamList } from "../types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -22,5 +24,7 @@ export const RootNavigator = () => (
       options={{ animation: "slide_from_bottom" }}
     />
     <Stack.Screen name="ScanResult" component={ScanResultScreen} />
+    <Stack.Screen name="Documents" component={DocumentsScreen} />
+    <Stack.Screen name="DocumentDetail" component={DocumentDetailScreen} />
   </Stack.Navigator>
 );

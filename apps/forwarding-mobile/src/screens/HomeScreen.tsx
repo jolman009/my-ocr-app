@@ -59,6 +59,17 @@ export const HomeScreen = ({ navigation }: Props) => {
           </View>
         </Pressable>
 
+        <Pressable
+          style={styles.card}
+          onPress={() => navigation.navigate("Documents")}
+        >
+          <Text style={styles.cardLabel}>DOCUMENTS</Text>
+          <Text style={styles.cardTitle}>View recent intake</Text>
+          <Text style={styles.cardMuted}>
+            Browse and search saved labels by tracking number.
+          </Text>
+        </Pressable>
+
         <View style={styles.footer}>
           <Pressable onPress={logout} style={styles.logoutButton}>
             <Text style={styles.logoutText}>Sign out</Text>
