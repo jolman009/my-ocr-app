@@ -32,7 +32,7 @@
   │ 7   │ Path mapping first real use              │ ✅ In place via @receipt-radar/api/* (used by shipmentDocumentService for OCR + image resize).  │
   └─────┴──────────────────────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────┘
 
-  Phase 3: Mobile App (4 of 5 done)
+  Phase 3: Mobile App (DONE)
 
   ┌─────┬────────────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────────────┐
   │  #  │                              What                              │                                  Status / Notes                                 │
@@ -43,7 +43,8 @@
   ├─────┼────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────┤
   │ 10  │ Capture flow: scan → extract tracking → confirm/correct → save │ ✅ Committed. Camera → preview → upload → ScanResult with confidence display.   │
   ├─────┼────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────┤
-  │ 11  │ Document list with search                                      │ ⏳ NEXT — FlatList + search input, search-by-tracking                           │
+  │ 11  │ Document list with search                                      │ ✅ Committed + live-tested. DocumentsScreen FlatList + debounced search,        │
+│     │                                                                │ DocumentDetailScreen with image + OCR text. Reachable from Home.                │
   ├─────┼────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────┤
   │ 12  │ Auth (reuse Receipt Radar login)                               │ ✅ Committed. Same JWT, AuthProvider reused via @receipt-radar/mobile/* alias.  │
   └─────┴────────────────────────────────────────────────────────────────┴─────────────────────────────────────────────────────────────────────────────────┘
@@ -87,12 +88,12 @@
   └─────┴───────────────────────────────────────────┴───────────────────────────────────────────────────────────────────────────┘
 
   ---
-  Where you are right now (as of 2026-04-26)
+  Where you are right now (as of 2026-04-27)
 
   Phase 1 ████████████████████ DONE  (foundation + bootstrap)
   Phase 2 ████████████████████ DONE  (server pipeline, smoke tested with real UPS label)
-  Phase 3 ████████████████░░░░ 4/5   (commits 8/9/10/12 done; #11 list+search next)
+  Phase 3 ████████████████████ DONE  (mobile V0 complete — capture, scan, list+search, detail)
   Phase 4 ███████░░░░░░░░░░░░░ 1/3   (#14 dev APK + device test PASSED; #13 Render deploy + #15 operator test pending)
   Phase 5 ░░░░░░░░░░░░░░░░░░░░ after operator feedback
 
-  Next concrete step: Phase 3 commit #11 (document list with search) — closes V0 mobile scope.
+  Next concrete step: Phase 4 #13 — deploy forwarding-api to Render so the phone can talk to it without LAN/IP juggling, then #15 hand the phone to a warehouse operator.
