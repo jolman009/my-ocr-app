@@ -2,14 +2,24 @@
 
 ## Project Overview
 
-Full-stack receipt OCR application. Users upload/capture receipt images, extract structured data via OCR, and review/edit results. Exports to CSV/Excel.
+This monorepo hosts two products that share infrastructure:
+
+- **Receipt Radar** — freelancer receipt OCR app. Users upload/capture receipts, extract structured data via OCR, review/edit, and export CSV/Excel. Shipped to Play Store closed testing.
+- **Manifest 956** — forwarding-center logistics document pipeline (B2B). Currently mid-V0 build. See `docs/manifest_docs/forwarding_center_pivot.md` for the strategic plan.
 
 ## Monorepo Structure
 
-- `apps/api` — Express + TypeScript backend (port 4000)
-- `apps/web` — React 19 + Vite frontend (port 5173)
-- `docs/` — Setup guides and implementation plans
+- `apps/api` — Receipt Radar Express + TypeScript backend (port 4000)
+- `apps/forwarding-api` — Manifest 956 backend (port 4001)
+- `apps/web` — Receipt Radar React 19 + Vite frontend (port 5173)
+- `apps/mobile` — Receipt Radar Expo app (`com.jolma.receiptradar`)
+- `apps/forwarding-mobile` — Manifest 956 Expo app (`com.jolma.manifest956`)
+- `packages/shared` — shared receipt types, API client, hooks (used by web + mobile)
+- `docs/receipt_docs/` — Receipt Radar guides + roadmap
+- `docs/manifest_docs/` — Manifest 956 pivot plan + V0 timeline
 - Root uses **npm workspaces**
+
+The two backends share `JWT_SECRET` so a token issued by `apps/api` verifies on `apps/forwarding-api`. Code is shared via direct imports (`@receipt-radar/api/*`, `@receipt-radar/mobile/*` path aliases) — extraction to `packages/*` is deferred until the third-instance rule triggers.
 
 ## Tech Stack
 
@@ -21,14 +31,17 @@ Full-stack receipt OCR application. Users upload/capture receipt images, extract
 ## Key Commands
 
 ```bash
-npm run dev:api         # Start API server
-npm run dev:web         # Start web dev server
-npm run build           # Build both apps
-npm run test            # Run all tests
-npm run lint            # Type-check all workspaces
+npm run dev:api                  # Receipt Radar API (port 4000)
+npm run dev:forwarding-api       # Manifest 956 API (port 4001)
+npm run dev:web                  # Receipt Radar web
+npm run dev:mobile               # Receipt Radar Expo
+npm run dev:forwarding-mobile    # Manifest 956 Expo
+npm run build                    # Build shared + both backends + web
+npm run test                     # Run api + web tests
+npm run lint                     # Type-check all workspaces
 npm run prisma:migrate --workspace api   # Run DB migrations
 npm run prisma:generate --workspace api  # Regenerate Prisma client
-docker-compose up -d    # Start PostgreSQL
+docker-compose up -d             # Start PostgreSQL (local dev only — prod uses Supabase)
 ```
 
 ## Architecture Patterns
