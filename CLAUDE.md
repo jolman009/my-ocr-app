@@ -71,7 +71,6 @@ docker-compose up -d    # Start PostgreSQL
 
 ## Future Plans
 
-- Android app via Expo (React Native) — see `docs/ANDROID_IMPLEMENTATION_PLAN.md`
-- Cloud storage for uploads (replacing local `uploads/`)
-- JWT authentication
 - Rate limiting
+- See `docs/receipt_docs/ROADMAP.md` for active Receipt Radar work
+- See `docs/manifest_docs/` for Manifest 956 (forwarding-center pivot) plans
