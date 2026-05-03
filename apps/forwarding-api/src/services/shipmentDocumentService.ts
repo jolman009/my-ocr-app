@@ -8,6 +8,7 @@ import {
   type ShipmentDocumentListResult
 } from "../repositories/shipmentDocumentRepository.js";
 import { BarcodeService } from "./barcodeService.js";
+import { PdfTextService } from "./pdfTextService.js";
 import {
   extractTrackingNumber,
   inferCarrierFromBarcode
@@ -31,10 +32,18 @@ export class ShipmentDocumentService {
     private readonly barcodeService: BarcodeService,
     private readonly ocrProvider: OcrProvider,
     private readonly imageService: ImageService,
-    private readonly storageProvider: StorageProvider
+    private readonly storageProvider: StorageProvider,
+    private readonly pdfTextService: PdfTextService
   ) {}
 
   async createFromUpload(input: CreateFromUploadInput): Promise<ShipmentDocument> {
+    if (input.file.mimetype === "application/pdf") {
+      return this.createFromPdfUpload(input);
+    }
+    return this.createFromImageUpload(input);
+  }
+
+  private async createFromImageUpload(input: CreateFromUploadInput): Promise<ShipmentDocument> {
     const original = input.file.buffer;
 
     // Barcode-first: try the original buffer before preprocessing, since
@@ -75,6 +84,41 @@ export class ShipmentDocumentService {
       barcodeFormat: barcode?.format ?? null,
       ocrRawText,
       ocrRawJson,
+      confidence: resolution.confidence,
+      status: resolution.status
+    });
+  }
+
+  private async createFromPdfUpload(input: CreateFromUploadInput): Promise<ShipmentDocument> {
+    const buffer = input.file.buffer;
+
+    // PDF flow: barcode is skipped (zxing wants raster pixels), and embedded
+    // text plays the role of OCR text. The same resolveTracking() pipeline
+    // then runs the carrier-tracking regex against it.
+    const [pdfResult, imageUrl] = await Promise.all([
+      this.pdfTextService.extractText(buffer),
+      this.storageProvider.save(buffer, "pdf")
+    ]);
+
+    if (!pdfResult.hasEmbeddedText) {
+      throw new HttpError(
+        422,
+        "PDF has no extractable text. Scanned/image-only PDFs are not yet supported."
+      );
+    }
+
+    const resolution = this.resolveTracking(null, pdfResult.text);
+
+    return this.repository.create({
+      organizationId: input.organizationId,
+      uploadedById: input.uploadedById,
+      imageUrl,
+      trackingNumber: resolution.trackingNumber,
+      carrier: resolution.carrier,
+      barcodeRaw: null,
+      barcodeFormat: null,
+      ocrRawText: pdfResult.text,
+      ocrRawJson: { source: "pdfjs-dist", pageCount: pdfResult.pageCount },
       confidence: resolution.confidence,
       status: resolution.status
     });
@@ -156,6 +200,7 @@ export class ShipmentDocumentService {
     if (mimetype === "image/jpeg" || mimetype === "image/jpg") return "jpg";
     if (mimetype === "image/png") return "png";
     if (mimetype === "image/webp") return "webp";
+    if (mimetype === "application/pdf") return "pdf";
     return "png";
   }
 }

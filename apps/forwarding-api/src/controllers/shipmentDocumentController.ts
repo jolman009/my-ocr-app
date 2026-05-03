@@ -15,7 +15,8 @@ const ACCEPTED_MIME_TYPES = new Set([
   "image/jpeg",
   "image/jpg",
   "image/png",
-  "image/webp"
+  "image/webp",
+  "application/pdf"
 ]);
 
 export class ShipmentDocumentController {
@@ -23,7 +24,7 @@ export class ShipmentDocumentController {
 
   create = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     if (!req.file) {
-      throw new HttpError(400, "Image file is required in the 'image' form field.");
+      throw new HttpError(400, "File is required in the 'image' form field.");
     }
     if (!req.organizationId) {
       throw new HttpError(500, "Organization context missing — middleware misconfigured.");
@@ -32,7 +33,7 @@ export class ShipmentDocumentController {
       throw new HttpError(401, "Authentication is required.");
     }
     if (!ACCEPTED_MIME_TYPES.has(req.file.mimetype)) {
-      throw new HttpError(400, `Unsupported image type: ${req.file.mimetype}.`);
+      throw new HttpError(400, `Unsupported file type: ${req.file.mimetype}.`);
     }
 
     const document = await this.service.createFromUpload({

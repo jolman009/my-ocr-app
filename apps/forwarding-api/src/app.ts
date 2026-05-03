@@ -18,6 +18,7 @@ import { OrganizationRepository } from "./repositories/organizationRepository.js
 import { ShipmentDocumentRepository } from "./repositories/shipmentDocumentRepository.js";
 import { OrganizationService } from "./services/organizationService.js";
 import { BarcodeService } from "./services/barcodeService.js";
+import { PdfTextService } from "./services/pdfTextService.js";
 import { ShipmentDocumentService } from "./services/shipmentDocumentService.js";
 import { OrganizationController } from "./controllers/organizationController.js";
 import { ShipmentDocumentController } from "./controllers/shipmentDocumentController.js";
@@ -31,6 +32,7 @@ const imageService = new ImageService(storageProvider);
 const ocrProvider: OcrProvider =
   env.OCR_PROVIDER === "google-vision" ? new GoogleVisionOcrProvider() : new MockOcrProvider();
 const barcodeService = new BarcodeService();
+const pdfTextService = new PdfTextService();
 
 // ---- Repositories ----
 const organizationRepository = new OrganizationRepository();
@@ -43,7 +45,8 @@ const shipmentDocumentService = new ShipmentDocumentService(
   barcodeService,
   ocrProvider,
   imageService,
-  storageProvider
+  storageProvider,
+  pdfTextService
 );
 
 // ---- Controllers ----
