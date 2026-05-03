@@ -1,8 +1,10 @@
 # Forwarding Center Pivot — Strategic Plan
 
-> **Status (2026-04-11):** Pivot committed. Direction is monorepo with parallel `apps/forwarding-*` workspaces sharing existing infra (OCR provider, storage, auth, image pipeline) via direct imports — no premature extraction to `packages/*`. Receipt Radar (the freelancer app) coasts during this build. Same Supabase project, new Render service for the forwarding API. Mobile-first for V0; web admin lives in MVP scope. Multi-tenant from day one — `Organization` model is non-negotiable.
+> **Status (2026-05-02):** V0 mobile + API shipped. `forwarding-api` is live on Render (`https://manifest-956-api.onrender.com`, deployed 2026-04-30); the Manifest 956 Expo dev client is wired to cloud URLs and tested end-to-end on a physical device. Only Phase 4 #15 — the warehouse-operator handoff (18/20 success criterion) — remains before V0 closes. See `Manifest_956_V0_Timeline.md` for the live phase tracker.
 >
-> See the V0 scope and critique notes in chat history (2026-04-11). The MVP scope below is the destination, not the next sprint — V0 is the next sprint.
+> Original direction (still load-bearing): monorepo with parallel `apps/forwarding-*` workspaces sharing existing infra (OCR provider, storage, auth, image pipeline) via direct imports — no premature extraction to `packages/*`. Receipt Radar coasts during this build. Same Supabase project, separate Render service. Mobile-first for V0; web admin lives in MVP scope. Multi-tenant from day one — `Organization` model is non-negotiable.
+>
+> The MVP scope below is the destination, not the next sprint — operator feedback drives Phase 5 prioritization.
 
 ## The MVP target
 

@@ -54,7 +54,8 @@
   ┌─────┬────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────┐
   │  #  │                  What                  │                                            Status / Notes                                            │
   ├─────┼────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────┤
-  │ 13  │ Create forwarding-api Render service   │ ⏳ Pending — still local-only at http://192.168.1.181:4001. Needs build/start cmds + env vars.      │
+  │ 13  │ Create forwarding-api Render service   │ ✅ Live 2026-04-30 at https://manifest-956-api.onrender.com. Health passing, mobile .env wired.     │
+  │     │                                        │ Cell-signal verification (off-WiFi end-to-end) is the only piece left before #15.                   │
   ├─────┼────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────┤
   │ 14  │ Build dev APK via EAS                  │ ✅ Built + installed 2026-04-26. Project ID 853000ca-d62e-45fa-be8e-a4fd59ab16b5.                   │
   │     │                                        │ Live device test PASSED end-to-end (camera → upload → barcode/OCR → ScanResult).                    │
@@ -88,12 +89,12 @@
   └─────┴───────────────────────────────────────────┴───────────────────────────────────────────────────────────────────────────┘
 
   ---
-  Where you are right now (as of 2026-04-27)
+  Where you are right now (as of 2026-05-02)
 
   Phase 1 ████████████████████ DONE  (foundation + bootstrap)
   Phase 2 ████████████████████ DONE  (server pipeline, smoke tested with real UPS label)
   Phase 3 ████████████████████ DONE  (mobile V0 complete — capture, scan, list+search, detail)
-  Phase 4 ███████░░░░░░░░░░░░░ 1/3   (#14 dev APK + device test PASSED; #13 Render deploy + #15 operator test pending)
+  Phase 4 █████████████░░░░░░░ 2/3   (#13 Render deploy live, #14 dev APK device-tested; #15 operator test pending)
   Phase 5 ░░░░░░░░░░░░░░░░░░░░ after operator feedback
 
-  Next concrete step: Phase 4 #13 — deploy forwarding-api to Render so the phone can talk to it without LAN/IP juggling, then #15 hand the phone to a warehouse operator.
+  Next concrete step: Phase 4 #15 — verify the dev client works off-WiFi against the Render URLs (login + scan + Documents list), then hand the phone to a warehouse operator and run the 18/20 success test.
