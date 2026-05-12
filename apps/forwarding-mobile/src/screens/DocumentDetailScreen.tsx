@@ -1,12 +1,12 @@
 import {
   ActivityIndicator,
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View
 } from "react-native";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -71,7 +71,8 @@ export const DocumentDetailScreen = ({ navigation, route }: Props) => {
             <Image
               source={{ uri: doc.imageUrl }}
               style={styles.image}
-              resizeMode="contain"
+              contentFit="contain"
+              transition={150}
             />
           ) : null}
 

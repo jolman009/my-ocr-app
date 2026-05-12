@@ -23,7 +23,7 @@
       },
       "env": {
         "EXPO_PUBLIC_AUTH_API_URL": "https://receipt-radar-api.onrender.com/api",
-        "EXPO_PUBLIC_FORWARDING_API_URL": "https://forwarding-api.onrender.com/forwarding"
+        "EXPO_PUBLIC_FORWARDING_API_URL": "https://manifest-956-api.onrender.com/forwarding"
       }
     },
     "production": {
@@ -32,7 +32,7 @@
       },
       "env": {
         "EXPO_PUBLIC_AUTH_API_URL": "https://receipt-radar-api.onrender.com/api",
-        "EXPO_PUBLIC_FORWARDING_API_URL": "https://forwarding-api.onrender.com/forwarding"
+        "EXPO_PUBLIC_FORWARDING_API_URL": "https://manifest-956-api.onrender.com/forwarding"
       },
       "autoIncrement": true
     }
