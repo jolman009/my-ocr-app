@@ -32,3 +32,24 @@ const envSchema = z.object({
 });
 
 export const env = envSchema.parse(process.env);
+
+// Guard against the config drift that broke Manifest 956 image URLs (2026-05-12):
+// s3StorageProvider writes keys as `receipts/<file>` and builds public URLs as
+// `${S3_PUBLIC_BASE_URL}/${key}`. For Supabase Storage the URL must include the
+// bucket segment (`.../public/<bucket>`), so S3_PUBLIC_BASE_URL must end with the
+// bucket name — otherwise every uploaded image 404s even though the PUT succeeds.
+// Warn (not throw) so legitimate CDN/custom-domain setups that map to the bucket
+// root are not broken.
+if (
+  env.STORAGE_PROVIDER === "s3" &&
+  env.S3_BUCKET &&
+  env.S3_PUBLIC_BASE_URL &&
+  !env.S3_PUBLIC_BASE_URL.replace(/\/$/, "").endsWith(`/${env.S3_BUCKET}`)
+) {
+  console.warn(
+    `[env] S3_PUBLIC_BASE_URL ("${env.S3_PUBLIC_BASE_URL}") does not end with ` +
+      `the bucket name "/${env.S3_BUCKET}". For Supabase Storage this produces ` +
+      `image URLs that 404. Expected it to end with "/${env.S3_BUCKET}". ` +
+      `Ignore this only if you front the bucket with a CDN mapped to its root.`
+  );
+}
