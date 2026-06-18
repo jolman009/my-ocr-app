@@ -13,6 +13,7 @@ import {
   extractTrackingNumber,
   inferCarrierFromBarcode
 } from "../utils/trackingNumberExtractor.js";
+import { classifyDocument } from "../utils/documentClassifier.js";
 import { HttpError } from "../utils/httpError.js";
 
 export interface CreateFromUploadInput {
@@ -74,6 +75,12 @@ export class ShipmentDocumentService {
     // Barcode wins if present; otherwise try OCR text extraction.
     const resolution = this.resolveTracking(barcode, ocrRawText);
 
+    // Coarse document-type classification from the OCR text. A resolved carrier
+    // tracking number is a strong signal the document is a shipping label.
+    const classification = classifyDocument(ocrRawText, {
+      hasCarrierTracking: Boolean(resolution.carrier)
+    });
+
     return this.repository.create({
       organizationId: input.organizationId,
       uploadedById: input.uploadedById,
@@ -84,6 +91,7 @@ export class ShipmentDocumentService {
       barcodeFormat: barcode?.format ?? null,
       ocrRawText,
       ocrRawJson,
+      documentType: classification.type,
       confidence: resolution.confidence,
       status: resolution.status
     });
@@ -109,6 +117,10 @@ export class ShipmentDocumentService {
 
     const resolution = this.resolveTracking(null, pdfResult.text);
 
+    const classification = classifyDocument(pdfResult.text, {
+      hasCarrierTracking: Boolean(resolution.carrier)
+    });
+
     return this.repository.create({
       organizationId: input.organizationId,
       uploadedById: input.uploadedById,
@@ -119,6 +131,7 @@ export class ShipmentDocumentService {
       barcodeFormat: null,
       ocrRawText: pdfResult.text,
       ocrRawJson: { source: "pdfjs-dist", pageCount: pdfResult.pageCount },
+      documentType: classification.type,
       confidence: resolution.confidence,
       status: resolution.status
     });
