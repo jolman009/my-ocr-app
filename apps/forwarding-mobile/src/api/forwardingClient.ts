@@ -107,11 +107,13 @@ export const getMyOrganization = (): Promise<OrganizationResponse> =>
 
 export const listShipmentDocuments = (params?: {
   q?: string;
+  status?: ShipmentDocumentRecord["status"];
   page?: number;
   limit?: number;
 }): Promise<ShipmentDocumentListResponse> => {
   const search = new URLSearchParams();
   if (params?.q) search.set("q", params.q);
+  if (params?.status) search.set("status", params.status);
   if (params?.page) search.set("page", String(params.page));
   if (params?.limit) search.set("limit", String(params.limit));
   const qs = search.toString();
@@ -122,6 +124,26 @@ export const getShipmentDocument = (
   id: string
 ): Promise<{ document: ShipmentDocumentRecord }> =>
   request(`/documents/${id}`);
+
+/** Fields an operator can edit from the review queue. */
+export interface ShipmentDocumentPatch {
+  trackingNumber?: string | null;
+  carrier?: string | null;
+  recipientName?: string | null;
+  mailboxNumber?: string | null;
+  documentType?: ShipmentDocumentRecord["documentType"];
+  status?: ShipmentDocumentRecord["status"];
+}
+
+export const updateShipmentDocument = (
+  id: string,
+  patch: ShipmentDocumentPatch
+): Promise<{ document: ShipmentDocumentRecord }> =>
+  request(`/documents/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(patch)
+  });
 
 /**
  * Upload a label image to the forwarding pipeline. Uses React Native's

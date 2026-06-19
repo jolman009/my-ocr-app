@@ -22,6 +22,7 @@ export const createShipmentDocumentRouter = (
 
   router.get("/", requireOrgContext, controller.list);
   router.get("/:id", requireOrgContext, controller.getById);
+  router.patch("/:id", requireOrgContext, controller.update);
 
   return router;
 };

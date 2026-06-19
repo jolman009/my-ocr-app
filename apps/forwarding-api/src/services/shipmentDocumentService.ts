@@ -5,7 +5,8 @@ import type { StorageProvider } from "@receipt-radar/api/providers/storageProvid
 import {
   ShipmentDocumentRepository,
   type ListShipmentDocumentsFilters,
-  type ShipmentDocumentListResult
+  type ShipmentDocumentListResult,
+  type UpdateShipmentDocumentInput
 } from "../repositories/shipmentDocumentRepository.js";
 import { BarcodeService } from "./barcodeService.js";
 import { PdfTextService } from "./pdfTextService.js";
@@ -165,6 +166,20 @@ export class ShipmentDocumentService {
       throw new HttpError(404, "Shipment document not found.");
     }
     return document;
+  }
+
+  /**
+   * Applies an operator's review edits (accept / correct / reject). The
+   * getById call enforces multi-tenant ownership before the update touches the
+   * row — the document must belong to the caller's organization.
+   */
+  async update(
+    id: string,
+    organizationId: string,
+    patch: UpdateShipmentDocumentInput
+  ): Promise<ShipmentDocument> {
+    await this.getById(id, organizationId);
+    return this.repository.update(id, patch);
   }
 
   private resolveTracking(

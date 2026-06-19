@@ -4,6 +4,8 @@ import { CameraScreen } from "../screens/CameraScreen";
 import { ScanResultScreen } from "../screens/ScanResultScreen";
 import { DocumentsScreen } from "../screens/DocumentsScreen";
 import { DocumentDetailScreen } from "../screens/DocumentDetailScreen";
+import { ReviewQueueScreen } from "../screens/ReviewQueueScreen";
+import { ReviewDocumentScreen } from "../screens/ReviewDocumentScreen";
 import type { RootStackParamList } from "../types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -26,5 +28,7 @@ export const RootNavigator = () => (
     <Stack.Screen name="ScanResult" component={ScanResultScreen} />
     <Stack.Screen name="Documents" component={DocumentsScreen} />
     <Stack.Screen name="DocumentDetail" component={DocumentDetailScreen} />
+    <Stack.Screen name="ReviewQueue" component={ReviewQueueScreen} />
+    <Stack.Screen name="ReviewDocument" component={ReviewDocumentScreen} />
   </Stack.Navigator>
 );

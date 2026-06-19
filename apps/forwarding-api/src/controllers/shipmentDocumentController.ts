@@ -5,13 +5,33 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { HttpError } from "../utils/httpError.js";
 import type { AuthenticatedRequest } from "../types/auth.js";
 
+const SHIPMENT_STATUSES = ["processed", "needs_review", "failed"] as const;
+
 const listFiltersSchema = z.object({
   q: z.string().optional(),
   type: z.enum(["label", "invoice", "packing_slip", "customs", "unknown"]).optional(),
   customerId: z.string().optional(),
+  status: z.enum(SHIPMENT_STATUSES).optional(),
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().max(100).optional()
 });
+
+// Fields an operator may edit from the review queue. All optional; `null`
+// explicitly clears a field. At least one key must be present (enforced below).
+const updateSchema = z
+  .object({
+    trackingNumber: z.string().trim().min(1).nullable(),
+    carrier: z.string().trim().min(1).nullable(),
+    recipientName: z.string().trim().min(1).nullable(),
+    mailboxNumber: z.string().trim().min(1).nullable(),
+    documentType: z.enum(["label", "invoice", "packing_slip", "customs", "unknown"]).nullable(),
+    matchedCustomerId: z.string().trim().min(1).nullable(),
+    status: z.enum(SHIPMENT_STATUSES)
+  })
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field is required."
+  });
 
 const ACCEPTED_MIME_TYPES = new Set([
   "image/jpeg",
@@ -57,6 +77,7 @@ export class ShipmentDocumentController {
       q: filters.q,
       type: filters.type,
       customerId: filters.customerId,
+      status: filters.status,
       page: filters.page,
       limit: filters.limit
     });
@@ -68,6 +89,19 @@ export class ShipmentDocumentController {
       throw new HttpError(500, "Organization context missing — middleware misconfigured.");
     }
     const document = await this.service.getById(String(req.params.id), req.organizationId);
+    res.json({ document });
+  });
+
+  update = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.organizationId) {
+      throw new HttpError(500, "Organization context missing — middleware misconfigured.");
+    }
+    const patch = updateSchema.parse(req.body);
+    const document = await this.service.update(
+      String(req.params.id),
+      req.organizationId,
+      patch
+    );
     res.json({ document });
   });
 }

@@ -1,8 +1,10 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useQuery } from "@tanstack/react-query";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useAuthContext } from "@receipt-radar/mobile/providers/AuthProvider";
 import { useOrgContext } from "../providers/OrgProvider";
+import { listShipmentDocuments } from "../api/forwardingClient";
 import type { RootStackParamList } from "../types/navigation";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
@@ -10,6 +12,14 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 export const HomeScreen = ({ navigation }: Props) => {
   const { user, logout } = useAuthContext();
   const { organization, isBootstrapping, error, retry } = useOrgContext();
+
+  // Lightweight count for the review badge — only fetch once an org exists.
+  const reviewQuery = useQuery({
+    queryKey: ["forwarding", "documents", { status: "needs_review", count: true }],
+    queryFn: () => listShipmentDocuments({ status: "needs_review", limit: 1 }),
+    enabled: Boolean(organization)
+  });
+  const reviewCount = reviewQuery.data?.pagination.total ?? 0;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -57,6 +67,26 @@ export const HomeScreen = ({ navigation }: Props) => {
           <View style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>Open scanner</Text>
           </View>
+        </Pressable>
+
+        <Pressable
+          style={styles.card}
+          onPress={() => navigation.navigate("ReviewQueue")}
+        >
+          <View style={styles.cardLabelRow}>
+            <Text style={styles.cardLabel}>REVIEW QUEUE</Text>
+            {reviewCount > 0 ? (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{reviewCount > 99 ? "99+" : reviewCount}</Text>
+              </View>
+            ) : null}
+          </View>
+          <Text style={styles.cardTitle}>Resolve flagged documents</Text>
+          <Text style={styles.cardMuted}>
+            {reviewCount > 0
+              ? `${reviewCount} ${reviewCount === 1 ? "document needs" : "documents need"} review.`
+              : "Fix and accept documents that couldn't be read confidently."}
+          </Text>
         </Pressable>
 
         <Pressable
@@ -118,6 +148,24 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 2
+  },
+  cardLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  badge: {
+    backgroundColor: "#f97316",
+    borderRadius: 999,
+    minWidth: 22,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    alignItems: "center"
+  },
+  badgeText: {
+    color: "#0f172a",
+    fontSize: 12,
+    fontWeight: "800"
   },
   cardTitle: {
     color: "#f8fafc",
