@@ -8,6 +8,7 @@ import type { AuthenticatedRequest } from "../types/auth.js";
 const listFiltersSchema = z.object({
   q: z.string().optional(),
   type: z.enum(["label", "invoice", "packing_slip", "customs", "unknown"]).optional(),
+  customerId: z.string().optional(),
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().max(100).optional()
 });
@@ -55,6 +56,7 @@ export class ShipmentDocumentController {
       organizationId: req.organizationId,
       q: filters.q,
       type: filters.type,
+      customerId: filters.customerId,
       page: filters.page,
       limit: filters.limit
     });
