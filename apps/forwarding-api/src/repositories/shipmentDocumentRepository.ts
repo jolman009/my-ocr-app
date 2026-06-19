@@ -13,6 +13,10 @@ export interface CreateShipmentDocumentInput {
   ocrRawText: string | null;
   ocrRawJson: unknown;
   documentType: string | null;
+  recipientName: string | null;
+  mailboxNumber: string | null;
+  matchedCustomerId: string | null;
+  customerMatchConfidence: number | null;
   confidence: number | null;
   status: ShipmentDocumentStatus;
 }
@@ -21,6 +25,7 @@ export interface ListShipmentDocumentsFilters {
   organizationId: string;
   q?: string;
   type?: string;
+  customerId?: string;
   page?: number;
   limit?: number;
 }
@@ -49,6 +54,10 @@ export class ShipmentDocumentRepository {
         ocrRawText: input.ocrRawText,
         ocrRawJson: (input.ocrRawJson ?? null) as never,
         documentType: input.documentType,
+        recipientName: input.recipientName,
+        mailboxNumber: input.mailboxNumber,
+        matchedCustomerId: input.matchedCustomerId,
+        customerMatchConfidence: input.customerMatchConfidence,
         confidence: input.confidence,
         status: input.status
       }
@@ -63,7 +72,8 @@ export class ShipmentDocumentRepository {
       trackingNumber: filters.q
         ? { contains: filters.q, mode: "insensitive" as const }
         : undefined,
-      documentType: filters.type ?? undefined
+      documentType: filters.type ?? undefined,
+      matchedCustomerId: filters.customerId ?? undefined
     };
 
     const [total, data] = await Promise.all([

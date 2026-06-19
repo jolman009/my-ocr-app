@@ -16,14 +16,19 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { createRequireOrgContext } from "./middleware/requireOrgContext.js";
 import { OrganizationRepository } from "./repositories/organizationRepository.js";
 import { ShipmentDocumentRepository } from "./repositories/shipmentDocumentRepository.js";
+import { CustomerAccountRepository } from "./repositories/customerAccountRepository.js";
 import { OrganizationService } from "./services/organizationService.js";
 import { BarcodeService } from "./services/barcodeService.js";
 import { PdfTextService } from "./services/pdfTextService.js";
+import { CustomerMatchService } from "./services/customerMatchService.js";
+import { CustomerAccountService } from "./services/customerAccountService.js";
 import { ShipmentDocumentService } from "./services/shipmentDocumentService.js";
 import { OrganizationController } from "./controllers/organizationController.js";
 import { ShipmentDocumentController } from "./controllers/shipmentDocumentController.js";
+import { CustomerAccountController } from "./controllers/customerAccountController.js";
 import { createOrganizationRouter } from "./routes/organizationRoutes.js";
 import { createShipmentDocumentRouter } from "./routes/shipmentDocumentRoutes.js";
+import { createCustomerAccountRouter } from "./routes/customerAccountRoutes.js";
 
 // ---- Providers (shared with apps/api via path-mapped imports) ----
 const storageProvider: StorageProvider =
@@ -37,21 +42,26 @@ const pdfTextService = new PdfTextService();
 // ---- Repositories ----
 const organizationRepository = new OrganizationRepository();
 const shipmentDocumentRepository = new ShipmentDocumentRepository();
+const customerAccountRepository = new CustomerAccountRepository();
 
 // ---- Services ----
 const organizationService = new OrganizationService(organizationRepository);
+const customerMatchService = new CustomerMatchService(customerAccountRepository);
+const customerAccountService = new CustomerAccountService(customerAccountRepository);
 const shipmentDocumentService = new ShipmentDocumentService(
   shipmentDocumentRepository,
   barcodeService,
   ocrProvider,
   imageService,
   storageProvider,
-  pdfTextService
+  pdfTextService,
+  customerMatchService
 );
 
 // ---- Controllers ----
 const organizationController = new OrganizationController(organizationService);
 const shipmentDocumentController = new ShipmentDocumentController(shipmentDocumentService);
+const customerAccountController = new CustomerAccountController(customerAccountService);
 
 // ---- Middleware factories ----
 const requireOrgContext = createRequireOrgContext(organizationRepository);
@@ -111,6 +121,10 @@ app.get("/forwarding/health", async (_req, res) => {
 });
 
 app.use("/forwarding/organizations", createOrganizationRouter(organizationController));
+app.use(
+  "/forwarding/customers",
+  createCustomerAccountRouter(customerAccountController, requireOrgContext)
+);
 app.use(
   "/forwarding/documents",
   createShipmentDocumentRouter(shipmentDocumentController, requireOrgContext)

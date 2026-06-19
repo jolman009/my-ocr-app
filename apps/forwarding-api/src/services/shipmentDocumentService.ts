@@ -14,6 +14,8 @@ import {
   inferCarrierFromBarcode
 } from "../utils/trackingNumberExtractor.js";
 import { classifyDocument } from "../utils/documentClassifier.js";
+import { extractRecipient } from "../utils/recipientExtractor.js";
+import type { CustomerMatchService } from "./customerMatchService.js";
 import { HttpError } from "../utils/httpError.js";
 
 export interface CreateFromUploadInput {
@@ -34,7 +36,8 @@ export class ShipmentDocumentService {
     private readonly ocrProvider: OcrProvider,
     private readonly imageService: ImageService,
     private readonly storageProvider: StorageProvider,
-    private readonly pdfTextService: PdfTextService
+    private readonly pdfTextService: PdfTextService,
+    private readonly customerMatchService: CustomerMatchService
   ) {}
 
   async createFromUpload(input: CreateFromUploadInput): Promise<ShipmentDocument> {
@@ -81,6 +84,10 @@ export class ShipmentDocumentService {
       hasCarrierTracking: Boolean(resolution.carrier)
     });
 
+    // Parse the recipient and route to a customer account (mailbox-first).
+    const recipient = extractRecipient(ocrRawText);
+    const customerMatch = await this.customerMatchService.match(input.organizationId, recipient);
+
     return this.repository.create({
       organizationId: input.organizationId,
       uploadedById: input.uploadedById,
@@ -92,6 +99,10 @@ export class ShipmentDocumentService {
       ocrRawText,
       ocrRawJson,
       documentType: classification.type,
+      recipientName: recipient.recipientName,
+      mailboxNumber: recipient.mailboxNumber,
+      matchedCustomerId: customerMatch?.customerId ?? null,
+      customerMatchConfidence: customerMatch?.confidence ?? null,
       confidence: resolution.confidence,
       status: resolution.status
     });
@@ -121,6 +132,9 @@ export class ShipmentDocumentService {
       hasCarrierTracking: Boolean(resolution.carrier)
     });
 
+    const recipient = extractRecipient(pdfResult.text);
+    const customerMatch = await this.customerMatchService.match(input.organizationId, recipient);
+
     return this.repository.create({
       organizationId: input.organizationId,
       uploadedById: input.uploadedById,
@@ -132,6 +146,10 @@ export class ShipmentDocumentService {
       ocrRawText: pdfResult.text,
       ocrRawJson: { source: "pdfjs-dist", pageCount: pdfResult.pageCount },
       documentType: classification.type,
+      recipientName: recipient.recipientName,
+      mailboxNumber: recipient.mailboxNumber,
+      matchedCustomerId: customerMatch?.customerId ?? null,
+      customerMatchConfidence: customerMatch?.confidence ?? null,
       confidence: resolution.confidence,
       status: resolution.status
     });

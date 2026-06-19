@@ -74,7 +74,9 @@
   │ 17  │ Document classifier                       │ ✅ Shipped — weighted keyword rules → label/invoice/packing_slip/customs/ │
   │     │                                           │ unknown, stored on documentType, filterable via GET /documents?type=.     │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
-  │ 18  │ Customer/account fuzzy matching (fuse.js) │ Auto-route by matching OCR'd recipient to existing customer records       │
+  │ 18  │ Customer/account fuzzy matching (fuse.js) │ ✅ Shipped — mailbox-number-first match (recipient name as fuzzy tie-     │
+  │     │                                           │ breaker) → matchedCustomerId/confidence. CustomerAccount model + CRUD at  │
+  │     │                                           │ /forwarding/customers; docs filterable via GET /documents?customerId=.    │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
   │ 19  │ Review queue UI                           │ Needs-review list, editable fields, accept/correct/reject flow            │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤

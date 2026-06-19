@@ -40,6 +40,10 @@ export interface ShipmentDocumentRecord {
   barcodeFormat: string | null;
   ocrRawText: string | null;
   documentType: "label" | "invoice" | "packing_slip" | "customs" | "unknown" | null;
+  recipientName: string | null;
+  mailboxNumber: string | null;
+  matchedCustomerId: string | null;
+  customerMatchConfidence: number | null;
   confidence: number | null;
   status: "processed" | "needs_review" | "failed";
   createdAt: string;
