@@ -6,4 +6,6 @@ export type RootStackParamList = {
   ScanResult: { document: ShipmentDocumentRecord };
   Documents: undefined;
   DocumentDetail: { id: string };
+  ReviewQueue: undefined;
+  ReviewDocument: { id: string };
 };

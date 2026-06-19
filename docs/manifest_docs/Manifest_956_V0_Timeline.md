@@ -78,7 +78,9 @@
   │     │                                           │ breaker) → matchedCustomerId/confidence. CustomerAccount model + CRUD at  │
   │     │                                           │ /forwarding/customers; docs filterable via GET /documents?customerId=.    │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
-  │ 19  │ Review queue UI                           │ Needs-review list, editable fields, accept/correct/reject flow            │
+  │ 19  │ Review queue UI                           │ ✅ Shipped — PATCH /documents/:id (org-scoped) + status filter; mobile    │
+  │     │                                           │ ReviewQueue (needs_review list w/ triage reason) + ReviewDocument         │
+  │     │                                           │ (editable fields, accept/reject), Home badge with live count.             │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
   │ 20  │ Audit trail                               │ Log every human edit to FieldCorrection table                             │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤

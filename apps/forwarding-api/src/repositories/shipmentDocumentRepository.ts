@@ -26,8 +26,19 @@ export interface ListShipmentDocumentsFilters {
   q?: string;
   type?: string;
   customerId?: string;
+  status?: ShipmentDocumentStatus;
   page?: number;
   limit?: number;
+}
+
+export interface UpdateShipmentDocumentInput {
+  trackingNumber?: string | null;
+  carrier?: string | null;
+  recipientName?: string | null;
+  mailboxNumber?: string | null;
+  documentType?: string | null;
+  matchedCustomerId?: string | null;
+  status?: ShipmentDocumentStatus;
 }
 
 export interface ShipmentDocumentListResult {
@@ -73,7 +84,8 @@ export class ShipmentDocumentRepository {
         ? { contains: filters.q, mode: "insensitive" as const }
         : undefined,
       documentType: filters.type ?? undefined,
-      matchedCustomerId: filters.customerId ?? undefined
+      matchedCustomerId: filters.customerId ?? undefined,
+      status: filters.status ?? undefined
     };
 
     const [total, data] = await Promise.all([
@@ -101,5 +113,11 @@ export class ShipmentDocumentRepository {
     return prisma.shipmentDocument.findFirst({
       where: { id, organizationId }
     });
+  }
+
+  async update(id: string, data: UpdateShipmentDocumentInput): Promise<ShipmentDocument> {
+    // Undefined fields are ignored by Prisma, so only the keys the caller set
+    // are written — null is a deliberate "clear this field".
+    return prisma.shipmentDocument.update({ where: { id }, data });
   }
 }
