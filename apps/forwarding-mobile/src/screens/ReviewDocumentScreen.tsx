@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
+  getDocumentCorrections,
   getShipmentDocument,
   updateShipmentDocument,
   type ShipmentDocumentPatch,
@@ -39,6 +40,12 @@ export const ReviewDocumentScreen = ({ navigation, route }: Props) => {
     queryFn: () => getShipmentDocument(id)
   });
   const doc = query.data?.document;
+
+  const historyQuery = useQuery({
+    queryKey: ["forwarding", "documents", id, "corrections"],
+    queryFn: () => getDocumentCorrections(id)
+  });
+  const corrections = historyQuery.data?.corrections ?? [];
 
   // Editable form state — seeded from the document once it loads.
   const [trackingNumber, setTrackingNumber] = useState("");
@@ -164,6 +171,30 @@ export const ReviewDocumentScreen = ({ navigation, route }: Props) => {
               {doc.barcodeRaw ? <ReadRow label="Barcode" value={doc.barcodeRaw} /> : null}
             </View>
 
+            {corrections.length > 0 ? (
+              <View style={styles.card}>
+                <Text style={styles.fieldLabel}>EDIT HISTORY</Text>
+                {corrections.map((c) => (
+                  <View key={c.id} style={styles.historyRow}>
+                    <Text style={styles.historyField}>{c.fieldName.replace("_", " ")}</Text>
+                    <Text style={styles.historyChange} numberOfLines={2}>
+                      <Text style={styles.historyOld}>{c.oldValue ?? "—"}</Text>
+                      {"  →  "}
+                      <Text style={styles.historyNew}>{c.newValue ?? "—"}</Text>
+                    </Text>
+                    <Text style={styles.historyDate}>
+                      {new Date(c.createdAt).toLocaleString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit"
+                      })}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
+
             {doc.ocrRawText ? (
               <View style={styles.card}>
                 <Text style={styles.fieldLabel}>OCR TEXT</Text>
@@ -286,6 +317,18 @@ const styles = StyleSheet.create({
   readLabel: { color: "#94a3b8", fontSize: 13, fontWeight: "600" },
   readValue: { color: "#f8fafc", fontSize: 14, fontWeight: "700", maxWidth: "60%", textAlign: "right" },
   ocrText: { color: "#cbd5e1", fontSize: 13, lineHeight: 18, fontFamily: "monospace" },
+
+  historyRow: {
+    gap: 2,
+    borderTopWidth: 1,
+    borderTopColor: "#0f172a",
+    paddingTop: 10
+  },
+  historyField: { color: "#94a3b8", fontSize: 12, fontWeight: "700", textTransform: "capitalize" },
+  historyChange: { fontSize: 13, lineHeight: 18 },
+  historyOld: { color: "#f87171" },
+  historyNew: { color: "#10b981", fontWeight: "700" },
+  historyDate: { color: "#64748b", fontSize: 11 },
 
   actions: {
     flexDirection: "row",

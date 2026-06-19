@@ -82,7 +82,9 @@
   │     │                                           │ ReviewQueue (needs_review list w/ triage reason) + ReviewDocument         │
   │     │                                           │ (editable fields, accept/reject), Home badge with live count.             │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
-  │ 20  │ Audit trail                               │ Log every human edit to FieldCorrection table                             │
+  │ 20  │ Audit trail                               │ ✅ Shipped — FieldCorrection table logs each changed field (old→new, who, │
+  │     │                                           │ when) transactionally with the PATCH; GET /documents/:id/corrections +     │
+  │     │                                           │ edit-history card on the mobile review screen.                            │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
   │ 21  │ Duplicate tracking detection              │ Unique constraint + soft-block on repeated tracking numbers               │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤

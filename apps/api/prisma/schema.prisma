@@ -32,6 +32,7 @@ model User {
   receipts                  Receipt[]
   organizationMemberships   OrganizationMember[]
   uploadedShipmentDocuments ShipmentDocument[]
+  fieldCorrections          FieldCorrection[]
   createdAt                 DateTime             @default(now())
   updatedAt                 DateTime             @updatedAt
 }
@@ -89,9 +90,10 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  members   OrganizationMember[]
-  documents ShipmentDocument[]
-  customers CustomerAccount[]
+  members          OrganizationMember[]
+  documents        ShipmentDocument[]
+  customers        CustomerAccount[]
+  fieldCorrections FieldCorrection[]
 
   @@map("forwarding_organizations")
 }
@@ -135,12 +137,32 @@ model ShipmentDocument {
   organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   uploadedBy      User?            @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
   matchedCustomer CustomerAccount? @relation(fields: [matchedCustomerId], references: [id], onDelete: SetNull)
+  corrections     FieldCorrection[]
 
   @@index([organizationId, trackingNumber])
   @@index([organizationId, createdAt])
   @@index([organizationId, documentType])
   @@index([organizationId, matchedCustomerId])
   @@map("forwarding_shipment_documents")
+}
+
+model FieldCorrection {
+  id                 String   @id @default(cuid())
+  organizationId     String
+  shipmentDocumentId String
+  userId             String?
+  fieldName          String
+  oldValue           String?
+  newValue           String?
+  createdAt          DateTime @default(now())
+
+  organization     Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  shipmentDocument ShipmentDocument @relation(fields: [shipmentDocumentId], references: [id], onDelete: Cascade)
+  user             User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([shipmentDocumentId])
+  @@index([organizationId, createdAt])
+  @@map("forwarding_field_corrections")
 }
 
 model CustomerAccount {

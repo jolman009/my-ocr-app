@@ -17,6 +17,7 @@ import { createRequireOrgContext } from "./middleware/requireOrgContext.js";
 import { OrganizationRepository } from "./repositories/organizationRepository.js";
 import { ShipmentDocumentRepository } from "./repositories/shipmentDocumentRepository.js";
 import { CustomerAccountRepository } from "./repositories/customerAccountRepository.js";
+import { FieldCorrectionRepository } from "./repositories/fieldCorrectionRepository.js";
 import { OrganizationService } from "./services/organizationService.js";
 import { BarcodeService } from "./services/barcodeService.js";
 import { PdfTextService } from "./services/pdfTextService.js";
@@ -43,6 +44,7 @@ const pdfTextService = new PdfTextService();
 const organizationRepository = new OrganizationRepository();
 const shipmentDocumentRepository = new ShipmentDocumentRepository();
 const customerAccountRepository = new CustomerAccountRepository();
+const fieldCorrectionRepository = new FieldCorrectionRepository();
 
 // ---- Services ----
 const organizationService = new OrganizationService(organizationRepository);
@@ -55,7 +57,8 @@ const shipmentDocumentService = new ShipmentDocumentService(
   imageService,
   storageProvider,
   pdfTextService,
-  customerMatchService
+  customerMatchService,
+  fieldCorrectionRepository
 );
 
 // ---- Controllers ----
