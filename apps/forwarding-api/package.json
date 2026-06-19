@@ -8,6 +8,7 @@
     "build": "tsc -p tsconfig.build.json && node scripts/rewrite-aliases.mjs",
     "start": "node dist/index.js",
     "lint": "tsc --noEmit",
+    "reclassify": "tsx scripts/reclassify-documents.ts",
     "test": "vitest run"
   },
   "dependencies": {

@@ -69,9 +69,10 @@
   ┌─────┬───────────────────────────────────────────┬───────────────────────────────────────────────────────────────────────────┐
   │  #  │                   What                    │                                   Notes                                   │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
-  │ 16  │ PDF ingestion (pdfjs-dist)                │ Shipping docs/invoices arrive as PDFs                                     │
+  │ 16  │ PDF ingestion (pdfjs-dist)                │ ✅ Shipped — embedded-text extraction feeds the same tracking pipeline.   │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
-  │ 17  │ Document classifier                       │ Rules + OCR keywords (label / invoice / packing slip / customs / unknown) │
+  │ 17  │ Document classifier                       │ ✅ Shipped — weighted keyword rules → label/invoice/packing_slip/customs/ │
+  │     │                                           │ unknown, stored on documentType, filterable via GET /documents?type=.     │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
   │ 18  │ Customer/account fuzzy matching (fuse.js) │ Auto-route by matching OCR'd recipient to existing customer records       │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤

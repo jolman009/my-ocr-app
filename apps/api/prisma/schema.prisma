@@ -121,6 +121,7 @@ model ShipmentDocument {
   barcodeFormat  String?
   ocrRawText     String?
   ocrRawJson     Json?
+  documentType   String?
   confidence     Float?
   status         ShipmentDocumentStatus @default(processed)
   createdAt      DateTime               @default(now())
@@ -131,5 +132,6 @@ model ShipmentDocument {
 
   @@index([organizationId, trackingNumber])
   @@index([organizationId, createdAt])
+  @@index([organizationId, documentType])
   @@map("forwarding_shipment_documents")
 }

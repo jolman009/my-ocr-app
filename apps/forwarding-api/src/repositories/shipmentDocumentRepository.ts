@@ -12,6 +12,7 @@ export interface CreateShipmentDocumentInput {
   barcodeFormat: string | null;
   ocrRawText: string | null;
   ocrRawJson: unknown;
+  documentType: string | null;
   confidence: number | null;
   status: ShipmentDocumentStatus;
 }
@@ -19,6 +20,7 @@ export interface CreateShipmentDocumentInput {
 export interface ListShipmentDocumentsFilters {
   organizationId: string;
   q?: string;
+  type?: string;
   page?: number;
   limit?: number;
 }
@@ -46,6 +48,7 @@ export class ShipmentDocumentRepository {
         barcodeFormat: input.barcodeFormat,
         ocrRawText: input.ocrRawText,
         ocrRawJson: (input.ocrRawJson ?? null) as never,
+        documentType: input.documentType,
         confidence: input.confidence,
         status: input.status
       }
@@ -59,7 +62,8 @@ export class ShipmentDocumentRepository {
       organizationId: filters.organizationId,
       trackingNumber: filters.q
         ? { contains: filters.q, mode: "insensitive" as const }
-        : undefined
+        : undefined,
+      documentType: filters.type ?? undefined
     };
 
     const [total, data] = await Promise.all([
