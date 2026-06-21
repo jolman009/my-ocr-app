@@ -145,6 +145,21 @@ export const updateShipmentDocument = (
     body: JSON.stringify(patch)
   });
 
+/** One logged edit to a document field (audit trail). */
+export interface FieldCorrectionRecord {
+  id: string;
+  fieldName: string;
+  oldValue: string | null;
+  newValue: string | null;
+  userId: string | null;
+  createdAt: string;
+}
+
+export const getDocumentCorrections = (
+  id: string
+): Promise<{ corrections: FieldCorrectionRecord[] }> =>
+  request(`/documents/${id}/corrections`);
+
 /**
  * Upload a label image to the forwarding pipeline. Uses React Native's
  * FormData which accepts { uri, name, type } objects for file attachments.

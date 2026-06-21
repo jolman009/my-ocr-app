@@ -16,8 +16,11 @@ import {
 } from "../utils/trackingNumberExtractor.js";
 import { classifyDocument } from "../utils/documentClassifier.js";
 import { extractRecipient } from "../utils/recipientExtractor.js";
+import { diffCorrections } from "../utils/fieldCorrectionDiff.js";
 import type { CustomerMatchService } from "./customerMatchService.js";
+import type { FieldCorrectionRepository } from "../repositories/fieldCorrectionRepository.js";
 import { HttpError } from "../utils/httpError.js";
+import type { FieldCorrection } from "@prisma/client";
 
 export interface CreateFromUploadInput {
   file: Express.Multer.File;
@@ -38,7 +41,8 @@ export class ShipmentDocumentService {
     private readonly imageService: ImageService,
     private readonly storageProvider: StorageProvider,
     private readonly pdfTextService: PdfTextService,
-    private readonly customerMatchService: CustomerMatchService
+    private readonly customerMatchService: CustomerMatchService,
+    private readonly fieldCorrectionRepository: FieldCorrectionRepository
   ) {}
 
   async createFromUpload(input: CreateFromUploadInput): Promise<ShipmentDocument> {
@@ -176,10 +180,22 @@ export class ShipmentDocumentService {
   async update(
     id: string,
     organizationId: string,
-    patch: UpdateShipmentDocumentInput
+    patch: UpdateShipmentDocumentInput,
+    editedById: string | null
   ): Promise<ShipmentDocument> {
+    const existing = await this.getById(id, organizationId);
+    // Audit only the fields that actually changed (#20).
+    const corrections = diffCorrections(
+      existing as unknown as Record<string, unknown>,
+      patch as Record<string, unknown>
+    );
+    return this.repository.update(id, patch, { organizationId, editedById, corrections });
+  }
+
+  /** Edit history for a document (audit trail), newest first. Org-scoped. */
+  async listCorrections(id: string, organizationId: string): Promise<FieldCorrection[]> {
     await this.getById(id, organizationId);
-    return this.repository.update(id, patch);
+    return this.fieldCorrectionRepository.listByDocument(id);
   }
 
   private resolveTracking(

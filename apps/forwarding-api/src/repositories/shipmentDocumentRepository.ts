@@ -1,6 +1,13 @@
 import { PrismaClient, type ShipmentDocument, type ShipmentDocumentStatus } from "@prisma/client";
+import type { FieldCorrectionEntry } from "../utils/fieldCorrectionDiff.js";
 
 const prisma = new PrismaClient();
+
+export interface UpdateAudit {
+  organizationId: string;
+  editedById: string | null;
+  corrections: FieldCorrectionEntry[];
+}
 
 export interface CreateShipmentDocumentInput {
   organizationId: string;
@@ -115,9 +122,34 @@ export class ShipmentDocumentRepository {
     });
   }
 
-  async update(id: string, data: UpdateShipmentDocumentInput): Promise<ShipmentDocument> {
+  async update(
+    id: string,
+    data: UpdateShipmentDocumentInput,
+    audit?: UpdateAudit
+  ): Promise<ShipmentDocument> {
     // Undefined fields are ignored by Prisma, so only the keys the caller set
     // are written — null is a deliberate "clear this field".
-    return prisma.shipmentDocument.update({ where: { id }, data });
+    const updateOp = prisma.shipmentDocument.update({ where: { id }, data });
+
+    if (!audit || audit.corrections.length === 0) {
+      return updateOp;
+    }
+
+    // Write the document update and its audit rows atomically so the trail can
+    // never drift from the record it describes.
+    const [updated] = await prisma.$transaction([
+      updateOp,
+      prisma.fieldCorrection.createMany({
+        data: audit.corrections.map((c) => ({
+          organizationId: audit.organizationId,
+          shipmentDocumentId: id,
+          userId: audit.editedById,
+          fieldName: c.fieldName,
+          oldValue: c.oldValue,
+          newValue: c.newValue
+        }))
+      })
+    ]);
+    return updated;
   }
 }

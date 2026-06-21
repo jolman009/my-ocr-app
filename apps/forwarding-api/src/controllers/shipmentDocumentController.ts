@@ -100,8 +100,20 @@ export class ShipmentDocumentController {
     const document = await this.service.update(
       String(req.params.id),
       req.organizationId,
-      patch
+      patch,
+      req.auth?.userId ?? null
     );
     res.json({ document });
+  });
+
+  listCorrections = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.organizationId) {
+      throw new HttpError(500, "Organization context missing — middleware misconfigured.");
+    }
+    const corrections = await this.service.listCorrections(
+      String(req.params.id),
+      req.organizationId
+    );
+    res.json({ corrections });
   });
 }
