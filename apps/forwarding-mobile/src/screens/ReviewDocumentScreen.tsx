@@ -133,6 +133,17 @@ export const ReviewDocumentScreen = ({ navigation, route }: Props) => {
               />
             ) : null}
 
+            {doc.duplicateOfId ? (
+              <View style={styles.duplicateBanner}>
+                <Text style={styles.duplicateTitle}>Possible duplicate</Text>
+                <Text style={styles.duplicateText}>
+                  This tracking number matches an earlier scan. Accepting it is
+                  blocked while another document holds the same number — change
+                  the tracking number or reject this one.
+                </Text>
+              </View>
+            ) : null}
+
             <View style={styles.card}>
               <Field label="Tracking number" value={trackingNumber} onChangeText={setTrackingNumber} autoCapitalize="characters" />
               <Field label="Carrier" value={carrier} onChangeText={setCarrier} />
@@ -317,6 +328,17 @@ const styles = StyleSheet.create({
   readLabel: { color: "#94a3b8", fontSize: 13, fontWeight: "600" },
   readValue: { color: "#f8fafc", fontSize: 14, fontWeight: "700", maxWidth: "60%", textAlign: "right" },
   ocrText: { color: "#cbd5e1", fontSize: 13, lineHeight: 18, fontFamily: "monospace" },
+
+  duplicateBanner: {
+    backgroundColor: "rgba(248, 113, 113, 0.12)",
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "rgba(248, 113, 113, 0.3)",
+    gap: 4
+  },
+  duplicateTitle: { color: "#f87171", fontSize: 14, fontWeight: "800" },
+  duplicateText: { color: "#fca5a5", fontSize: 13, lineHeight: 18 },
 
   historyRow: {
     gap: 2,

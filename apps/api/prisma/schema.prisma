@@ -131,6 +131,10 @@ model ShipmentDocument {
   customerMatchConfidence Float?
   confidence     Float?
   status         ShipmentDocumentStatus @default(processed)
+  // Set when this document's tracking number already existed in the org at
+  // scan time (#21). Points at the earliest non-rejected match. The document
+  // is still saved (soft-block) but routed to needs_review for an operator.
+  duplicateOfId  String?
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
 
