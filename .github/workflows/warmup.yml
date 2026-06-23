@@ -1,0 +1,43 @@
+name: Warm up Render services
+
+# Render free-tier web services spin down after ~15 min of inactivity, and the
+# next request then pays a ~30s cold start. For Manifest 956's operator that
+# reads as "the app is broken" on the first scan of the day. This workflow pings
+# both health endpoints on a schedule so a service is already awake when an
+# operator logs in and scans.
+#
+# Scope: scheduled during Central-Time business hours only (the warehouse's
+# working window) to avoid burning Render's free instance-hours around the clock.
+# Trigger it manually (workflow_dispatch) right before a handoff to pre-warm.
+#
+# Caveats: GitHub's scheduled runs are best-effort (often delayed several
+# minutes under load) and are paused if the default branch sees no commits for
+# 60 days. A late ping still helps; this is warming, not a hard SLA.
+
+on:
+  schedule:
+    # Every 10 minutes, 12:00–23:59 UTC (~6am–6pm CST / 7am–7pm CDT).
+    - cron: "*/10 12-23 * * *"
+  workflow_dispatch: {}
+
+# A new run supersedes an in-flight one — no value in overlapping pings.
+concurrency:
+  group: warmup
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        url:
+          - https://receipt-radar-api.onrender.com/api/health
+          - https://manifest-956-api.onrender.com/forwarding/health
+    steps:
+      - name: Ping ${{ matrix.url }}
+        run: |
+          # --max-time 90 absorbs a cold start; retry a couple times in case the
+          # service is mid-spin-up. -f makes a non-2xx status fail the step.
+          curl -fsS --max-time 90 --retry 3 --retry-all-errors --retry-delay 10 \
+            "${{ matrix.url }}" && echo "" && echo "OK: ${{ matrix.url }}"
