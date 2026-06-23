@@ -13,7 +13,7 @@ import { BarcodeService } from "./barcodeService.js";
 import { PdfTextService } from "./pdfTextService.js";
 import {
   extractTrackingNumber,
-  inferCarrierFromBarcode
+  parseBarcodeTracking
 } from "../utils/trackingNumberExtractor.js";
 import { classifyDocument } from "../utils/documentClassifier.js";
 import { extractRecipient } from "../utils/recipientExtractor.js";
@@ -262,12 +262,14 @@ export class ShipmentDocumentService {
   } {
     // Best outcome: barcode decoded AND the decoded text matches a known
     // carrier's tracking format. This is the only path with high confidence.
+    // parseBarcodeTracking strips GS1 control chars + USPS routing prefixes so
+    // we store the real tracking number, not the raw barcode payload.
     if (barcode) {
-      const carrier = inferCarrierFromBarcode(barcode.raw);
-      if (carrier) {
+      const parsed = parseBarcodeTracking(barcode.raw);
+      if (parsed) {
         return {
-          trackingNumber: barcode.raw,
-          carrier,
+          trackingNumber: parsed.trackingNumber,
+          carrier: parsed.carrier,
           confidence: BARCODE_CONFIDENCE,
           status: "processed"
         };
