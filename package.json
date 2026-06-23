@@ -6,6 +6,7 @@
     "apps/api",
     "apps/forwarding-api",
     "apps/web",
+    "apps/forwarding-web",
     "apps/mobile",
     "apps/forwarding-mobile",
     "packages/shared"
@@ -18,10 +19,11 @@
     "dev:api": "npm run dev --workspace api",
     "dev:forwarding-api": "npm run dev --workspace forwarding-api",
     "dev:web": "npm run dev --workspace web",
+    "dev:forwarding-web": "npm run dev --workspace forwarding-web",
     "dev:mobile": "npm run start --workspace mobile",
     "dev:forwarding-mobile": "npm run start --workspace forwarding-mobile",
-    "build": "npm run build --workspace @receipt-ocr/shared && npm run build --workspace api && npm run build --workspace forwarding-api && npm run build --workspace web",
+    "build": "npm run build --workspace @receipt-ocr/shared && npm run build --workspace api && npm run build --workspace forwarding-api && npm run build --workspace web && npm run build --workspace forwarding-web",
     "test": "npm run test --workspace api && npm run test --workspace web",
-    "lint": "npm run lint --workspace @receipt-ocr/shared && npm run lint --workspace api && npm run lint --workspace forwarding-api && npm run lint --workspace web && npm run lint --workspace mobile && npm run lint --workspace forwarding-mobile"
+    "lint": "npm run lint --workspace @receipt-ocr/shared && npm run lint --workspace api && npm run lint --workspace forwarding-api && npm run lint --workspace web && npm run lint --workspace forwarding-web && npm run lint --workspace mobile && npm run lint --workspace forwarding-mobile"
   }
 }
