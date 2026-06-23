@@ -26,6 +26,7 @@ export interface CreateShipmentDocumentInput {
   customerMatchConfidence: number | null;
   confidence: number | null;
   status: ShipmentDocumentStatus;
+  duplicateOfId?: string | null;
 }
 
 export interface ListShipmentDocumentsFilters {
@@ -77,8 +78,28 @@ export class ShipmentDocumentRepository {
         matchedCustomerId: input.matchedCustomerId,
         customerMatchConfidence: input.customerMatchConfidence,
         confidence: input.confidence,
-        status: input.status
+        status: input.status,
+        duplicateOfId: input.duplicateOfId ?? null
       }
+    });
+  }
+
+  /**
+   * Earliest non-rejected document in the org carrying this exact tracking
+   * number, or null. Drives duplicate detection (#21) — `failed` (rejected)
+   * documents are ignored so a re-scan after a rejection isn't flagged.
+   */
+  async findDuplicate(
+    organizationId: string,
+    trackingNumber: string
+  ): Promise<ShipmentDocument | null> {
+    return prisma.shipmentDocument.findFirst({
+      where: {
+        organizationId,
+        trackingNumber,
+        status: { not: "failed" }
+      },
+      orderBy: { createdAt: "asc" }
     });
   }
 

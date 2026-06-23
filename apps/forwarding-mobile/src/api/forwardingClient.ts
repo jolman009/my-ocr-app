@@ -46,6 +46,7 @@ export interface ShipmentDocumentRecord {
   customerMatchConfidence: number | null;
   confidence: number | null;
   status: "processed" | "needs_review" | "failed";
+  duplicateOfId: string | null;
   createdAt: string;
   updatedAt: string;
 }

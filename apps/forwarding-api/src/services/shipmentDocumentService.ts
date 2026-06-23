@@ -4,6 +4,7 @@ import type { OcrProvider } from "@receipt-radar/api/providers/ocrProvider.js";
 import type { StorageProvider } from "@receipt-radar/api/providers/storageProvider.js";
 import {
   ShipmentDocumentRepository,
+  type CreateShipmentDocumentInput,
   type ListShipmentDocumentsFilters,
   type ShipmentDocumentListResult,
   type UpdateShipmentDocumentInput
@@ -20,6 +21,7 @@ import { diffCorrections } from "../utils/fieldCorrectionDiff.js";
 import type { CustomerMatchService } from "./customerMatchService.js";
 import type { FieldCorrectionRepository } from "../repositories/fieldCorrectionRepository.js";
 import { HttpError } from "../utils/httpError.js";
+import { isUniqueConstraintError } from "../utils/prismaErrors.js";
 import type { FieldCorrection } from "@prisma/client";
 
 export interface CreateFromUploadInput {
@@ -93,7 +95,7 @@ export class ShipmentDocumentService {
     const recipient = extractRecipient(ocrRawText);
     const customerMatch = await this.customerMatchService.match(input.organizationId, recipient);
 
-    return this.repository.create({
+    return this.persistDocument({
       organizationId: input.organizationId,
       uploadedById: input.uploadedById,
       imageUrl,
@@ -140,7 +142,7 @@ export class ShipmentDocumentService {
     const recipient = extractRecipient(pdfResult.text);
     const customerMatch = await this.customerMatchService.match(input.organizationId, recipient);
 
-    return this.repository.create({
+    return this.persistDocument({
       organizationId: input.organizationId,
       uploadedById: input.uploadedById,
       imageUrl,
@@ -158,6 +160,45 @@ export class ShipmentDocumentService {
       confidence: resolution.confidence,
       status: resolution.status
     });
+  }
+
+  /**
+   * Persists a freshly-extracted document, applying duplicate detection (#21).
+   * If the tracking number already exists in the org, the document is still
+   * saved (soft-block) but forced to `needs_review` and linked to the original
+   * via `duplicateOfId`. A unique-index trip (concurrent scan accepted in the
+   * gap between check and insert) is retried the same way rather than 500ing.
+   */
+  private async persistDocument(
+    data: CreateShipmentDocumentInput
+  ): Promise<ShipmentDocument> {
+    let toCreate = data;
+    if (toCreate.trackingNumber) {
+      const original = await this.repository.findDuplicate(
+        toCreate.organizationId,
+        toCreate.trackingNumber
+      );
+      if (original) {
+        toCreate = { ...toCreate, status: "needs_review", duplicateOfId: original.id };
+      }
+    }
+
+    try {
+      return await this.repository.create(toCreate);
+    } catch (error) {
+      if (isUniqueConstraintError(error) && toCreate.trackingNumber) {
+        const original = await this.repository.findDuplicate(
+          toCreate.organizationId,
+          toCreate.trackingNumber
+        );
+        return this.repository.create({
+          ...toCreate,
+          status: "needs_review",
+          duplicateOfId: original?.id ?? toCreate.duplicateOfId ?? null
+        });
+      }
+      throw error;
+    }
   }
 
   async list(filters: ListShipmentDocumentsFilters): Promise<ShipmentDocumentListResult> {
@@ -189,7 +230,19 @@ export class ShipmentDocumentService {
       existing as unknown as Record<string, unknown>,
       patch as Record<string, unknown>
     );
-    return this.repository.update(id, patch, { organizationId, editedById, corrections });
+    try {
+      return await this.repository.update(id, patch, { organizationId, editedById, corrections });
+    } catch (error) {
+      // Accept guard (#21): the partial unique index rejects accepting a second
+      // document that shares an already-processed tracking number.
+      if (isUniqueConstraintError(error)) {
+        throw new HttpError(
+          409,
+          "Another accepted document already has this tracking number. Edit the tracking number or reject this duplicate."
+        );
+      }
+      throw error;
+    }
   }
 
   /** Edit history for a document (audit trail), newest first. Org-scoped. */

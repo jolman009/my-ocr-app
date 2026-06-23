@@ -59,7 +59,15 @@ export const ScanResultScreen = ({ navigation, route }: Props) => {
           ) : null}
         </View>
 
-        {doc.status === "needs_review" ? (
+        {doc.duplicateOfId ? (
+          <View style={styles.duplicateBanner}>
+            <Text style={styles.duplicateTitle}>Possible duplicate</Text>
+            <Text style={styles.duplicateText}>
+              This tracking number was already scanned. It's been saved to the
+              review queue so an operator can confirm before accepting.
+            </Text>
+          </View>
+        ) : doc.status === "needs_review" ? (
           <View style={styles.reviewBanner}>
             <Text style={styles.reviewText}>
               Marked for review — a human should verify this tracking number.
@@ -139,6 +147,17 @@ const styles = StyleSheet.create({
     borderColor: "rgba(245, 158, 11, 0.3)"
   },
   reviewText: { color: "#f59e0b", fontSize: 13, lineHeight: 18 },
+
+  duplicateBanner: {
+    backgroundColor: "rgba(248, 113, 113, 0.15)",
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "rgba(248, 113, 113, 0.35)",
+    gap: 4
+  },
+  duplicateTitle: { color: "#f87171", fontSize: 14, fontWeight: "800" },
+  duplicateText: { color: "#fca5a5", fontSize: 13, lineHeight: 18 },
 
   actions: { gap: 12 },
   scanAnotherButton: {

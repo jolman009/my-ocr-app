@@ -86,7 +86,10 @@
   │     │                                           │ when) transactionally with the PATCH; GET /documents/:id/corrections +     │
   │     │                                           │ edit-history card on the mobile review screen.                            │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
-  │ 21  │ Duplicate tracking detection              │ Unique constraint + soft-block on repeated tracking numbers               │
+  │ 21  │ Duplicate tracking detection              │ ✅ Shipped — repeat tracking numbers are still saved (soft-block) but    │
+  │     │                                           │ routed to needs_review with duplicateOfId set; partial unique index on    │
+  │     │                                           │ (org, trackingNumber) WHERE processed blocks accepting two duplicates     │
+  │     │                                           │ (409 on accept). "Possible duplicate" triage reason + scan/review banners.│
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
   │ 22  │ apps/forwarding-web admin surface         │ Search, review, audit — for office managers, not warehouse floor          │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤

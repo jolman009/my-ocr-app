@@ -32,6 +32,7 @@ const formatDate = (iso: string) => {
 // Why is this document in the queue? Surface the most useful triage hint so an
 // operator knows what to fix before opening it.
 const reviewReason = (doc: ShipmentDocumentRecord): string => {
+  if (doc.duplicateOfId) return "Possible duplicate";
   if (!doc.trackingNumber) return "No tracking number";
   if (doc.confidence !== null && doc.confidence < 0.5) return "Low extraction confidence";
   if (!doc.matchedCustomerId) return "No customer match";
