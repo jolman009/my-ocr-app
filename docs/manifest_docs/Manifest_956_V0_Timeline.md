@@ -91,7 +91,10 @@
   │     │                                           │ (org, trackingNumber) WHERE processed blocks accepting two duplicates     │
   │     │                                           │ (409 on accept). "Possible duplicate" triage reason + scan/review banners.│
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
-  │ 22  │ apps/forwarding-web admin surface         │ Search, review, audit — for office managers, not warehouse floor          │
+  │ 22  │ apps/forwarding-web admin surface         │ ✅ Shipped — React 19 + Vite + Tailwind admin (port 5175). Documents      │
+  │     │                                           │ search (debounced + status/type filters + pagination), review queue       │
+  │     │                                           │ (triage reasons), document detail (editable fields, accept/reject,        │
+  │     │                                           │ edit-history audit, duplicate banner + 409 guard). Shared-JWT login.      │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
   │ 23  │ Batch upload                              │ Multiple documents at once                                                │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
