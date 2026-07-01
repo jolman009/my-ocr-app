@@ -1,6 +1,9 @@
 import type { Response } from "express";
 import { z } from "zod";
-import { ShipmentDocumentService } from "../services/shipmentDocumentService.js";
+import {
+  ShipmentDocumentService,
+  ACCEPTED_UPLOAD_MIME_TYPES
+} from "../services/shipmentDocumentService.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { HttpError } from "../utils/httpError.js";
 import type { AuthenticatedRequest } from "../types/auth.js";
@@ -33,14 +36,6 @@ const updateSchema = z
     message: "At least one field is required."
   });
 
-const ACCEPTED_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-  "application/pdf"
-]);
-
 export class ShipmentDocumentController {
   constructor(private readonly service: ShipmentDocumentService) {}
 
@@ -54,7 +49,7 @@ export class ShipmentDocumentController {
     if (!req.auth?.userId) {
       throw new HttpError(401, "Authentication is required.");
     }
-    if (!ACCEPTED_MIME_TYPES.has(req.file.mimetype)) {
+    if (!ACCEPTED_UPLOAD_MIME_TYPES.has(req.file.mimetype)) {
       throw new HttpError(400, `Unsupported file type: ${req.file.mimetype}.`);
     }
 
@@ -65,6 +60,29 @@ export class ShipmentDocumentController {
     });
 
     res.status(201).json({ document });
+  });
+
+  createBatch = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const files = req.files as Express.Multer.File[] | undefined;
+    if (!files || files.length === 0) {
+      throw new HttpError(400, "At least one file is required in the 'images' form field.");
+    }
+    if (!req.organizationId) {
+      throw new HttpError(500, "Organization context missing — middleware misconfigured.");
+    }
+    if (!req.auth?.userId) {
+      throw new HttpError(401, "Authentication is required.");
+    }
+
+    const result = await this.service.createBatchFromUploads({
+      files,
+      organizationId: req.organizationId,
+      uploadedById: req.auth.userId
+    });
+
+    // 207 Multi-Status: the request itself succeeded, but individual files may
+    // have failed — clients must inspect `results` / `summary`, not just status.
+    res.status(207).json(result);
   });
 
   list = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {

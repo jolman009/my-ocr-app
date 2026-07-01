@@ -30,6 +30,34 @@ export interface CreateFromUploadInput {
   uploadedById: string;
 }
 
+export interface CreateBatchFromUploadsInput {
+  files: Express.Multer.File[];
+  organizationId: string;
+  uploadedById: string;
+}
+
+/** Per-file outcome in a batch upload. Exactly one of document/error is set. */
+export interface BatchUploadItemResult {
+  index: number;
+  filename: string;
+  document: ShipmentDocument | null;
+  error: string | null;
+}
+
+export interface BatchUploadResult {
+  results: BatchUploadItemResult[];
+  summary: { total: number; succeeded: number; failed: number };
+}
+
+/** MIME types accepted by both the single- and batch-upload endpoints. */
+export const ACCEPTED_UPLOAD_MIME_TYPES = new Set([
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "application/pdf"
+]);
+
 const BARCODE_CONFIDENCE = 0.95;
 const OCR_EXTRACTION_CONFIDENCE = 0.6;
 const UNRECOGNIZED_BARCODE_CONFIDENCE = 0.4;
@@ -52,6 +80,71 @@ export class ShipmentDocumentService {
       return this.createFromPdfUpload(input);
     }
     return this.createFromImageUpload(input);
+  }
+
+  /**
+   * Processes many uploads in one request (#23). Files are handled
+   * **sequentially on purpose**: each one runs barcode decode + OCR + image
+   * storage, which is CPU- and memory-heavy, so fanning out concurrently could
+   * exhaust the free-tier instance. True async fan-out is deferred to #24.
+   *
+   * A single bad file never fails the batch — its slot carries an `error`
+   * string while the rest still process. Duplicate detection (#21) still runs
+   * per file, so two identical tracking numbers within one batch behave exactly
+   * as two separate uploads (first processes, repeat → needs_review).
+   */
+  async createBatchFromUploads(
+    input: CreateBatchFromUploadsInput
+  ): Promise<BatchUploadResult> {
+    const results: BatchUploadItemResult[] = [];
+
+    for (let index = 0; index < input.files.length; index++) {
+      const file = input.files[index];
+      const filename = file.originalname || `file-${index + 1}`;
+
+      if (!ACCEPTED_UPLOAD_MIME_TYPES.has(file.mimetype)) {
+        results.push({
+          index,
+          filename,
+          document: null,
+          error: `Unsupported file type: ${file.mimetype}.`
+        });
+        continue;
+      }
+
+      try {
+        const document = await this.createFromUpload({
+          file,
+          organizationId: input.organizationId,
+          uploadedById: input.uploadedById
+        });
+        results.push({ index, filename, document, error: null });
+      } catch (error) {
+        // Known validation failures (e.g. image-only PDF) surface their own
+        // message; anything unexpected is logged and reported generically so
+        // one broken file can't leak internals or abort the batch.
+        const isHttp = error instanceof HttpError;
+        if (!isHttp && process.env.NODE_ENV !== "production") {
+          console.error(`[shipment] batch item ${index} (${filename}) failed:`, error);
+        }
+        results.push({
+          index,
+          filename,
+          document: null,
+          error: isHttp ? error.message : "Failed to process file."
+        });
+      }
+    }
+
+    const succeeded = results.filter((r) => r.document !== null).length;
+    return {
+      results,
+      summary: {
+        total: results.length,
+        succeeded,
+        failed: results.length - succeeded
+      }
+    };
   }
 
   private async createFromImageUpload(input: CreateFromUploadInput): Promise<ShipmentDocument> {

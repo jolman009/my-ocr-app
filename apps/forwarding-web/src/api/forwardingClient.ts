@@ -80,10 +80,14 @@ export class ForwardingApiError extends Error {
   }
 }
 
-const request = async <T>(path: string, init: RequestInit = {}): Promise<T> => {
+const request = async <T>(
+  path: string,
+  init: RequestInit = {},
+  timeoutMs = TIMEOUT_MS
+): Promise<T> => {
   const token = getAuthToken();
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   const headers = new Headers(init.headers);
   if (token) {
@@ -142,6 +146,39 @@ export const listShipmentDocuments = (
 export const getShipmentDocument = (
   id: string
 ): Promise<{ document: ShipmentDocumentRecord }> => request(`/documents/${id}`);
+
+export interface BatchUploadItemResult {
+  index: number;
+  filename: string;
+  document: ShipmentDocumentRecord | null;
+  error: string | null;
+}
+
+export interface BatchUploadResponse {
+  results: BatchUploadItemResult[];
+  summary: { total: number; succeeded: number; failed: number };
+}
+
+/** Max files per batch — mirrors the multer `upload.array("images", 25)` cap. */
+export const BATCH_UPLOAD_LIMIT = 25;
+
+// Batch processing runs each file through barcode + OCR + storage sequentially,
+// so it can easily outlast the default 30s request timeout — especially on a
+// cold free-tier instance. Give it a much longer ceiling.
+const BATCH_TIMEOUT_MS = 180_000;
+
+export const uploadShipmentDocuments = (
+  files: File[]
+): Promise<BatchUploadResponse> => {
+  const form = new FormData();
+  for (const file of files) form.append("images", file);
+  // No explicit Content-Type: the browser sets multipart boundaries itself.
+  return request<BatchUploadResponse>(
+    "/documents/batch",
+    { method: "POST", body: form },
+    BATCH_TIMEOUT_MS
+  );
+};
 
 export const updateShipmentDocument = (
   id: string,

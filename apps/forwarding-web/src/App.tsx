@@ -4,6 +4,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { DocumentsPage } from "./pages/DocumentsPage";
 import { ReviewQueuePage } from "./pages/ReviewQueuePage";
 import { DocumentDetailPage } from "./pages/DocumentDetailPage";
+import { UploadPage } from "./pages/UploadPage";
 
 const WorkspaceLayout = ({
   onLogout,
@@ -14,6 +15,7 @@ const WorkspaceLayout = ({
 }) => {
   const navItems = [
     { to: "/app", label: "Documents", end: true },
+    { to: "/app/upload", label: "Upload" },
     { to: "/app/review", label: "Review queue" }
   ];
 
@@ -97,6 +99,7 @@ export default function App() {
         }
       >
         <Route index element={<DocumentsPage />} />
+        <Route path="upload" element={<UploadPage />} />
         <Route path="review" element={<ReviewQueuePage />} />
         <Route path="documents/:id" element={<DocumentDetailPage />} />
       </Route>

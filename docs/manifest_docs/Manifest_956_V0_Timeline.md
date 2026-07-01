@@ -96,7 +96,10 @@
   │     │                                           │ (triage reasons), document detail (editable fields, accept/reject,        │
   │     │                                           │ edit-history audit, duplicate banner + 409 guard). Shared-JWT login.      │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
-  │ 23  │ Batch upload                              │ Multiple documents at once                                                │
+  │ 23  │ Batch upload                              │ ✅ Shipped — POST /forwarding/documents/batch (up to 25 files under the   │
+  │     │                                           │ "images" field). Sequential per-file processing; one bad file never fails │
+  │     │                                           │ the batch (207 Multi-Status + per-file results/summary). forwarding-web    │
+  │     │                                           │ Upload page (drag-drop, per-file results linking to detail).              │
   ├─────┼───────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────┤
   │ 24  │ Async job queue (graphile-worker)         │ Only needed when volume makes inline processing too slow                  │
   └─────┴───────────────────────────────────────────┴───────────────────────────────────────────────────────────────────────────┘
