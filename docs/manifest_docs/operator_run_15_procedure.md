@@ -12,27 +12,67 @@ statistical run** for the official number.
 
 ---
 
-## Before the run
+## Operator — on-device steps
 
-1. **Warm the API.** forwarding-api is on Render free tier — the first request
-   after idle cold-starts for ~30s. Trigger the warmup workflow
-   (`.github/workflows/warmup.yml` → *Run workflow*), or just hit
-   `https://manifest-956-api.onrender.com/api/health` from a browser a minute
-   before starting. Business-hours cron already pings every 10 min.
-2. **Fresh device login** on the Manifest 956 app, on cell signal (not WiFi) if
-   you want to exercise the real field path.
-3. **Note the start time (UTC)** — you'll use it to select exactly this run's
-   rows when scoring. Or just plan to score the last 20 documents.
-4. **Capture technique:** fill the camera frame with the label so the tracking
-   barcode is large enough to decode. A label shot from a distance risks the
-   0.6/needs_review OCR fallback (mitigated by the upscale-retry, but avoid it).
+These are the exact taps on the Manifest 956 app (screens: Home → Scan a
+package → SCAN COMPLETE → optional Review Queue).
 
-## During the run
+### Before you start
+1. **Wake the server.** The API sleeps after idle and takes ~30s to wake. A
+   minute before starting, open
+   `https://manifest-956-api.onrender.com/api/health` in any browser (or trigger
+   the GitHub `warmup` workflow). The first scan otherwise hangs ~30s.
+2. **Open the app** (the dev build is already installed) and **sign in**. Use
+   cell data, not WiFi, for real field conditions.
+3. On **Home** ("MANIFEST 956" + your name), confirm the workspace card loaded
+   (not stuck on "Setting up…").
+4. **Gather 20 packages with distinct labels.** Don't scan the same tracking
+   number twice — repeats are intentionally flagged as duplicates and won't
+   count toward the 20.
 
-- Scan 20 distinct packages (distinct tracking numbers — repeats trip the
-  duplicate soft-block by design and won't count as clean).
-- Note any package where the app shows the wrong number or drops to
-  needs_review, so the observer can mark it later.
+### Scan loop — repeat for each of the 20 packages
+1. Tap **"Scan a package" → "Open scanner"** (the orange card).
+2. **Fill the camera frame with the shipping label** so the tracking barcode is
+   large and in focus, then capture. A label shot from a distance can fall back
+   to low-confidence OCR.
+3. On the **"SCAN COMPLETE"** screen, check the three rows:
+   - **Confidence: High (green, ≥90%)** with a tracking number at the top → clean.
+   - **Medium (amber) / Low (red)**, **"No tracking number found"**, or a
+     **"Marked for review" / "Possible duplicate"** banner → note this package.
+4. **Glance-check** the big tracking number against the label to catch obvious
+   mismatches early.
+5. Tap **"Scan another"** to continue, or **"Done"** to return Home.
+
+### Handling flagged scans (optional, during or after)
+- The Home **Review Queue** card shows an orange badge with the flagged count.
+  Tap it → tap a document → on the **Review** screen you can correct the tracking
+  number and **Accept** (or **Reject** a bad capture). Every edit is logged.
+- You don't have to clear the queue for the test — scoring counts what's
+  *correct*, whether it came in clean or was fixed.
+
+### What "counts"
+| On SCAN COMPLETE you see | Counts as correct? |
+|---|---|
+| High confidence + tracking # matches label | ✅ yes |
+| Flagged/low, but corrected in Review to match the label | ✅ yes (mark Y when scoring) |
+| Wrong number, or unresolved / no tracking # | ❌ no |
+
+Pass = **≥18 of the 20** end up with the correct tracking number. When 20 are
+done, tell whoever's scoring **when you started** (or that it was the last 20
+scans) — no further action on the phone.
+
+---
+
+## Observer / scoring setup
+
+The hands-on flow is under **Operator — on-device steps** above. The observer's
+only extra job is to make scoring exact:
+
+- **Note the run start time (UTC)** so you can select precisely this run's rows
+  with `--since`. If you'd rather not, just score the last 20 documents
+  (`--last=20`, the default).
+- Optionally jot down any package the app got wrong or dropped to needs_review,
+  as a cross-check against the generated run sheet.
 
 ## After the run — score it
 
